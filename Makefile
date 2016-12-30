@@ -4,7 +4,7 @@ BIN = bin
 INC = include
 SRC_TEST = test
 
-CFLAGS = -std=c11 -c -Wall -I$(INC)
+CFLAGS = -std=c11 -c -Wall -I$(INC) -fPIC
 LFLAGS = -Wall
 
 CFLAGS_TEST = $(CFLAGS)
@@ -57,8 +57,8 @@ build: $(BIN_PATH)
 
 .PHONY: tests
 tests: $(BIN_PATH_TESTS)
-	LD_LIBRARY_PATH=$(BIN) $(BIN_PATH_TESTS)
+	@LD_LIBRARY_PATH=$(BIN) $(BIN_PATH_TESTS)
 
 .PHONY: run
 run: $(BIN_PATH)
-	$(BIN_PATH)
+	@$(BIN_PATH)
