@@ -20,17 +20,20 @@ BIN_PATH_TESTS=$(BIN)/$(TARGET_TESTS)
 
 SRCS := $(shell find $(SRC) -type f -name '*.c')
 INCS := $(shell find $(INC) -type f -name '*.h')
-OBJS := $(SRCS:$(SRC)/%.c=$(OBJ)/%.o)
+OBJS := $(addprefix $(OBJ)/,$(notdir $(SRCS:%.c=%.o)))
 
 SRCS_TEST := $(shell find $(SRC_TEST) -type f -name '*.c')
 OBJS_TEST := $(SRCS_TEST:$(SRC_TEST)/%.c=$(OBJ)/%.o)
+
+VPATH = $(shell find $(SRC) $(INC) -type d)
 
 # main executable
 $(BIN_PATH): $(OBJS) | build_dirs
 	$(CC) $(LFLAGS) $(OBJS) -o $@
 
 # src -> obj
-$(OBJS): $(OBJ)/%.o : $(SRC)/%.c | build_dirs
+$(OBJS): $(OBJ)/%.o : %.c | build_dirs
+	echo $(SRCS) $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # shared lib

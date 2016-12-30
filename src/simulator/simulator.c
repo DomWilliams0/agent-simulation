@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "simulator.h"
+#include "simulator/simulator.h"
 
 struct simulator_state
 {
@@ -28,4 +28,9 @@ void simulator_destroy(struct simulator_state **sim)
 		free(*sim);
 
 	*sim = NULL;
+}
+
+int main(int argc, char **argv)
+{
+
 }

@@ -3,7 +3,7 @@
 #include <setjmp.h>
 #include <cmocka.h>
 
-#include "simulator.h"
+#include "simulator/simulator.h"
 
 static int setup(void **state)
 {
