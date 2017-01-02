@@ -33,7 +33,6 @@ $(BIN_PATH): $(OBJS) | build_dirs
 
 # src -> obj
 $(OBJS): $(OBJ)/%.o : %.c | build_dirs
-	echo $(SRCS) $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # shared lib
