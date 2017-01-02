@@ -1,59 +1,5 @@
-#include <stdarg.h>
-#include <stddef.h>
-#include <setjmp.h>
-#include <cmocka.h>
-
-#include "simulator/simulator.h"
+#include "helper.h"
 #include "entity/entity.h"
-
-
-static int setup(void **state)
-{
-	struct simulator_state *sim = NULL;
-	simulator_init(&sim);
-	if (sim == NULL)
-		return 1;
-
-	*state = sim;
-	return 0;
-}
-
-static int teardown(void **state)
-{
-	simulator_destroy((struct simulator_state **) state);
-	return 0;
-}
-
-static int teardown_remove_all_entities(void **state)
-{
-	struct simulator_state *sim = (struct simulator_state *)*state;
-	struct entity_ctx *ctx = entity_get_context(sim);
-
-	entity_id i = entity_get_iterator(ctx);
-
-	while (entity_is_valid(i))
-	{
-		// cache next
-		entity_id next = entity_get_next(ctx, i);
-
-		// destroy current
-		entity_destroy(ctx, i);
-
-		i = next;
-	}
-
-	return 0;
-}
-
-static void test_creation_destruction(void **state)
-{
-	struct simulator_state *sim;
-	simulator_init(&sim);
-	assert_non_null(sim);
-
-	simulator_destroy(&sim);
-	assert_null(sim);
-}
 
 static void test_entity_creation_destruction(void **state)
 {
@@ -138,26 +84,7 @@ static void test_entity_iteration(void **state)
 	assert_false(entity_is_valid(iterator));
 }
 
-static void test_step(void **state)
-{
-	struct simulator_state *sim = (struct simulator_state *)*state;
-	simulator_step(sim);
 
-	// ...
-}
-
-int main()
-{
-	const struct CMUnitTest tests[] =
-	{
-		cmocka_unit_test(test_creation_destruction),
-		cmocka_unit_test(test_step),
-
-		cmocka_unit_test_teardown(test_entity_creation_destruction, teardown_remove_all_entities),
-		cmocka_unit_test_teardown(test_entity_creation_max, teardown_remove_all_entities),
-		cmocka_unit_test_teardown(test_entity_iteration, teardown_remove_all_entities),
-	};
-
-	return cmocka_run_group_tests(tests, setup, teardown);
-}
-
+REGISTER_TEST_TEARDOWN(test_entity_creation_destruction, teardown_remove_all_entities);
+REGISTER_TEST_TEARDOWN(test_entity_creation_max, teardown_remove_all_entities);
+REGISTER_TEST_TEARDOWN(test_entity_iteration, teardown_remove_all_entities);

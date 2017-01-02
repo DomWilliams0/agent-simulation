@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 #include "simulator/simulator.h"
 #include "entity/entity.h"
