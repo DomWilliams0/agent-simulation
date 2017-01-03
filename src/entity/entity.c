@@ -1,10 +1,10 @@
 #include <stdint.h>
 #include <stddef.h>
-#include <stdlib.h>
 
 #include "simulator/simulator.h"
 #include "entity/entity.h"
 #include "util/log.h"
+#include "util/memory.h"
 
 #define INVALID_ENTITY (0)
 #define MAX_ENTITIES (256)
@@ -20,8 +20,8 @@ static struct entity_ctx *context_instance;
 
 void entity_init_context(struct entity_ctx **ctx)
 {
-	struct entity_ctx *new_ctx = malloc(sizeof(struct entity_ctx));
-	// TODO null check and use own allocator
+	struct entity_ctx *new_ctx;
+	safe_malloc_struct(struct entity_ctx, &new_ctx);
 
 	new_ctx->count = 0;
 
@@ -31,9 +31,8 @@ void entity_init_context(struct entity_ctx **ctx)
 
 void entity_destroy_context(struct entity_ctx **ctx)
 {
-	// TODO generalise and share with simulator_state
-	if (ctx && *ctx)
-		free(*ctx);
+	if (ctx)
+		safe_free(*ctx);
 
 	*ctx = NULL;
 }
