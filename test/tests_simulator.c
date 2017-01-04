@@ -1,7 +1,7 @@
 #include "helper.h"
 #include "simulator/simulator.h"
 
-static void test_creation_destruction(void **state)
+UNIT_TEST(creation_destruction)
 {
 	struct simulator_state *sim;
 	simulator_init(&sim);
@@ -11,7 +11,7 @@ static void test_creation_destruction(void **state)
 	assert_null(sim);
 }
 
-static void test_step(void **state)
+UNIT_TEST(step)
 {
 	struct simulator_state *sim = (struct simulator_state *)*state;
 	simulator_step(sim);
@@ -19,5 +19,5 @@ static void test_step(void **state)
 	// ...
 }
 
-REGISTER_TEST(test_creation_destruction);
-REGISTER_TEST(test_step);
+REGISTER_TEST(creation_destruction);
+REGISTER_TEST(step);

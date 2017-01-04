@@ -1,7 +1,7 @@
 #include "helper.h"
 #include "entity/entity.h"
 
-static void test_entity_creation_destruction(void **state)
+UNIT_TEST(entity_creation_destruction)
 {
 	struct simulator_state *sim = (struct simulator_state *)*state;
 	struct entity_ctx *ctx = entity_get_context(sim);
@@ -25,7 +25,7 @@ static void test_entity_creation_destruction(void **state)
 	assert_int_equal(0, entity_get_count(ctx));
 }
 
-static void test_entity_creation_max(void **state)
+UNIT_TEST(entity_creation_max)
 {
 	struct simulator_state *sim = (struct simulator_state *)*state;
 	struct entity_ctx *ctx = entity_get_context(sim);
@@ -55,7 +55,7 @@ static void test_entity_creation_max(void **state)
 	assert_false(entity_is_alive(ctx, e));
 }
 
-static void test_entity_iteration(void **state)
+UNIT_TEST(entity_iteration)
 {
 	struct simulator_state *sim = (struct simulator_state *)*state;
 	struct entity_ctx *ctx = entity_get_context(sim);
@@ -84,7 +84,7 @@ static void test_entity_iteration(void **state)
 	assert_false(entity_is_alive(ctx, iterator));
 }
 
-static void test_entity_is_alive(void **state)
+UNIT_TEST(entity_is_alive)
 {
 	struct simulator_state *sim = (struct simulator_state *)*state;
 	struct entity_ctx *ctx = entity_get_context(sim);
@@ -103,7 +103,7 @@ static void test_entity_is_alive(void **state)
 }
 
 
-REGISTER_TEST_TEARDOWN(test_entity_creation_destruction, teardown_remove_all_entities);
-REGISTER_TEST_TEARDOWN(test_entity_creation_max, teardown_remove_all_entities);
-REGISTER_TEST_TEARDOWN(test_entity_iteration, teardown_remove_all_entities);
-REGISTER_TEST_TEARDOWN(test_entity_is_alive, teardown_remove_all_entities);
+REGISTER_TEST_TEARDOWN(entity_creation_destruction, teardown_remove_all_entities);
+REGISTER_TEST_TEARDOWN(entity_creation_max, teardown_remove_all_entities);
+REGISTER_TEST_TEARDOWN(entity_iteration, teardown_remove_all_entities);
+REGISTER_TEST_TEARDOWN(entity_is_alive, teardown_remove_all_entities);

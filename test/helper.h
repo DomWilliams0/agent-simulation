@@ -21,20 +21,22 @@ struct unit_test
 #define REGISTER_TEST_SETUP_TEARDOWN(test_func, setup_func, teardown_func) \
 	static struct unit_test unit_test_##test_func \
 	__attribute((used, section("tests"))) = { \
-		.test = test_func, \
+		.test = test_##test_func, \
 		.name = #test_func, \
 		.setup = setup_func, \
 		.teardown = teardown_func \
 	};
 
-#define REGISTER_TEST_SETUP(test_func, setup) \
-	REGISTER_TEST_SETUP_TEARDOWN(test_func, setup, NULL)
+#define REGISTER_TEST_SETUP(name, setup) \
+   REGISTER_TEST_SETUP_TEARDOWN(name, setup, NULL)
 
-#define REGISTER_TEST_TEARDOWN(test_func, teardown) \
-	REGISTER_TEST_SETUP_TEARDOWN(test_func, NULL, teardown)
+#define REGISTER_TEST_TEARDOWN(name, teardown) \
+   REGISTER_TEST_SETUP_TEARDOWN(name, NULL, teardown)
 
-#define REGISTER_TEST(test_func) \
-	REGISTER_TEST_SETUP_TEARDOWN(test_func, NULL, NULL)
+#define REGISTER_TEST(name) \
+	REGISTER_TEST_SETUP_TEARDOWN(name, NULL, NULL)
+
+#define UNIT_TEST(name) static void test_##name(void **state)
 
 
 int setup_simulator(void **state);
