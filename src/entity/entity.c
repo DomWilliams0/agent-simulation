@@ -46,6 +46,11 @@ struct entity_ctx *entity_get_context(struct simulator_state *sim)
 	return context_instance;
 }
 
+static BOOL is_valid(entity_id e)
+{
+	return e != INVALID_ENTITY && e <= MAX_ENTITIES;
+}
+
 static BOOL attr_does_exist(struct entity_ctx *ctx, entity_id e)
 {
 	return ctx->attributes[e] != 0;
@@ -101,21 +106,24 @@ entity_id entity_create(struct entity_ctx *ctx)
 
 	attr_init(ctx, index);
 
+	LOG_DEBUG("Created new entity %d", index);
 	return index;
 }
 
 void entity_destroy(struct entity_ctx *ctx, entity_id e)
 {
-	if (entity_is_valid(e) && attr_does_exist(ctx, e))
+	if (entity_is_alive(ctx, e))
 	{
 		attr_destroy(ctx, e);
 		ctx->count -= 1;
+
+		LOG_DEBUG("Destroyed entity %d", e);
 	}
 }
 
-BOOL entity_is_valid(entity_id e)
+BOOL entity_is_alive(struct entity_ctx *ctx, entity_id e)
 {
-	return e != INVALID_ENTITY && e <= MAX_ENTITIES;
+	return is_valid(e) && attr_does_exist(ctx, e);
 }
 
 entity_id entity_get_count(struct entity_ctx *ctx)

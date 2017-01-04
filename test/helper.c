@@ -27,7 +27,7 @@ int teardown_remove_all_entities(void **state)
 
 	entity_id i = entity_get_iterator(ctx);
 
-	while (entity_is_valid(i))
+	while (entity_is_alive(ctx, i))
 	{
 		// cache next
 		entity_id next = entity_get_next(ctx, i);

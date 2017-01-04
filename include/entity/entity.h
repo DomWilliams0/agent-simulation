@@ -19,7 +19,7 @@ entity_id entity_create(struct entity_ctx *ctx);
 
 void entity_destroy(struct entity_ctx *ctx, entity_id e);
 
-BOOL entity_is_valid(entity_id e);
+BOOL entity_is_alive(struct entity_ctx *ctx, entity_id e);
 
 entity_id entity_get_count(struct entity_ctx *ctx);
 
