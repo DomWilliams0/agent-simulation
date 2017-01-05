@@ -13,7 +13,7 @@ MAKE      := $(MAKE) --no-print-directory
 
 LIB_DIR    = libsimulator
 EXE_DIR    = renderer
-TEST_DIR   = test
+TEST_DIR   = tests
 
 LIB_NAME   = libsimulator.so
 EXE_NAME   = renderer
