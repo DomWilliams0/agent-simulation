@@ -2,6 +2,7 @@
 #define COMPONENTS_H
 
 #include "entity/entity.h"
+#include "world/world_forward.h"
 
 #define COMPONENT_NONE    (0)
 #define COMPONENT_PHYSICS (1 << 0)
@@ -12,8 +13,7 @@ typedef unsigned int component_type;
 
 struct component_physics
 {
-	// TODO physics engine
-	int x, y;
+	world_body body;
 };
 
 struct component_human

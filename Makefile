@@ -5,7 +5,7 @@ INC = include
 SRC_TEST = test
 
 CFLAGS = -std=c11 -c -Wall -I$(INC) -fPIC
-LFLAGS = -Wall
+LFLAGS = -Wall -lode
 
 CFLAGS_TEST = $(CFLAGS)
 LFLAGS_TEST = $(LFLAGS) -lcmocka
