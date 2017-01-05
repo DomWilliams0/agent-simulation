@@ -27,6 +27,11 @@ OBJS_TEST := $(SRCS_TEST:$(SRC_TEST)/%.c=$(OBJ)/%.o)
 
 VPATH = $(shell find $(SRC) $(INC) -type d)
 
+DEBUG ?= 0
+ifeq ($(DEBUG), 1)
+	CFLAGS += -DDEBUGGING
+endif
+
 # main executable
 $(BIN_PATH): $(OBJS) | build_dirs
 	$(CC) $(LFLAGS) $(OBJS) -o $@

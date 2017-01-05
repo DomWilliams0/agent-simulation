@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 
-// TODO put in Makefile
-#define DEBUGGING
+// defined in Makefile
+// #define DEBUGGING
 
 #define EXPAND_VA_ARGS(...) __VA_ARGS__
 
