@@ -5,6 +5,11 @@
 
 struct world;
 
+struct position
+{
+	coord x, y;
+};
+
 void world_create(struct world **w);
 
 void world_destroy(struct world **w);
@@ -12,5 +17,9 @@ void world_destroy(struct world **w);
 void world_step(struct world *w);
 
 world_body world_create_entity(struct world *w);
+
+void world_get_position(world_body body, struct position *pos);
+
+void world_set_position(world_body body, struct position *pos);
 
 #endif

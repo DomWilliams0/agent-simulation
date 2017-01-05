@@ -69,3 +69,15 @@ void world_step(struct world *w)
 
 	return b;
 }
+
+void world_get_position(world_body body, struct position *pos)
+{
+	const dReal *position = dBodyGetPosition(body);
+	pos->x = position[0];
+	pos->y = position[1];
+}
+
+void world_set_position(world_body body, struct position *pos)
+{
+	dBodySetPosition(body, pos->x, pos->y, 0);
+}

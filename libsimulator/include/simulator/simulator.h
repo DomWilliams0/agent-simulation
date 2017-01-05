@@ -12,4 +12,6 @@ void simulator_destroy(struct simulator_state **sim);
 
 simulator_id simulator_get_id(struct simulator_state *sim);
 
+struct world *simulator_get_world(struct simulator_state *sim);
+
 #endif

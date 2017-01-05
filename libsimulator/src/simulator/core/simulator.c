@@ -48,3 +48,8 @@ simulator_id simulator_get_id(struct simulator_state *sim)
 {
 	return sim->id;
 }
+
+struct world *simulator_get_world(struct simulator_state *sim)
+{
+	return sim->world;
+}
