@@ -23,6 +23,11 @@ LIB        = $(BIN)/$(LIB_NAME)
 EXE        = $(BIN)/$(EXE_NAME)
 TEST       = $(BIN)/$(TEST_NAME)
 
+DEBUG ?= 0
+ifeq ($(DEBUG), 1)
+	CFLAGS += -DDEBUGGING
+endif
+
 export
 
 .PHONY: all
