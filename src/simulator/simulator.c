@@ -28,9 +28,10 @@ void simulator_step(struct simulator_state *sim)
 void simulator_destroy(struct simulator_state **sim)
 {
 	if (sim)
+	{
 		safe_free(*sim);
-
-	*sim = NULL;
+		*sim = NULL;
+	}
 }
 
 simulator_id simulator_get_id(struct simulator_state *sim)

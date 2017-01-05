@@ -38,9 +38,10 @@ void entity_init_context(struct entity_ctx **ctx)
 void entity_destroy_context(struct entity_ctx **ctx)
 {
 	if (ctx)
+	{
 		safe_free(*ctx);
-
-	*ctx = NULL;
+		*ctx = NULL;
+	}
 }
 
 struct entity_ctx *entity_get_context(struct simulator_state *sim)
