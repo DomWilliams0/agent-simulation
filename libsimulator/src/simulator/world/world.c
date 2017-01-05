@@ -59,7 +59,7 @@ void world_step(struct world *w)
 	dWorldQuickStep(w->phys_id, 0.05);
 }
 
-void world_create_entity(struct world *w, world_body *body)
+ world_body world_create_entity(struct world *w)
 {
 	dBodyID b = dBodyCreate(w->phys_id);
 
@@ -67,5 +67,5 @@ void world_create_entity(struct world *w, world_body *body)
 	dMassSetCapsuleTotal(&mass, 80, 3, 0.3, 1.7);
 	dBodySetMass(b, &mass);
 
-	*body = b;
+	return b;
 }
