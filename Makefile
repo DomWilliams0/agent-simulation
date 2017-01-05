@@ -25,8 +25,8 @@ TEST       = $(BIN)/$(TEST_NAME)
 
 export
 
-.PHONY: default
-default: $(EXE_DIR)
+.PHONY: all
+all: $(LIB_DIR) $(EXE_DIR) $(TEST_DIR)
 
 # lib
 $(LIB): $(LIB_DIR)
