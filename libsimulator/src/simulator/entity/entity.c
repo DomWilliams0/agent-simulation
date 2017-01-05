@@ -177,3 +177,21 @@ void entity_remove_component(struct entity_ctx *ctx, entity_id e, component_type
 	if (entity_is_alive(ctx, e) && entity_has_component(ctx, e, c))
 		ctx->masks[e] &= ~c;
 }
+
+void* entity_get_component(struct entity_ctx *ctx, entity_id e, component_type c)
+{
+	if (!entity_has_component(ctx, e, c))
+		return NULL;
+
+	switch(c)
+	{
+		case COMPONENT_PHYSICS:
+			return ctx->components_physics + e;
+
+		case COMPONENT_HUMAN:
+			return ctx->components_human + e;
+
+		default:
+			return NULL;
+	}
+}

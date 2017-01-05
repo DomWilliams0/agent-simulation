@@ -29,4 +29,6 @@ void entity_add_component(struct entity_ctx *ctx, entity_id e, component_type c)
 
 void entity_remove_component(struct entity_ctx *ctx, entity_id e, component_type c);
 
+void* entity_get_component(struct entity_ctx *ctx, entity_id e, component_type c);
+
 #endif

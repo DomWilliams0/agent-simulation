@@ -115,10 +115,12 @@ UNIT_TEST(entity_component_add_remove)
 	// add physics
 	entity_add_component(ctx, e, COMPONENT_PHYSICS);
 	assert_int_equal(COMPONENT_PHYSICS, entity_get_component_mask(ctx, e));
+	assert_non_null(entity_get_component(ctx, e, COMPONENT_PHYSICS));
 
 	// add human
 	entity_add_component(ctx, e, COMPONENT_HUMAN);
 	assert_int_equal(COMPONENT_PHYSICS | COMPONENT_HUMAN, entity_get_component_mask(ctx, e));
+	assert_non_null(entity_get_component(ctx, e, COMPONENT_HUMAN));
 
 	// adding multiple times doesn't matter
 	entity_add_component(ctx, e, COMPONENT_HUMAN);
@@ -127,6 +129,7 @@ UNIT_TEST(entity_component_add_remove)
 	// remove physics
 	entity_remove_component(ctx, e, COMPONENT_PHYSICS);
 	assert_int_equal(COMPONENT_HUMAN, entity_get_component_mask(ctx, e));
+	assert_null(entity_get_component(ctx, e, COMPONENT_PHYSICS));
 
 	// removing multiple times doesn't matter
 	entity_remove_component(ctx, e, COMPONENT_PHYSICS);
