@@ -163,7 +163,7 @@ entity_mask entity_get_component_mask(struct entity_ctx *ctx, entity_id e)
 
 static BOOL entity_has_component(struct entity_ctx *ctx, entity_id e, component_type c)
 {
-	return (ctx->masks[e] >> c) & 1;
+	return ctx->masks[e] & c;
 }
 
 void entity_add_component(struct entity_ctx *ctx, entity_id e, component_type c)
