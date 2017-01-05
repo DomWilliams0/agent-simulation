@@ -1,18 +1,24 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "simulator/simulator.h"
 #include "entity/entity.h"
+#include "entity/components.h"
+#include "simulator/simulator.h"
 #include "util/log.h"
 #include "util/memory.h"
 
 #define INVALID_ENTITY (0)
-#define MAX_ENTITIES (256)
+#define EMPTY_MASK     (0)
+#define MAX_ENTITIES   (256)
 
 struct entity_ctx
 {
 	entity_id count;
 	uint8_t attributes[MAX_ENTITIES + 1]; // will be bitfield for entity flags
+
+	entity_mask masks[MAX_ENTITIES + 1];
+	struct component_physics components_physics[MAX_ENTITIES + 1];
+	struct component_human components_human[MAX_ENTITIES + 1];
 };
 
 // TODO temporary: add module for context lookup when others are added
@@ -144,4 +150,29 @@ entity_id entity_get_iterator(struct entity_ctx *ctx)
 entity_id entity_get_next(struct entity_ctx *ctx, entity_id e)
 {
 	return find_first_valid(ctx, e + 1);
+}
+
+entity_mask entity_get_component_mask(struct entity_ctx *ctx, entity_id e)
+{
+	if (!entity_is_alive(ctx, e))
+		return EMPTY_MASK;
+
+	return ctx->masks[e];
+}
+
+static BOOL entity_has_component(struct entity_ctx *ctx, entity_id e, component_type c)
+{
+	return (ctx->masks[e] >> c) & 1;
+}
+
+void entity_add_component(struct entity_ctx *ctx, entity_id e, component_type c)
+{
+	if (entity_is_alive(ctx, e))
+		ctx->masks[e] |= c;
+}
+
+void entity_remove_component(struct entity_ctx *ctx, entity_id e, component_type c)
+{
+	if (entity_is_alive(ctx, e) && entity_has_component(ctx, e, c))
+		ctx->masks[e] &= ~c;
 }

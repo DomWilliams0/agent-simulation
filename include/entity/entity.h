@@ -5,8 +5,11 @@
 
 // TODO entity IDs will be unique across all worlds
 typedef unsigned int entity_id;
-struct entity_ctx;
+typedef unsigned int human_age;
 
+typedef enum { MALE = 1, FEMALE } human_gender;
+
+struct entity_ctx;
 struct simulator_state;
 
 void entity_init_context(struct entity_ctx **ctx);

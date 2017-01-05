@@ -1,4 +1,5 @@
 #include "helper.h"
+#include "entity/components.h"
 #include "entity/entity.h"
 
 UNIT_TEST(entity_creation_destruction)
@@ -102,8 +103,39 @@ UNIT_TEST(entity_is_alive)
 	assert_false(entity_is_alive(ctx, -e));
 }
 
+UNIT_TEST(entity_component_add_remove)
+{
+	struct simulator_state *sim = (struct simulator_state *)*state;
+	struct entity_ctx *ctx = entity_get_context(sim);
+	entity_id e = entity_create(ctx);
+
+	// no components to start
+	assert_int_equal(COMPONENT_NONE, entity_get_component_mask(ctx, e));
+
+	// add physics
+	entity_add_component(ctx, e, COMPONENT_PHYSICS);
+	assert_int_equal(COMPONENT_PHYSICS, entity_get_component_mask(ctx, e));
+
+	// add human
+	entity_add_component(ctx, e, COMPONENT_HUMAN);
+	assert_int_equal(COMPONENT_PHYSICS | COMPONENT_HUMAN, entity_get_component_mask(ctx, e));
+
+	// adding multiple times doesn't matter
+	entity_add_component(ctx, e, COMPONENT_HUMAN);
+	assert_int_equal(COMPONENT_PHYSICS | COMPONENT_HUMAN, entity_get_component_mask(ctx, e));
+
+	// remove physics
+	entity_remove_component(ctx, e, COMPONENT_PHYSICS);
+	assert_int_equal(COMPONENT_HUMAN, entity_get_component_mask(ctx, e));
+
+	// removing multiple times doesn't matter
+	entity_remove_component(ctx, e, COMPONENT_PHYSICS);
+	assert_int_equal(COMPONENT_HUMAN, entity_get_component_mask(ctx, e));
+}
+
 
 REGISTER_TEST_TEARDOWN(entity_creation_destruction, teardown_remove_all_entities);
 REGISTER_TEST_TEARDOWN(entity_creation_max, teardown_remove_all_entities);
 REGISTER_TEST_TEARDOWN(entity_iteration, teardown_remove_all_entities);
 REGISTER_TEST_TEARDOWN(entity_is_alive, teardown_remove_all_entities);
+REGISTER_TEST_TEARDOWN(entity_component_add_remove, teardown_remove_all_entities);
