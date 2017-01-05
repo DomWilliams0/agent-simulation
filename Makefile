@@ -1,71 +1,63 @@
-OBJ = obj
-SRC = src
-BIN = bin
-INC = include
-SRC_TEST = test
+OBJ        = obj
+BIN        = bin
 
-CFLAGS = -std=c11 -c -Wall -I$(INC) -fPIC
-LFLAGS = -Wall -lode
+SRC        = src
+INC        = include
+LIB_INC    = $(LIB_DIR)/$(INC)
 
-CFLAGS_TEST = $(CFLAGS)
-LFLAGS_TEST = $(LFLAGS) -lcmocka
+CFLAGS     = -std=c11 -c -Wall -fPIC -I$(INC)
+LDFLAGS    = -Wall
 
-CC = gcc
-TARGET = simulator
-TARGET_LIB = lib$(TARGET).so
-TARGET_TESTS = tests_$(TARGET)
+CC         = gcc
+MAKE      := $(MAKE) --no-print-directory
 
-BIN_PATH=$(BIN)/$(TARGET)
-BIN_PATH_TESTS=$(BIN)/$(TARGET_TESTS)
+LIB_DIR    = libsimulator
+EXE_DIR    = renderer
+TEST_DIR   = test
 
-SRCS := $(shell find $(SRC) -type f -name '*.c')
-INCS := $(shell find $(INC) -type f -name '*.h')
-OBJS := $(addprefix $(OBJ)/,$(notdir $(SRCS:%.c=%.o)))
+LIB_NAME   = libsimulator.so
+EXE_NAME   = renderer
+TEST_NAME  = simulator_tests
 
-SRCS_TEST := $(shell find $(SRC_TEST) -type f -name '*.c')
-OBJS_TEST := $(SRCS_TEST:$(SRC_TEST)/%.c=$(OBJ)/%.o)
+LIB        = $(BIN)/$(LIB_NAME)
+EXE        = $(BIN)/$(EXE_NAME)
+TEST       = $(BIN)/$(TEST_NAME)
 
-VPATH = $(shell find $(SRC) $(INC) -type d)
+export
 
-DEBUG ?= 0
-ifeq ($(DEBUG), 1)
-	CFLAGS += -DDEBUGGING
-endif
+.PHONY: default
+default: $(EXE_DIR)
 
-# main executable
-$(BIN_PATH): $(OBJS) | build_dirs
-	$(CC) $(LFLAGS) $(OBJS) -o $@
+# lib
+$(LIB): $(LIB_DIR)
 
-# src -> obj
-$(OBJS): $(OBJ)/%.o : %.c | build_dirs
-	$(CC) $(CFLAGS) -c $< -o $@
+.PHONY: $(LIB_DIR)
+$(LIB_DIR): | build_dirs
+	@$(MAKE) -C $@ TARGET=../$(LIB) BIN=../$(BIN) OBJ=../$(OBJ)
 
-# shared lib
-$(BIN)/$(TARGET_LIB): $(OBJS) | build_dirs
-	$(CC) $(LFLAGS) $(OBJS) -o $@ -shared
+# renderer
+$(EXE): $(EXE_DIR)
 
-# test executable
-$(BIN_PATH_TESTS): $(BIN)/$(TARGET_LIB) $(OBJS_TEST) | build_dirs
-	$(CC) $(LFLAGS_TEST) $(OBJS_TEST) -o $@ -L$(BIN) -l$(TARGET)
+.PHONY: $(EXE_DIR)
+$(EXE_DIR): $(LIB) | build_dirs
+	@$(MAKE) -C $@ TARGET=../$(EXE) BIN=../$(BIN) OBJ=../$(OBJ) INC="$(INC) ../$(LIB_INC)"
 
-# test src -> obj
-$(OBJS_TEST): $(OBJ)/%.o : $(SRC_TEST)/%.c | build_dirs
-	$(CC) $(CFLAGS) -c $< -o $@
+# tests
+$(TEST): $(TEST_DIR)
 
-build_dirs:
-	@mkdir -p $(BIN) $(OBJ)
+.PHONY: $(TEST_DIR)
+$(TEST_DIR): $(LIB) | build_dirs
+	@$(MAKE) -C $@ TARGET=../$(TEST) BIN=../$(BIN) OBJ=../$(OBJ) INC=../$(LIB_INC) SRC=.
+	@LD_LIBRARY_PATH=$(BIN) $(TEST)
 
 .PHONY: clean
 clean:
 	@rm -rf $(OBJ) $(BIN)
 
-.PHONY: build
-build: $(BIN_PATH)
-
-.PHONY: tests
-tests: $(BIN_PATH_TESTS)
-	@LD_LIBRARY_PATH=$(BIN) $(BIN_PATH_TESTS)
-
 .PHONY: run
-run: $(BIN_PATH)
-	@$(BIN_PATH)
+run: $(EXE)
+	@LD_LIBRARY_PATH=$(BIN) $(EXE)
+
+.PHONY: build_dirs
+build_dirs:
+	@mkdir -p $(BIN) $(OBJ)

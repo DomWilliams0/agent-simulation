@@ -48,8 +48,3 @@ simulator_id simulator_get_id(struct simulator_state *sim)
 {
 	return sim->id;
 }
-
-int main(int argc, char **argv)
-{
-	LOG_INFO("Doing nothing for now");
-}
