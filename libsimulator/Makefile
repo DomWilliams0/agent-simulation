@@ -6,7 +6,7 @@ VPATH  = $(shell find $(SRC) $(INC) -type d)
 
 $(TARGET): $(OBJS)
 	$(CC) $(LDFLAGS) $(OBJS) -o $@ -shared
-	@echo "Compiling $(TARGET)"
+	@echo "Compiled $(TARGET)"
 
 # src -> obj
 $(OBJS): $(OBJ)/%.o : %.c
