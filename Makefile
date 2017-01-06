@@ -30,8 +30,8 @@ endif
 
 export
 
-.PHONY: all
-all: $(LIB_DIR) $(EXE_DIR) $(TEST_DIR)
+.PHONY: default
+default: $(EXE)
 
 # lib
 $(LIB): $(LIB_DIR)
@@ -66,3 +66,7 @@ run: $(EXE)
 .PHONY: build_dirs
 build_dirs:
 	@mkdir -p $(BIN) $(OBJ)
+
+.PHONY: all
+all: $(LIB_DIR) $(EXE_DIR) $(TEST_DIR)
+
