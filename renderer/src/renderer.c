@@ -30,12 +30,14 @@ struct
 void step_simulation(struct renderer_state *renderer);
 void render_simulation(struct renderer_state *renderer);
 
-struct renderer_state *renderer_create()
+struct renderer_state *renderer_create(struct simulator_state *sim)
 {
 	LOG_DEBUG("Creating new renderer");
 
 	struct renderer_state *new_renderer;
 	safe_malloc_struct(struct renderer_state, &new_renderer);
+
+	new_renderer->sim = sim;
 
 	// allegro
 	if (!al_init())
@@ -58,9 +60,6 @@ struct renderer_state *renderer_create()
 
 	colours.BG = al_map_rgb(17, 17, 19);
 	colours.TEST = al_map_rgb(100, 190, 140);
-
-	// simulator
-	new_renderer->sim = simulator_create();
 
 	return new_renderer;
 }
@@ -128,13 +127,8 @@ void renderer_start_loop(struct renderer_state *renderer)
 
 void renderer_destroy(struct renderer_state *renderer)
 {
-	if (renderer)
-	{
-		simulator_destroy(renderer->sim);
-		safe_free(renderer);
-
-		LOG_DEBUG("Destroyed renderer");
-	}
+	safe_free(renderer);
+	LOG_DEBUG("Destroyed renderer");
 }
 
 void step_simulation(struct renderer_state *renderer)

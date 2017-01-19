@@ -4,8 +4,9 @@
 #include "util/bool.h"
 
 struct renderer_state;
+struct simulator_state;
 
-struct renderer_state *renderer_create();
+struct renderer_state *renderer_create(struct simulator_state *sim);
 
 void renderer_start_loop(struct renderer_state *renderer);
 
