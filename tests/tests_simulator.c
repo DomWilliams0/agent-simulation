@@ -1,14 +1,14 @@
 #include "helper.h"
 #include "simulator/simulator.h"
+#include "util/util.h"
 
 UNIT_TEST(simulator_creation_destruction)
 {
-	struct simulator_state *sim;
-	simulator_init(&sim);
+	UNUSED(state);
+	struct simulator_state *sim = simulator_create();
 	assert_non_null(sim);
 
-	simulator_destroy(&sim);
-	assert_null(sim);
+	simulator_destroy(sim);
 }
 
 UNIT_TEST(simulator_step)

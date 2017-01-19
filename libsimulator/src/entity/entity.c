@@ -25,24 +25,20 @@ struct entity_ctx
 // TODO temporary: add module for context lookup when others are added
 static struct entity_ctx *context_instance;
 
-void entity_init_context(struct entity_ctx **ctx)
+struct entity_ctx *entity_create_context()
 {
 	struct entity_ctx *new_ctx;
 	safe_malloc_struct(struct entity_ctx, &new_ctx);
 
 	new_ctx->count = 0;
 
-	*ctx = new_ctx;
 	context_instance = new_ctx;
+	return new_ctx;
 }
 
-void entity_destroy_context(struct entity_ctx **ctx)
+void entity_destroy_context(struct entity_ctx *ctx)
 {
-	if (ctx)
-	{
-		safe_free(*ctx);
-		*ctx = NULL;
-	}
+	safe_free(ctx);
 }
 
 struct entity_ctx *entity_get_context(struct simulator_state *sim)

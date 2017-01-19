@@ -1,28 +1,28 @@
 #include "helper.h"
 #include "world/world.h"
+#include "util/util.h"
 
 UNIT_TEST(world_creation_destruction)
 {
-	struct world *w;
-
-	world_create(&w);
+	UNUSED(state);
+	struct world *w = world_create();
 	assert_non_null(w);
 
-	world_destroy(&w);
-	assert_null(w);
+	world_destroy(w);
 }
 
 UNIT_TEST(world_entity_creation)
 {
-	struct world *w;
-	world_create(&w);
+	UNUSED(state);
+
+	struct world *w = world_create();
 
 	world_body b = world_create_entity(w);
 	assert_non_null(b);
 
 	// TODO you can do better than this
 
-	world_destroy(&w);
+	world_destroy(w);
 }
 
 REGISTER_TEST(world_creation_destruction);

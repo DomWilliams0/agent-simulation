@@ -30,7 +30,7 @@ struct
 void step_simulation(struct renderer_state *renderer);
 void render_simulation(struct renderer_state *renderer);
 
-BOOL renderer_init(struct renderer_state **renderer)
+struct renderer_state *renderer_create()
 {
 	LOG_DEBUG("Creating new renderer");
 
@@ -41,29 +41,28 @@ BOOL renderer_init(struct renderer_state **renderer)
 	if (!al_init())
 	{
 		LOG_INFO("Failed to init allegro");
-		return FALSE;
+		return NULL;
 	}
 
 	if (!al_install_keyboard())
 	{
 		LOG_INFO("Failed to init keyboard");
-		return FALSE;
+		return NULL;
 	}
 
 	if ((new_renderer->window = al_create_display(WINDOW_WIDTH, WINDOW_HEIGHT)) == NULL)
 	{
 		LOG_INFO("Failed to create display");
-		return FALSE;
+		return NULL;
 	}
 
 	colours.BG = al_map_rgb(17, 17, 19);
 	colours.TEST = al_map_rgb(100, 190, 140);
 
 	// simulator
-	simulator_init(&new_renderer->sim);
+	new_renderer->sim = simulator_create();
 
-	*renderer = new_renderer;
-	return TRUE;
+	return new_renderer;
 }
 
 void renderer_start_loop(struct renderer_state *renderer)
@@ -131,7 +130,7 @@ void renderer_destroy(struct renderer_state *renderer)
 {
 	if (renderer)
 	{
-		simulator_destroy(&renderer->sim);
+		simulator_destroy(renderer->sim);
 		safe_free(renderer);
 
 		LOG_DEBUG("Destroyed renderer");

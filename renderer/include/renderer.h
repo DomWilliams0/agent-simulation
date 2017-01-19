@@ -5,7 +5,7 @@
 
 struct renderer_state;
 
-BOOL renderer_init(struct renderer_state **renderer);
+struct renderer_state *renderer_create();
 
 void renderer_start_loop(struct renderer_state *renderer);
 

@@ -28,26 +28,24 @@ static dWorldID create_physics_world()
 	return w;
 }
 
-void world_create(struct world **w)
+struct world *world_create()
 {
 	struct world *new_world;
 	safe_malloc_struct(struct world, &new_world);
 
 	new_world->phys_id = create_physics_world();
 
-	*w = new_world;
-
 	LOG_DEBUG("Created new world");
+
+	return new_world;
 }
 
-void world_destroy(struct world **w)
+void world_destroy(struct world *w)
 {
 	if (w)
 	{
-		dWorldDestroy((*w)->phys_id);
-
-		safe_free(*w);
-		*w = NULL;
+		dWorldDestroy(w->phys_id);
+		safe_free(w);
 
 		LOG_DEBUG("Destroyed world");
 	}

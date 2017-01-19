@@ -12,9 +12,9 @@ typedef enum { MALE = 1, FEMALE } human_gender;
 struct entity_ctx;
 struct simulator_state;
 
-void entity_init_context(struct entity_ctx **ctx);
+struct entity_ctx *entity_create_context();
 
-void entity_destroy_context(struct entity_ctx **ctx);
+void entity_destroy_context(struct entity_ctx *ctx);
 
 struct entity_ctx *entity_get_context(struct simulator_state *sim);
 

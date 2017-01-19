@@ -5,8 +5,7 @@
 
 int setup_simulator(void **state)
 {
-	struct simulator_state *sim = NULL;
-	simulator_init(&sim);
+	struct simulator_state *sim = simulator_create();
 	if (sim == NULL)
 		return 1;
 
@@ -16,7 +15,7 @@ int setup_simulator(void **state)
 
 int teardown_simulator(void **state)
 {
-	simulator_destroy((struct simulator_state **) state);
+	simulator_destroy(*(struct simulator_state **) state);
 	return 0;
 }
 

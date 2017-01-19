@@ -10,9 +10,9 @@ struct position
 	coord x, y;
 };
 
-void world_create(struct world **w);
+struct world *world_create();
 
-void world_destroy(struct world **w);
+void world_destroy(struct world *w);
 
 void world_step(struct world *w);
 
