@@ -1,5 +1,8 @@
+ALLEGRO_LIBS = main primitives color
+ALLEGRO_LIBS := -lallegro $(addprefix -lallegro_,$(ALLEGRO_LIBS))
+
 CFLAGS  += $(addprefix -I,$(INC))
-LDFLAGS += -lode -lsimulator -L$(BIN)
+LDFLAGS += -lode -lsimulator $(ALLEGRO_LIBS) -L$(BIN)
 
 SRCS    := $(shell find $(SRC) -type f -name '*.c')
 INCS    := $(shell find $(INC) -type f -name '*.h')
