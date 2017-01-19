@@ -30,12 +30,13 @@ static dWorldID create_physics_world()
 
 struct world *world_create()
 {
+	LOG_DEBUG("Creating new world");
+
 	struct world *new_world;
 	safe_malloc_struct(struct world, &new_world);
 
 	new_world->phys_id = create_physics_world();
 
-	LOG_DEBUG("Created new world");
 
 	return new_world;
 }
@@ -44,10 +45,10 @@ void world_destroy(struct world *w)
 {
 	if (w)
 	{
+		LOG_DEBUG("Destroying world");
+
 		dWorldDestroy(w->phys_id);
 		safe_free(w);
-
-		LOG_DEBUG("Destroyed world");
 	}
 
 }

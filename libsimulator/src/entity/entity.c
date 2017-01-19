@@ -106,11 +106,12 @@ entity_id entity_create(struct entity_ctx *ctx)
 		return INVALID_ENTITY;
 	}
 
+	LOG_DEBUG("Creating new entity %d", index);
+
 	ctx->count += 1;
 
 	attr_init(ctx, index);
 
-	LOG_DEBUG("Created new entity %d", index);
 	return index;
 }
 
@@ -118,10 +119,10 @@ void entity_destroy(struct entity_ctx *ctx, entity_id e)
 {
 	if (entity_is_alive(ctx, e))
 	{
+		LOG_DEBUG("Destroying entity %d", e);
+
 		attr_destroy(ctx, e);
 		ctx->count -= 1;
-
-		LOG_DEBUG("Destroyed entity %d", e);
 	}
 }
 
