@@ -6,6 +6,7 @@
 #include "simulator/simulator.h"
 #include "util/log.h"
 #include "util/memory.h"
+#include "util/util.h"
 
 #define INVALID_ENTITY (0)
 #define EMPTY_MASK     (0)
@@ -140,6 +141,7 @@ entity_id entity_get_count(struct entity_ctx *ctx)
 
 entity_id entity_get_max_count(struct entity_ctx *ctx)
 {
+	UNUSED(ctx);
 	return MAX_ENTITIES;
 }
 

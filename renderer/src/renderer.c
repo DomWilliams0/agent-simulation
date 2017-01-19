@@ -7,6 +7,7 @@
 #include "util/memory.h"
 #include "util/log.h"
 #include "util/bool.h"
+#include "util/util.h"
 
 #define TICKS_PER_SECOND  (5)
 #define FRAMES_PER_SECOND (60)
@@ -139,11 +140,13 @@ void renderer_destroy(struct renderer_state *renderer)
 
 void step_simulation(struct renderer_state *renderer)
 {
-
+	UNUSED(renderer);
 }
 
 void render_simulation(struct renderer_state *renderer)
 {
+	UNUSED(renderer);
+
 	al_clear_to_color(colours.BG);
 
 	al_draw_rectangle(40, 40, 80, 100, colours.TEST, 2.f);
