@@ -5,7 +5,7 @@ SRC        = src
 INC        = include
 LIB_INC    = $(LIB_DIR)/$(INC)
 
-CFLAGS     = -std=c11 -c -Wall -fPIC -I$(INC) -g -O0
+CFLAGS     = -std=c11 -c -Wall -Wextra -fPIC -I$(INC) -g -O0
 LDFLAGS    = -Wall
 
 CC         = gcc
