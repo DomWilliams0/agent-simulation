@@ -58,7 +58,7 @@ void world_step(struct world *w)
 	dWorldQuickStep(w->phys_id, 0.05);
 }
 
- world_body world_create_entity(struct world *w)
+world_body world_create_entity(struct world *w)
 {
 	dBodyID b = dBodyCreate(w->phys_id);
 
