@@ -13,16 +13,12 @@ UNIT_TEST(entity_creation_destruction)
 
 	// add entity
 	entity_id e = entity_create(ctx);
-	assert_true(entity_is_alive(ctx, e));
 
 	// ensure it was added
 	assert_int_equal(1, entity_get_count(ctx));
+	assert_true(entity_is_alive(ctx, e));
 
 	// remove again
-	entity_destroy(ctx, e);
-	assert_int_equal(0, entity_get_count(ctx));
-
-	// do nothing if attempt to destroy again
 	entity_destroy(ctx, e);
 	assert_int_equal(0, entity_get_count(ctx));
 }
@@ -42,13 +38,14 @@ UNIT_TEST(entity_creation_max)
 		e = entity_create(ctx);
 		assert_true(entity_is_alive(ctx, e));
 	}
+	entity_id last_valid_entity = e;
 
 	// next allocation should fail
 	e = entity_create(ctx);
 	assert_false(entity_is_alive(ctx, e));
 
 	// free one space
-	entity_destroy(ctx, entity_get_iterator(ctx));
+	entity_destroy(ctx, last_valid_entity);
 	e = entity_create(ctx);
 	assert_true(entity_is_alive(ctx, e));
 
@@ -76,7 +73,7 @@ UNIT_TEST(entity_iteration)
 	struct entity_ctx *ctx = entity_get_context(sim);
 
 	// no entities
-	assert_false(entity_is_alive(ctx, entity_get_iterator(ctx)));
+	assert_false(entity_is_alive(ctx, entity_get_first(ctx)));
 	entity_foreach(ctx, iterator_func_fail, NULL);
 
 	// add entities
@@ -91,16 +88,14 @@ UNIT_TEST(entity_iteration)
 	assert_true(entity_is_alive(ctx, e3));
 
 	// iterate
-	entity_id iterator = entity_get_iterator(ctx);
-
-	for (int i = 0; i < 3; ++i)
+	entity_id e = entity_get_first(ctx);
+	for (int i = 0; i < 3; ++i, ++e)
 	{
-		assert_true(entity_is_alive(ctx, iterator));
-		iterator = entity_get_next(ctx, iterator);
+		assert_true(entity_is_alive(ctx, e));
 	}
 
 	// should be at end now
-	assert_false(entity_is_alive(ctx, iterator));
+	assert_false(entity_is_alive(ctx, e));
 
 	// do same with foreach
 	entity_foreach(ctx, iterator_func, ctx);
@@ -121,7 +116,6 @@ UNIT_TEST(entity_is_alive)
 	assert_true(entity_is_alive(ctx, e));
 	assert_false(entity_is_alive(ctx, e + 1));
 	assert_false(entity_is_alive(ctx, e - 1));
-	assert_false(entity_is_alive(ctx, -e));
 }
 
 UNIT_TEST(entity_component_add_remove)

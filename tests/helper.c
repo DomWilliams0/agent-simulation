@@ -2,6 +2,7 @@
 #include "simulator/simulator.h"
 #include "entity/entity.h"
 
+#include "util/log.h"
 
 int setup_simulator(void **state)
 {
@@ -24,17 +25,10 @@ int teardown_remove_all_entities(void **state)
 	struct simulator_state *sim = (struct simulator_state *)*state;
 	struct entity_ctx *ctx = entity_get_context(sim);
 
-	entity_id i = entity_get_iterator(ctx);
-
-	while (entity_is_alive(ctx, i))
+	entity_id count = entity_get_count(ctx);
+	for (entity_id i = 0; i < count; ++i)
 	{
-		// cache next
-		entity_id next = entity_get_next(ctx, i);
-
-		// destroy current
-		entity_destroy(ctx, i);
-
-		i = next;
+		entity_destroy(ctx, entity_get_first(ctx));
 	}
 
 	return 0;

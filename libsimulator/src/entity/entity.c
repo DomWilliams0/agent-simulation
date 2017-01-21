@@ -8,18 +8,23 @@
 #include "util/memory.h"
 #include "util/util.h"
 
-#define INVALID_ENTITY (0)
+#define INVALID_ENTITY (MAX_ENTITIES)
 #define EMPTY_MASK     (0)
 #define MAX_ENTITIES   (256)
 
 struct entity_ctx
 {
 	entity_id count;
-	uint8_t attributes[MAX_ENTITIES + 1]; // will be bitfield for entity flags
 
-	entity_mask masks[MAX_ENTITIES + 1];
-	struct component_physics components_physics[MAX_ENTITIES + 1];
-	struct component_human components_human[MAX_ENTITIES + 1];
+	// current unused
+	// uint8_t attributes[MAX_ENTITIES]; // will be bitfield for entity flags
+
+	// these must remain sorted
+	// 0 -> count-1 are active
+	// count -> MAX_ENTITIES are inactive
+	entity_mask masks[MAX_ENTITIES];
+	struct component_physics components_physics[MAX_ENTITIES];
+	struct component_human components_human[MAX_ENTITIES];
 };
 
 // TODO temporary: add module for context lookup when others are added
@@ -52,9 +57,10 @@ struct entity_ctx *entity_get_context(struct simulator_state *sim)
 
 static BOOL is_valid(entity_id e)
 {
-	return e != INVALID_ENTITY && e <= MAX_ENTITIES;
+	return e < MAX_ENTITIES;
 }
 
+/*
 static BOOL attr_does_exist(struct entity_ctx *ctx, entity_id e)
 {
 	return ctx->attributes[e] != 0;
@@ -96,39 +102,53 @@ static entity_id find_first_space(struct entity_ctx *ctx)
 
 	return INVALID_ENTITY;
 }
+*/
 
+// don't rely on an entity_id being the same in the future
 entity_id entity_create(struct entity_ctx *ctx)
 {
-	entity_id index = find_first_space(ctx);
-	if (index == INVALID_ENTITY)
+	// max reached
+	if (ctx->count == MAX_ENTITIES)
 	{
-		LOG_DEBUG("Could not create a new entity");
+		LOG_DEBUG("Maximum entity count reached (%d)", MAX_ENTITIES);
 		return INVALID_ENTITY;
 	}
+
+	// allocate at end of sorted array
+	entity_id index = ctx->count;
 
 	LOG_DEBUG("Creating new entity %d", index);
 
 	ctx->count += 1;
 
-	attr_init(ctx, index);
+	// attr_init(ctx, index);
 
 	return index;
 }
 
 void entity_destroy(struct entity_ctx *ctx, entity_id e)
 {
-	if (entity_is_alive(ctx, e))
-	{
-		LOG_DEBUG("Destroying entity %d", e);
+	LOG_DEBUG("Destroying entity %d", e);
 
-		attr_destroy(ctx, e);
-		ctx->count -= 1;
-	}
+	ctx->count -= 1;
+	entity_id new_count = ctx->count;
+
+	// swap with last active
+	SWAP_IN_ARRAY(entity_mask, ctx->masks, e, new_count);
+	SWAP_IN_ARRAY(struct component_physics, ctx->components_physics, e, new_count);
+	SWAP_IN_ARRAY(struct component_human, ctx->components_human, e, new_count);
+
+	// attr_destroy(ctx, e);
 }
 
 BOOL entity_is_alive(struct entity_ctx *ctx, entity_id e)
 {
-	return is_valid(e) && attr_does_exist(ctx, e);
+	return is_valid(e) && e < ctx->count;
+}
+
+entity_id entity_get_first(struct entity_ctx *ctx)
+{
+	return ctx->count == 0 ? INVALID_ENTITY : 0;
 }
 
 entity_id entity_get_count(struct entity_ctx *ctx)
@@ -142,29 +162,15 @@ entity_id entity_get_max_count(struct entity_ctx *ctx)
 	return MAX_ENTITIES;
 }
 
-entity_id entity_get_iterator(struct entity_ctx *ctx)
-{
-	return find_first_valid(ctx, 0);
-}
-
-entity_id entity_get_next(struct entity_ctx *ctx, entity_id e)
-{
-	return find_first_valid(ctx, e + 1);
-}
-
 void entity_foreach(struct entity_ctx *ctx, entity_consumer *func, void *arg)
 {
-	entity_id e = entity_get_iterator(ctx);
-
-	while (attr_does_exist(ctx, e))
-	{
+	for (entity_id e = 0; e < ctx->count; ++e)
 		func(e, arg);
-		e = entity_get_next(ctx, e);
-	}
 }
 
 entity_mask entity_get_component_mask(struct entity_ctx *ctx, entity_id e)
 {
+	// TODO assert
 	if (!entity_is_alive(ctx, e))
 		return EMPTY_MASK;
 
@@ -193,6 +199,7 @@ static void* get_component(struct entity_ctx *ctx, entity_id e, component_type c
 
 void *entity_add_component(struct entity_ctx *ctx, entity_id e, component_type c)
 {
+	// TODO assert
 	if (entity_is_alive(ctx, e))
 		ctx->masks[e] |= c;
 

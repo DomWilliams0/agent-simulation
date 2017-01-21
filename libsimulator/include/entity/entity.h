@@ -26,13 +26,11 @@ void entity_destroy(struct entity_ctx *ctx, entity_id e);
 
 BOOL entity_is_alive(struct entity_ctx *ctx, entity_id e);
 
+entity_id entity_get_first(struct entity_ctx *ctx);
+
 entity_id entity_get_count(struct entity_ctx *ctx);
 
 entity_id entity_get_max_count(struct entity_ctx *ctx);
-
-entity_id entity_get_iterator(struct entity_ctx *ctx);
-
-entity_id entity_get_next(struct entity_ctx *ctx, entity_id e);
 
 void entity_foreach(struct entity_ctx *ctx, entity_consumer *func, void *arg);
 
