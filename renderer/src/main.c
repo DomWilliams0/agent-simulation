@@ -14,6 +14,7 @@ int main()
 	if ((renderer = renderer_create(sim)) == NULL)
 		return 2;
 
+	simulator_populate(sim);
 	renderer_start_loop(renderer);
 
 	renderer_destroy(renderer);

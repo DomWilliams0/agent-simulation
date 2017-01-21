@@ -3,13 +3,15 @@
 
 #include "renderer.h"
 #include "simulator/simulator.h"
+#include "entity/components.h"
+#include "world/world.h"
 
 #include "util/memory.h"
 #include "util/log.h"
 #include "util/bool.h"
 #include "util/util.h"
 
-#define TICKS_PER_SECOND  (5)
+#define TICKS_PER_SECOND  (20)
 #define FRAMES_PER_SECOND (60)
 #define WINDOW_WIDTH      (400)
 #define WINDOW_HEIGHT     (600)
@@ -24,7 +26,7 @@ struct renderer_state
 struct
 {
 	ALLEGRO_COLOR BG;
-	ALLEGRO_COLOR TEST;
+	ALLEGRO_COLOR ENTITY;
 } colours;
 
 void step_simulation(struct renderer_state *renderer);
@@ -59,7 +61,7 @@ struct renderer_state *renderer_create(struct simulator_state *sim)
 	}
 
 	colours.BG = al_map_rgb(17, 17, 19);
-	colours.TEST = al_map_rgb(100, 190, 140);
+	colours.ENTITY = al_map_rgb(200, 80, 105);
 
 	return new_renderer;
 }
@@ -133,16 +135,25 @@ void renderer_destroy(struct renderer_state *renderer)
 
 void step_simulation(struct renderer_state *renderer)
 {
-	UNUSED(renderer);
+	simulator_step(renderer->sim);
 }
 
 void render_simulation(struct renderer_state *renderer)
 {
-	UNUSED(renderer);
-
 	al_clear_to_color(colours.BG);
 
-	al_draw_rectangle(40, 40, 80, 100, colours.TEST, 2.f);
+	// entities
+	struct entity_ctx *entity = entity_get_context(renderer->sim);
+	struct component_physics *physics = (struct component_physics *)entity_get_component_array(entity, COMPONENT_PHYSICS);
+	entity_id count = entity_get_count(entity);
+
+	struct position pos;
+	for (entity_id i = 0; i < count; ++i)
+	{
+		struct component_physics *phys = physics + i;
+		world_get_position(phys->body, &pos);
+		al_draw_circle(pos.x, pos.y, 2.f, colours.ENTITY, 1.f);
+	}
 
 	al_flip_display();
 }

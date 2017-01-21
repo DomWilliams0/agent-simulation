@@ -16,4 +16,6 @@ simulator_id simulator_get_id(struct simulator_state *sim);
 
 struct world *simulator_get_world(struct simulator_state *sim);
 
+void simulator_populate(struct simulator_state *sim);
+
 #endif

@@ -1,5 +1,6 @@
 #include "simulator/simulator.h"
 #include "entity/entity.h"
+#include "entity/components.h"
 #include "world/world.h"
 
 #include "util/memory.h"
@@ -58,3 +59,26 @@ struct world *simulator_get_world(struct simulator_state *sim)
 {
 	return sim->world;
 }
+
+void simulator_populate(struct simulator_state *sim)
+{
+	struct entity_ctx *entity = sim->entity;
+	struct position pos = {10, 10};
+
+	for (int i = 0; i < 50; ++i)
+	{
+		entity_id e = entity_create(entity);
+
+		struct component_physics *phys = entity_add_component(entity, e, COMPONENT_PHYSICS);
+		struct component_human *hum = entity_add_component(entity, e, COMPONENT_HUMAN);
+
+		phys->body = world_create_entity(sim->world);
+		world_set_position(phys->body, &pos);
+		pos.x += 10;
+		pos.y += 5;
+
+		hum->age = 20 + i;
+		hum->gender = i < 3 ? MALE : FEMALE;
+	}
+}
+
