@@ -70,7 +70,7 @@ void simulator_populate(struct simulator_state *sim)
 		entity_id e = entity_create(entity);
 
 		struct component_physics *phys = entity_add_component(entity, e, COMPONENT_PHYSICS);
-		struct component_human *hum = entity_add_component(entity, e, COMPONENT_HUMAN);
+		struct component_human *hum = entity_add_component(entity, e, COMPONENT_HUMAN); // cache miss, hissss
 
 		phys->body = world_create_entity(sim->world);
 		world_set_position(phys->body, &pos);
@@ -78,7 +78,7 @@ void simulator_populate(struct simulator_state *sim)
 		pos.y += 5;
 
 		hum->age = 20 + i;
-		hum->gender = i < 3 ? MALE : FEMALE;
+		hum->gender = i % 2 == 0 ? MALE : FEMALE;
 	}
 }
 

@@ -26,7 +26,8 @@ struct renderer_state
 struct
 {
 	ALLEGRO_COLOR BG;
-	ALLEGRO_COLOR ENTITY;
+	ALLEGRO_COLOR ENTITY_MALE;
+	ALLEGRO_COLOR ENTITY_FEMALE;
 } colours;
 
 void step_simulation(struct renderer_state *renderer);
@@ -61,7 +62,8 @@ struct renderer_state *renderer_create(struct simulator_state *sim)
 	}
 
 	colours.BG = al_map_rgb(17, 17, 19);
-	colours.ENTITY = al_map_rgb(200, 80, 105);
+	colours.ENTITY_MALE = al_map_rgb(105, 80, 200);
+	colours.ENTITY_FEMALE = al_map_rgb(200, 80, 105);
 
 	return new_renderer;
 }
@@ -152,7 +154,10 @@ void render_simulation(struct renderer_state *renderer)
 	{
 		struct component_physics *phys = physics + i;
 		world_get_position(phys->body, &pos);
-		al_draw_circle(pos.x, pos.y, 2.f, colours.ENTITY, 1.f);
+
+		struct component_human *human = entity_get_component(entity, i, COMPONENT_HUMAN);
+
+		al_draw_circle(pos.x, pos.y, 2.f, human->gender == MALE ? colours.ENTITY_MALE : colours.ENTITY_FEMALE, 1.f);
 	}
 
 	al_flip_display();
