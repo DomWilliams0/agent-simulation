@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 #include "entity/entity.h"
 #include "entity/components.h"
@@ -182,6 +183,23 @@ static BOOL entity_has_component(struct entity_ctx *ctx, entity_id e, component_
 	return ctx->masks[e] & c;
 }
 
+void* entity_get_component_array(struct entity_ctx *ctx, component_type c)
+{
+	switch(c)
+	{
+		case COMPONENT_PHYSICS:
+			return ctx->components_physics;
+
+		case COMPONENT_HUMAN:
+			return ctx->components_human;
+
+		default:
+			// TODO assert false
+			LOG_DEBUG("Component not implemented!");
+			exit(3);
+	}
+}
+
 static void* get_component(struct entity_ctx *ctx, entity_id e, component_type c)
 {
 	switch(c)
@@ -193,7 +211,9 @@ static void* get_component(struct entity_ctx *ctx, entity_id e, component_type c
 			return ctx->components_human + e;
 
 		default:
-			return NULL;
+			// TODO assert false, just like above
+			LOG_DEBUG("Component not implemented!");
+			exit(3);
 	}
 }
 

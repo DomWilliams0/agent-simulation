@@ -151,9 +151,45 @@ UNIT_TEST(entity_component_add_remove)
 	assert_int_equal(COMPONENT_HUMAN, entity_get_component_mask(ctx, e));
 }
 
+#include "util/log.h"
+UNIT_TEST(entity_component_get)
+{
+	struct simulator_state *sim = (struct simulator_state *)*state;
+	struct entity_ctx *ctx = entity_get_context(sim);
+
+	// add 2 entities
+	entity_id e1 = entity_create(ctx);
+	entity_id e2 = entity_create(ctx);
+
+	// add human to each
+	struct component_human *human1 = entity_add_component(ctx, e1, COMPONENT_HUMAN);
+	struct component_human *human2 = entity_add_component(ctx, e2, COMPONENT_HUMAN);
+
+	// get component separately
+	struct component_human *human1_get = entity_get_component(ctx, e1, COMPONENT_HUMAN);
+	struct component_human *human2_get = entity_get_component(ctx, e2, COMPONENT_HUMAN);
+
+	// get again through array
+	struct component_human *human1_arr = (struct component_human *)entity_get_component_array(ctx, COMPONENT_HUMAN) + e1;
+	struct component_human *human2_arr = (struct component_human *)entity_get_component_array(ctx, COMPONENT_HUMAN) + e2;
+
+	// ensure same
+	assert_ptr_equal(human1, human1_get);
+	assert_ptr_equal(human1, human1_arr);
+	assert_ptr_equal(human2, human2_get);
+	assert_ptr_equal(human2, human2_arr);
+
+	// ensure no memory overlap
+	human1->age = 20;
+	human2->age = 80;
+	assert_int_equal(human1->age, 20);
+	assert_int_equal(human2->age, 80);
+}
+
 
 REGISTER_TEST_TEARDOWN(entity_creation_destruction, teardown_remove_all_entities);
 REGISTER_TEST_TEARDOWN(entity_creation_max, teardown_remove_all_entities);
 REGISTER_TEST_TEARDOWN(entity_iteration, teardown_remove_all_entities);
 REGISTER_TEST_TEARDOWN(entity_is_alive, teardown_remove_all_entities);
 REGISTER_TEST_TEARDOWN(entity_component_add_remove, teardown_remove_all_entities);
+REGISTER_TEST_TEARDOWN(entity_component_get, teardown_remove_all_entities);

@@ -31,4 +31,8 @@ void entity_remove_component(struct entity_ctx *ctx, entity_id e, component_type
 
 void* entity_get_component(struct entity_ctx *ctx, entity_id e, component_type c);
 
+// for the love of god, remember to cast the return value to an array of the
+// component type BEFORE iterating through it. see test_entity_component_get
+void* entity_get_component_array(struct entity_ctx *ctx, component_type c);
+
 #endif
