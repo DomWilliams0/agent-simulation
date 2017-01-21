@@ -63,6 +63,10 @@ clean:
 run: $(EXE)
 	@LD_LIBRARY_PATH=$(BIN) $(EXE)
 
+.PHONY: debug
+debug: $(EXE)
+	@LD_LIBRARY_PATH=$(BIN) gdb --tui $(EXE)
+
 .PHONY: build_dirs
 build_dirs:
 	@mkdir -p $(BIN) $(OBJ)
