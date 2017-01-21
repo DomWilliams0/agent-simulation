@@ -152,6 +152,17 @@ entity_id entity_get_next(struct entity_ctx *ctx, entity_id e)
 	return find_first_valid(ctx, e + 1);
 }
 
+void entity_foreach(struct entity_ctx *ctx, entity_consumer *func, void *arg)
+{
+	entity_id e = entity_get_iterator(ctx);
+
+	while (attr_does_exist(ctx, e))
+	{
+		func(e, arg);
+		e = entity_get_next(ctx, e);
+	}
+}
+
 entity_mask entity_get_component_mask(struct entity_ctx *ctx, entity_id e)
 {
 	if (!entity_is_alive(ctx, e))

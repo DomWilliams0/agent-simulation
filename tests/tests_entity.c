@@ -1,6 +1,7 @@
 #include "helper.h"
 #include "entity/components.h"
 #include "entity/entity.h"
+#include "util/util.h"
 
 UNIT_TEST(entity_creation_destruction)
 {
@@ -56,10 +57,27 @@ UNIT_TEST(entity_creation_max)
 	assert_false(entity_is_alive(ctx, e));
 }
 
+static void iterator_func(entity_id e, void *arg)
+{
+	assert_true(entity_is_alive((struct entity_ctx *)arg, e));
+}
+
+static void iterator_func_fail(entity_id e, void *arg)
+{
+	UNUSED(arg);
+	UNUSED(e);
+
+	fail();
+}
+
 UNIT_TEST(entity_iteration)
 {
 	struct simulator_state *sim = (struct simulator_state *)*state;
 	struct entity_ctx *ctx = entity_get_context(sim);
+
+	// no entities
+	assert_false(entity_is_alive(ctx, entity_get_iterator(ctx)));
+	entity_foreach(ctx, iterator_func_fail, NULL);
 
 	// add entities
 	entity_id e1, e2, e3;
@@ -83,6 +101,9 @@ UNIT_TEST(entity_iteration)
 
 	// should be at end now
 	assert_false(entity_is_alive(ctx, iterator));
+
+	// do same with foreach
+	entity_foreach(ctx, iterator_func, ctx);
 }
 
 UNIT_TEST(entity_is_alive)

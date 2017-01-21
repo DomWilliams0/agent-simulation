@@ -12,6 +12,8 @@ typedef enum { MALE = 1, FEMALE } human_gender;
 struct entity_ctx;
 struct simulator_state;
 
+typedef void entity_consumer(entity_id, void *);
+
 struct entity_ctx *entity_create_context();
 
 void entity_destroy_context(struct entity_ctx *ctx);
@@ -31,5 +33,7 @@ entity_id entity_get_max_count(struct entity_ctx *ctx);
 entity_id entity_get_iterator(struct entity_ctx *ctx);
 
 entity_id entity_get_next(struct entity_ctx *ctx, entity_id e);
+
+void entity_foreach(struct entity_ctx *ctx, entity_consumer *func, void *arg);
 
 #endif
