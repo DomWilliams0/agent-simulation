@@ -25,7 +25,7 @@ struct component_human
 
 entity_mask entity_get_component_mask(struct entity_ctx *ctx, entity_id e);
 
-void entity_add_component(struct entity_ctx *ctx, entity_id e, component_type c);
+void *entity_add_component(struct entity_ctx *ctx, entity_id e, component_type c);
 
 void entity_remove_component(struct entity_ctx *ctx, entity_id e, component_type c);
 

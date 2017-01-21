@@ -165,10 +165,27 @@ static BOOL entity_has_component(struct entity_ctx *ctx, entity_id e, component_
 	return ctx->masks[e] & c;
 }
 
-void entity_add_component(struct entity_ctx *ctx, entity_id e, component_type c)
+static void* get_component(struct entity_ctx *ctx, entity_id e, component_type c)
+{
+	switch(c)
+	{
+		case COMPONENT_PHYSICS:
+			return ctx->components_physics + e;
+
+		case COMPONENT_HUMAN:
+			return ctx->components_human + e;
+
+		default:
+			return NULL;
+	}
+}
+
+void *entity_add_component(struct entity_ctx *ctx, entity_id e, component_type c)
 {
 	if (entity_is_alive(ctx, e))
 		ctx->masks[e] |= c;
+
+	return get_component(ctx, e, c);
 }
 
 void entity_remove_component(struct entity_ctx *ctx, entity_id e, component_type c)
@@ -182,15 +199,5 @@ void* entity_get_component(struct entity_ctx *ctx, entity_id e, component_type c
 	if (!entity_has_component(ctx, e, c))
 		return NULL;
 
-	switch(c)
-	{
-		case COMPONENT_PHYSICS:
-			return ctx->components_physics + e;
-
-		case COMPONENT_HUMAN:
-			return ctx->components_human + e;
-
-		default:
-			return NULL;
-	}
+	return get_component(ctx, e, c);
 }
