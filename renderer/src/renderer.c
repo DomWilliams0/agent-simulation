@@ -1,31 +1,25 @@
 #include <allegro5/allegro.h>
-#include <allegro5/allegro_primitives.h>
 
 #include "renderer.h"
+#include "graphics.h"
 #include "simulator/simulator.h"
 #include "entity/components.h"
 #include "world/world.h"
 
 #include "util/memory.h"
 #include "util/log.h"
-#include "util/bool.h"
-#include "util/util.h"
 
 #define TICKS_PER_SECOND  (20)
 #define FRAMES_PER_SECOND (60)
-#define WINDOW_WIDTH      (400)
-#define WINDOW_HEIGHT     (600)
-
 
 struct renderer_state
 {
 	struct simulator_state *sim;
-	ALLEGRO_DISPLAY *window;
+	struct graphics_ctx *graphics;
 };
 
 struct
 {
-	ALLEGRO_COLOR BG;
 	ALLEGRO_COLOR ENTITY_MALE;
 	ALLEGRO_COLOR ENTITY_FEMALE;
 } colours;
@@ -55,13 +49,12 @@ struct renderer_state *renderer_create(struct simulator_state *sim)
 		return NULL;
 	}
 
-	if ((new_renderer->window = al_create_display(WINDOW_WIDTH, WINDOW_HEIGHT)) == NULL)
+	if ((new_renderer->graphics = graphics_init()) == NULL)
 	{
-		LOG_INFO("Failed to create display");
+		LOG_INFO("Failed to init graphics");
 		return NULL;
 	}
 
-	colours.BG = al_map_rgb(17, 17, 19);
 	colours.ENTITY_MALE = al_map_rgb(105, 80, 200);
 	colours.ENTITY_FEMALE = al_map_rgb(200, 80, 105);
 
@@ -86,14 +79,13 @@ void renderer_start_loop(struct renderer_state *renderer)
 		LOG_INFO("Failed to create event queue");
 		return;
 	}
-	al_register_event_source(event_queue, al_get_display_event_source(renderer->window));
+	al_register_event_source(event_queue, graphics_get_display_event_source(renderer->graphics));
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
 	al_register_event_source(event_queue, al_get_timer_event_source(sim_timer));
 	al_register_event_source(event_queue, al_get_timer_event_source(render_timer));
 
 	al_start_timer(sim_timer);
 	al_start_timer(render_timer);
-
 
 	while (TRUE)
 	{
@@ -124,15 +116,15 @@ void renderer_start_loop(struct renderer_state *renderer)
 	// cleanup
 	al_destroy_timer(sim_timer);
 	al_destroy_timer(render_timer);
-	al_destroy_display(renderer->window);
 	al_destroy_event_queue(event_queue);
-
 }
 
 void renderer_destroy(struct renderer_state *renderer)
 {
+	LOG_DEBUG("Destroying renderer");
+
+	graphics_destroy(renderer->graphics);
 	safe_free(renderer);
-	LOG_DEBUG("Destroyed renderer");
 }
 
 void step_simulation(struct renderer_state *renderer)
@@ -142,7 +134,7 @@ void step_simulation(struct renderer_state *renderer)
 
 void render_simulation(struct renderer_state *renderer)
 {
-	al_clear_to_color(colours.BG);
+	graphics_start(renderer->graphics);
 
 	// entities
 	struct entity_ctx *entity = entity_get_context(renderer->sim);
@@ -158,8 +150,8 @@ void render_simulation(struct renderer_state *renderer)
 		struct component_human *human = entity_get_component(entity, i, COMPONENT_HUMAN);
 
 		// TODO scale view
-		al_draw_circle(pos.x, pos.y, HUMAN_RADIUS, human->gender == MALE ? colours.ENTITY_MALE : colours.ENTITY_FEMALE, 1.f);
+		graphics_draw_human(renderer->graphics, pos.x, pos.y, human->gender == MALE ? &colours.ENTITY_MALE : &colours.ENTITY_FEMALE);
 	}
 
-	al_flip_display();
+	graphics_end(renderer->graphics);
 }
