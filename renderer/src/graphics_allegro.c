@@ -1,3 +1,5 @@
+#ifdef GRAPHICS_ALLEGRO
+
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
@@ -18,7 +20,7 @@ struct
 	ALLEGRO_COLOR BG;
 } graphics_colours;
 
-MODULE_IMPLEMENT(struct graphics_ctx, "graphics context",
+MODULE_IMPLEMENT(struct graphics_ctx, "software graphics context",
 		graphics_init,
 		{
 			if ((new_instance->display = al_create_display(WINDOW_WIDTH, WINDOW_HEIGHT)) == NULL)
@@ -60,3 +62,5 @@ void graphics_end(struct graphics_ctx *ctx)
 
 	al_flip_display();
 }
+
+#endif
