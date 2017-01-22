@@ -3,6 +3,7 @@
 #include "util/memory.h"
 #include "util/bool.h"
 #include "util/log.h"
+#include "util/util.h"
 
 #include "world/world.h"
 
@@ -11,9 +12,11 @@ static BOOL ode_init;
 struct world
 {
 	dWorldID phys_id;
+	dSpaceID collision_space;
+	dJointGroupID contacts;
 };
 
-static dWorldID create_physics_world()
+static void create_physics_world(struct world *world)
 {
 	if (!ode_init)
 	{
@@ -25,7 +28,13 @@ static dWorldID create_physics_world()
 	dWorldSetGravity(w, 0, 0, 0);
 	dWorldSetQuickStepNumIterations(w, 5);
 
-	return w;
+	dVector3 centre = { 0, 0, 0, 0 };
+	dVector3 extents = { 5, 5, 5, 0 };
+	dSpaceID s = dQuadTreeSpaceCreate(0, centre, extents, 4);
+
+	world->phys_id = w;
+	world->collision_space = s;
+	world->contacts = dJointGroupCreate(0);
 }
 
 struct world *world_create()
@@ -35,8 +44,7 @@ struct world *world_create()
 	struct world *new_world;
 	safe_malloc_struct(struct world, &new_world);
 
-	new_world->phys_id = create_physics_world();
-
+	create_physics_world(new_world);
 
 	return new_world;
 }
@@ -48,23 +56,56 @@ void world_destroy(struct world *w)
 		LOG_DEBUG("Destroying world");
 
 		dWorldDestroy(w->phys_id);
+		dSpaceDestroy(w->collision_space);
+		dJointGroupDestroy(w->contacts);
 		safe_free(w);
 	}
 
 }
 
+static void near_callback(void *data, dGeomID o1, dGeomID o2)
+{
+	dBodyID b1 = dGeomGetBody(o1);
+	dBodyID b2 = dGeomGetBody(o2);
+	if (b1 && b2 && dAreConnected(b1, b2))
+		return;
+
+
+	struct world *w = (struct world *)data;
+
+	// TODO this absolutely needs tweaking, the current values are meaningless
+	dContact contact;
+	contact.surface.mode = dContactBounce;
+	contact.surface.bounce = 10;
+	contact.surface.bounce_vel = 10;
+	contact.surface.mu = 0;
+
+	if (dCollide(o1, o2, 1, &contact.geom, sizeof(dContactGeom)))
+	{
+		dJointID c = dJointCreateContact(w->phys_id, w->contacts, &contact);
+		dJointAttach(c, b1, b2);
+	}
+}
+
 void world_step(struct world *w)
 {
+	dSpaceCollide(w->collision_space, w, near_callback);
 	dWorldQuickStep(w->phys_id, 0.05);
+
+	dJointGroupEmpty(w->contacts);
 }
 
 world_body world_create_entity(struct world *w)
 {
+	// body
 	dBodyID b = dBodyCreate(w->phys_id);
-
 	dMass mass;
-	dMassSetCapsuleTotal(&mass, 80, 3, 0.3, 1.7);
+	dMassSetSphereTotal(&mass, HUMAN_MASS, HUMAN_RADIUS);
 	dBodySetMass(b, &mass);
+
+	// collision
+	dGeomID geom = dCreateSphere(w->collision_space, HUMAN_RADIUS);
+	dGeomSetBody(geom, b);
 
 	return b;
 }

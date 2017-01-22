@@ -63,9 +63,9 @@ struct world *simulator_get_world(struct simulator_state *sim)
 void simulator_populate(struct simulator_state *sim)
 {
 	struct entity_ctx *entity = sim->entity;
-	struct position pos = {10, 10};
+	struct position pos = {40, 40};
 
-	for (int i = 0; i < 50; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
 		entity_id e = entity_create(entity);
 
@@ -74,7 +74,7 @@ void simulator_populate(struct simulator_state *sim)
 
 		phys->body = world_create_entity(sim->world);
 		world_set_position(phys->body, &pos);
-		pos.x += 10;
+		pos.x += 5;
 		pos.y += 5;
 
 		hum->age = 20 + i;

@@ -157,7 +157,8 @@ void render_simulation(struct renderer_state *renderer)
 
 		struct component_human *human = entity_get_component(entity, i, COMPONENT_HUMAN);
 
-		al_draw_circle(pos.x, pos.y, 2.f, human->gender == MALE ? colours.ENTITY_MALE : colours.ENTITY_FEMALE, 1.f);
+		// TODO scale view
+		al_draw_circle(pos.x, pos.y, HUMAN_RADIUS, human->gender == MALE ? colours.ENTITY_MALE : colours.ENTITY_FEMALE, 1.f);
 	}
 
 	al_flip_display();

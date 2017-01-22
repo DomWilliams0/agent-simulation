@@ -3,6 +3,9 @@
 
 #include "world/world_forward.h"
 
+#define HUMAN_RADIUS (0.3)
+#define HUMAN_MASS   (10.0)
+
 struct world;
 
 struct position
