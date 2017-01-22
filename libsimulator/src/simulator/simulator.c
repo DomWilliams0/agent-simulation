@@ -13,41 +13,28 @@ struct simulator_state
 	struct world *world;
 };
 
-struct simulator_state *simulator_create()
-{
-	static simulator_id last_id = 1;
-	struct simulator_state *new_sim;
-	safe_malloc_struct(struct simulator_state, &new_sim);
+MODULE_IMPLEMENT(struct simulator_state, "simulator",
+		simulator_create,
+		{
+			static simulator_id last_id = 1;
+			new_instance->id = last_id++;
 
-	new_sim->id = last_id++;
-	LOG_DEBUG("Creating new simulator %d", new_sim->id);
-
-	if ((new_sim->entity = entity_create_context()) == NULL ||
-		(new_sim->world = world_create()) == NULL)
-	{
-		safe_free(new_sim);
-		new_sim = NULL;
-	}
-
-	return new_sim;
-}
+			if ((new_instance->entity = entity_create_context(NULL)) == NULL ||
+				(new_instance->world = world_create(NULL)) == NULL)
+			{
+				LOG_INFO("Failed to create simulator");
+				return NULL;
+			}
+		},
+		simulator_destroy,
+		{
+			entity_destroy_context(instance->entity);
+			world_destroy(instance->world);
+		})
 
 void simulator_step(struct simulator_state *sim)
 {
 	world_step(sim->world);
-}
-
-void simulator_destroy(struct simulator_state *sim)
-{
-	if (sim)
-	{
-		LOG_DEBUG("Destroying simulator %d", sim->id);
-
-		entity_destroy_context(sim->entity);
-		world_destroy(sim->world);
-
-		safe_free(sim);
-	}
 }
 
 simulator_id simulator_get_id(struct simulator_state *sim)

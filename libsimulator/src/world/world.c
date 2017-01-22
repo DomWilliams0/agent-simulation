@@ -37,31 +37,22 @@ static void create_physics_world(struct world *world)
 	world->contacts = dJointGroupCreate(0);
 }
 
-struct world *world_create()
+static void destroy_physics_world(struct world *world)
 {
-	LOG_DEBUG("Creating new world");
-
-	struct world *new_world;
-	safe_malloc_struct(struct world, &new_world);
-
-	create_physics_world(new_world);
-
-	return new_world;
+	dWorldDestroy(world->phys_id);
+	dSpaceDestroy(world->collision_space);
+	dJointGroupDestroy(world->contacts);
 }
 
-void world_destroy(struct world *w)
-{
-	if (w)
-	{
-		LOG_DEBUG("Destroying world");
-
-		dWorldDestroy(w->phys_id);
-		dSpaceDestroy(w->collision_space);
-		dJointGroupDestroy(w->contacts);
-		safe_free(w);
-	}
-
-}
+MODULE_IMPLEMENT(struct world, "world",
+		world_create,
+		{
+			create_physics_world(new_instance);
+		},
+		world_destroy,
+		{
+			destroy_physics_world(instance);
+		})
 
 static void near_callback(void *data, dGeomID o1, dGeomID o2)
 {

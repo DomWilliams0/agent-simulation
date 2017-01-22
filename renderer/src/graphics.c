@@ -18,31 +18,21 @@ struct
 	ALLEGRO_COLOR BG;
 } graphics_colours;
 
-struct graphics_ctx *graphics_init()
-{
-	LOG_DEBUG("Creating new graphics");
+MODULE_IMPLEMENT(struct graphics_ctx, "graphics context",
+		graphics_init,
+		{
+			if ((new_instance->display = al_create_display(WINDOW_WIDTH, WINDOW_HEIGHT)) == NULL)
+			{
+				LOG_INFO("Failed to create display");
+				return NULL;
+			}
 
-	struct graphics_ctx *new_graphics;
-	safe_malloc_struct(struct graphics_ctx, &new_graphics);
-
-	if ((new_graphics->display = al_create_display(WINDOW_WIDTH, WINDOW_HEIGHT)) == NULL)
-	{
-		LOG_INFO("Failed to create display");
-		return NULL;
-	}
-
-	graphics_colours.BG = al_map_rgb(17, 17, 19);
-
-	return new_graphics;
-}
-
-void graphics_destroy(struct graphics_ctx *ctx)
-{
-	LOG_DEBUG("Destroying graphics");
-
-	al_destroy_display(ctx->display);
-	safe_free(ctx);
-}
+			graphics_colours.BG = al_map_rgb(17, 17, 19);
+		},
+		graphics_destroy,
+		{
+			al_destroy_display(instance->display);
+		})
 
 ALLEGRO_EVENT_SOURCE *graphics_get_display_event_source(struct graphics_ctx *ctx)
 {

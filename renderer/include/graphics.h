@@ -1,18 +1,16 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-#define WINDOW_WIDTH      (400)
-#define WINDOW_HEIGHT     (600)
+#include "util/util.h"
+
+#define WINDOW_WIDTH  (400)
+#define WINDOW_HEIGHT (600)
 
 // shhh
 typedef struct ALLEGRO_EVENT_SOURCE ALLEGRO_EVENT_SOURCE;
 typedef struct ALLEGRO_COLOR ALLEGRO_COLOR;
 
-struct graphics_ctx;
-
-struct graphics_ctx *graphics_init();
-
-void graphics_destroy(struct graphics_ctx *ctx);
+MODULE_DECLARE(struct graphics_ctx, graphics_init, graphics_destroy)
 
 ALLEGRO_EVENT_SOURCE *graphics_get_display_event_source(struct graphics_ctx *ctx);
 

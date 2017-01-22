@@ -27,39 +27,37 @@ struct
 void step_simulation(struct renderer_state *renderer);
 void render_simulation(struct renderer_state *renderer);
 
-struct renderer_state *renderer_create(struct simulator_state *sim)
-{
-	LOG_DEBUG("Creating new renderer");
+MODULE_IMPLEMENT(struct renderer_state, "renderer",
+		renderer_create,
+		{
+			new_instance->sim = (struct simulator_state *)arg;
 
-	struct renderer_state *new_renderer;
-	safe_malloc_struct(struct renderer_state, &new_renderer);
+			// allegro
+			if (!al_init())
+			{
+				LOG_INFO("Failed to init allegro");
+				return NULL;
+			}
 
-	new_renderer->sim = sim;
+			if (!al_install_keyboard())
+			{
+				LOG_INFO("Failed to init keyboard");
+				return NULL;
+			}
 
-	// allegro
-	if (!al_init())
-	{
-		LOG_INFO("Failed to init allegro");
-		return NULL;
-	}
+			if ((new_instance->graphics = graphics_init(NULL)) == NULL)
+			{
+				LOG_INFO("Failed to init graphics");
+				return NULL;
+			}
 
-	if (!al_install_keyboard())
-	{
-		LOG_INFO("Failed to init keyboard");
-		return NULL;
-	}
-
-	if ((new_renderer->graphics = graphics_init()) == NULL)
-	{
-		LOG_INFO("Failed to init graphics");
-		return NULL;
-	}
-
-	colours.ENTITY_MALE = al_map_rgb(105, 80, 200);
-	colours.ENTITY_FEMALE = al_map_rgb(200, 80, 105);
-
-	return new_renderer;
-}
+			colours.ENTITY_MALE = al_map_rgb(105, 80, 200);
+			colours.ENTITY_FEMALE = al_map_rgb(200, 80, 105);
+		},
+		renderer_destroy,
+		{
+			graphics_destroy(instance->graphics);
+		})
 
 void renderer_start_loop(struct renderer_state *renderer)
 {
@@ -118,15 +116,6 @@ void renderer_start_loop(struct renderer_state *renderer)
 	al_destroy_timer(render_timer);
 	al_destroy_event_queue(event_queue);
 }
-
-void renderer_destroy(struct renderer_state *renderer)
-{
-	LOG_DEBUG("Destroying renderer");
-
-	graphics_destroy(renderer->graphics);
-	safe_free(renderer);
-}
-
 void step_simulation(struct renderer_state *renderer)
 {
 	simulator_step(renderer->sim);

@@ -2,20 +2,17 @@
 #define WORLD_H
 
 #include "world/world_forward.h"
+#include "util/util.h"
 
 #define HUMAN_RADIUS (0.3)
 #define HUMAN_MASS   (10.0)
-
-struct world;
 
 struct position
 {
 	coord x, y;
 };
 
-struct world *world_create();
-
-void world_destroy(struct world *w);
+MODULE_DECLARE(struct world, world_create, world_destroy)
 
 void world_step(struct world *w);
 

@@ -2,6 +2,7 @@
 #define ENTITY_H
 
 #include "util/bool.h"
+#include "util/util.h"
 
 // TODO entity IDs will be unique across all worlds
 typedef unsigned int entity_id;
@@ -9,14 +10,11 @@ typedef unsigned int human_age;
 
 typedef enum { MALE = 1, FEMALE } human_gender;
 
-struct entity_ctx;
 struct simulator_state;
 
 typedef void entity_consumer(entity_id, void *);
 
-struct entity_ctx *entity_create_context();
-
-void entity_destroy_context(struct entity_ctx *ctx);
+MODULE_DECLARE(struct entity_ctx, entity_create_context, entity_destroy_context)
 
 struct entity_ctx *entity_get_context(struct simulator_state *sim);
 

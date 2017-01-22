@@ -8,7 +8,7 @@ int main()
 	struct simulator_state *sim;
 	struct renderer_state *renderer;
 
-	if ((sim = simulator_create()) == NULL)
+	if ((sim = simulator_create(NULL)) == NULL)
 		return 1;
 
 	if ((renderer = renderer_create(sim)) == NULL)

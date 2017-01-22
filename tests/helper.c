@@ -6,7 +6,7 @@
 
 int setup_simulator(void **state)
 {
-	struct simulator_state *sim = simulator_create();
+	struct simulator_state *sim = simulator_create(NULL);
 	if (sim == NULL)
 		return 1;
 
