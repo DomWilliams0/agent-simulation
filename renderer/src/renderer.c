@@ -12,9 +12,9 @@
 #define TICKS_PER_SECOND  (20)
 #define FRAMES_PER_SECOND (60)
 
-struct renderer_state
+struct renderer
 {
-	struct simulator_state *sim;
+	struct simulator *sim;
 	struct graphics_ctx *graphics;
 };
 
@@ -24,13 +24,13 @@ struct
 	ALLEGRO_COLOR ENTITY_FEMALE;
 } colours;
 
-void step_simulation(struct renderer_state *renderer);
-void render_simulation(struct renderer_state *renderer);
+void step_simulation(struct renderer *renderer);
+void render_simulation(struct renderer *renderer);
 
-MODULE_IMPLEMENT(struct renderer_state, "renderer",
+MODULE_IMPLEMENT(struct renderer, "renderer",
 		renderer_create,
 		{
-			new_instance->sim = (struct simulator_state *)arg;
+			new_instance->sim = (struct simulator *)arg;
 
 			// allegro
 			if (!al_init())
@@ -59,7 +59,7 @@ MODULE_IMPLEMENT(struct renderer_state, "renderer",
 			graphics_destroy(instance->graphics);
 		})
 
-void renderer_start_loop(struct renderer_state *renderer)
+void renderer_start_loop(struct renderer *renderer)
 {
 	// timers
 	ALLEGRO_TIMER *sim_timer, *render_timer;
@@ -116,12 +116,12 @@ void renderer_start_loop(struct renderer_state *renderer)
 	al_destroy_timer(render_timer);
 	al_destroy_event_queue(event_queue);
 }
-void step_simulation(struct renderer_state *renderer)
+void step_simulation(struct renderer *renderer)
 {
 	simulator_step(renderer->sim);
 }
 
-void render_simulation(struct renderer_state *renderer)
+void render_simulation(struct renderer *renderer)
 {
 	graphics_start(renderer->graphics);
 

@@ -5,7 +5,7 @@
 
 UNIT_TEST(entity_creation_destruction)
 {
-	struct simulator_state *sim = (struct simulator_state *)*state;
+	struct simulator *sim = (struct simulator *)*state;
 	struct entity_ctx *ctx = entity_get_context(sim);
 
 	// start with zero
@@ -25,7 +25,7 @@ UNIT_TEST(entity_creation_destruction)
 
 UNIT_TEST(entity_creation_max)
 {
-	struct simulator_state *sim = (struct simulator_state *)*state;
+	struct simulator *sim = (struct simulator *)*state;
 	struct entity_ctx *ctx = entity_get_context(sim);
 
 	entity_id max_count = entity_get_max_count(ctx);
@@ -69,7 +69,7 @@ static void iterator_func_fail(entity_id e, void *arg)
 
 UNIT_TEST(entity_iteration)
 {
-	struct simulator_state *sim = (struct simulator_state *)*state;
+	struct simulator *sim = (struct simulator *)*state;
 	struct entity_ctx *ctx = entity_get_context(sim);
 
 	// no entities
@@ -103,7 +103,7 @@ UNIT_TEST(entity_iteration)
 
 UNIT_TEST(entity_is_alive)
 {
-	struct simulator_state *sim = (struct simulator_state *)*state;
+	struct simulator *sim = (struct simulator *)*state;
 	struct entity_ctx *ctx = entity_get_context(sim);
 
 	// start with zero
@@ -120,7 +120,7 @@ UNIT_TEST(entity_is_alive)
 
 UNIT_TEST(entity_component_add_remove)
 {
-	struct simulator_state *sim = (struct simulator_state *)*state;
+	struct simulator *sim = (struct simulator *)*state;
 	struct entity_ctx *ctx = entity_get_context(sim);
 	entity_id e = entity_create(ctx);
 
@@ -154,7 +154,7 @@ UNIT_TEST(entity_component_add_remove)
 #include "util/log.h"
 UNIT_TEST(entity_component_get)
 {
-	struct simulator_state *sim = (struct simulator_state *)*state;
+	struct simulator *sim = (struct simulator *)*state;
 	struct entity_ctx *ctx = entity_get_context(sim);
 
 	// add 2 entities

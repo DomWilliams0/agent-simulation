@@ -5,14 +5,14 @@
 
 typedef unsigned int simulator_id;
 
-MODULE_DECLARE(struct simulator_state, simulator_create, simulator_destroy)
+MODULE_DECLARE(struct simulator, simulator_create, simulator_destroy)
 
-void simulator_step(struct simulator_state *sim);
+void simulator_step(struct simulator *sim);
 
-simulator_id simulator_get_id(struct simulator_state *sim);
+simulator_id simulator_get_id(struct simulator *sim);
 
-struct world *simulator_get_world(struct simulator_state *sim);
+struct world *simulator_get_world(struct simulator *sim);
 
-void simulator_populate(struct simulator_state *sim);
+void simulator_populate(struct simulator *sim);
 
 #endif

@@ -41,7 +41,7 @@ MODULE_IMPLEMENT(struct entity_ctx, "entity context",
 		{
 		})
 
-struct entity_ctx *entity_get_context(struct simulator_state *sim)
+struct entity_ctx *entity_get_context(struct simulator *sim)
 {
 	// TODO awful but temporary
 	if (simulator_get_id(sim) != 1)

@@ -6,14 +6,14 @@
 #include "util/memory.h"
 #include "util/log.h"
 
-struct simulator_state
+struct simulator
 {
 	simulator_id id;
 	struct entity_ctx *entity;
 	struct world *world;
 };
 
-MODULE_IMPLEMENT(struct simulator_state, "simulator",
+MODULE_IMPLEMENT(struct simulator, "simulator",
 		simulator_create,
 		{
 			static simulator_id last_id = 1;
@@ -32,22 +32,22 @@ MODULE_IMPLEMENT(struct simulator_state, "simulator",
 			world_destroy(instance->world);
 		})
 
-void simulator_step(struct simulator_state *sim)
+void simulator_step(struct simulator *sim)
 {
 	world_step(sim->world);
 }
 
-simulator_id simulator_get_id(struct simulator_state *sim)
+simulator_id simulator_get_id(struct simulator *sim)
 {
 	return sim->id;
 }
 
-struct world *simulator_get_world(struct simulator_state *sim)
+struct world *simulator_get_world(struct simulator *sim)
 {
 	return sim->world;
 }
 
-void simulator_populate(struct simulator_state *sim)
+void simulator_populate(struct simulator *sim)
 {
 	struct entity_ctx *entity = sim->entity;
 	struct position pos = {40, 40};

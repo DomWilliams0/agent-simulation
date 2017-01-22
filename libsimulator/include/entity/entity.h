@@ -10,13 +10,13 @@ typedef unsigned int human_age;
 
 typedef enum { MALE = 1, FEMALE } human_gender;
 
-struct simulator_state;
+struct simulator;
 
 typedef void entity_consumer(entity_id, void *);
 
 MODULE_DECLARE(struct entity_ctx, entity_create_context, entity_destroy_context)
 
-struct entity_ctx *entity_get_context(struct simulator_state *sim);
+struct entity_ctx *entity_get_context(struct simulator *sim);
 
 entity_id entity_create(struct entity_ctx *ctx);
 

@@ -5,7 +5,7 @@
 UNIT_TEST(simulator_creation_destruction)
 {
 	UNUSED(state);
-	struct simulator_state *sim = simulator_create(NULL);
+	struct simulator *sim = simulator_create(NULL);
 	assert_non_null(sim);
 
 	simulator_destroy(sim);
@@ -13,7 +13,7 @@ UNIT_TEST(simulator_creation_destruction)
 
 UNIT_TEST(simulator_step)
 {
-	struct simulator_state *sim = (struct simulator_state *)*state;
+	struct simulator *sim = (struct simulator *)*state;
 	simulator_step(sim);
 
 	// ...

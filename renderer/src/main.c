@@ -5,8 +5,8 @@
 
 int main()
 {
-	struct simulator_state *sim;
-	struct renderer_state *renderer;
+	struct simulator *sim;
+	struct renderer *renderer;
 
 	if ((sim = simulator_create(NULL)) == NULL)
 		return 1;
