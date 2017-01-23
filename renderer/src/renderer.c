@@ -18,10 +18,24 @@
 	struct colour MACRO_CONCAT(COLOUR_, name) = {red/255.f, green/255.f, blue/255.f}
 
 
+struct time_collector
+{
+	double accumulator;
+	int count;
+};
+
 struct renderer
 {
 	struct simulator *sim;
 	struct graphics_ctx *graphics;
+
+	struct
+	{
+		struct time_collector logic;
+		struct time_collector render;
+		struct time_collector frame;
+		float last_frame;
+	} times;
 };
 
 DECLARE_COLOUR(ENTITY_MALE,   105, 80, 200);
@@ -92,14 +106,38 @@ void renderer_start_loop(struct renderer *renderer)
 
 		if (e.type == ALLEGRO_EVENT_TIMER)
 		{
+			double start_time = al_get_time();
+			double total_time;
+			struct time_collector *tc;
+
 			if (e.timer.source == sim_timer)
 			{
 				step_simulation(renderer);
+				total_time = al_get_time() - start_time;
+				tc = &renderer->times.logic;
+
+				// piggyback off simulator timer to print once per second
+				if (tc->count == TICKS_PER_SECOND)
+				{
+					float avg_logic = tc->accumulator / tc->count;
+					memset(tc, 0, sizeof(struct time_collector));
+
+					struct time_collector *render_tc = &renderer->times.render;
+					float avg_render = render_tc->accumulator / render_tc->count;
+					memset(render_tc, 0, sizeof(struct time_collector));
+
+					LOG_INFO("sim %.4f (%.2f) | render %.4f (%.2f)", avg_logic, 1./avg_logic, avg_render, 1./avg_render);
+				}
 			}
 			else
 			{
 				render_simulation(renderer);
+				total_time = al_get_time() - start_time;
+				tc = &renderer->times.render;
 			}
+
+			tc->accumulator += total_time;
+			tc->count += 1;
 		}
 
 		// quit
