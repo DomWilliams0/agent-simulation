@@ -6,6 +6,8 @@
 #define MACRO_CONCAT_IMPL(a, b) a##b
 #define MACRO_CONCAT(a, b) MACRO_CONCAT_IMPL(a, b)
 
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 // forward declare
 // header file init and destroy functions

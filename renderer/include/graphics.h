@@ -14,6 +14,13 @@ struct colour
 	float r, g, b;
 };
 
+struct camera_movement
+{
+	float move_hor;
+	float move_ver;
+	float zoom;
+};
+
 MODULE_DECLARE(struct graphics_ctx, graphics_init, graphics_destroy)
 
 ALLEGRO_EVENT_SOURCE *graphics_get_display_event_source(struct graphics_ctx *ctx);
@@ -26,5 +33,6 @@ void graphics_end(struct graphics_ctx *ctx);
 
 void graphics_resize(struct graphics_ctx *ctx, int w, int h);
 
+void graphics_update_camera(struct graphics_ctx *ctx, struct camera_movement changes);
 
 #endif

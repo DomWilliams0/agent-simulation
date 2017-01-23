@@ -9,6 +9,9 @@
 #include "util/log.h"
 #include "util/util.h"
 
+#define ZOOM_MAX (16.0f)
+#define ZOOM_MIN (0.5f)
+
 struct graphics_ctx
 {
 	ALLEGRO_DISPLAY *display;
@@ -130,6 +133,30 @@ void graphics_resize(struct graphics_ctx *ctx, int w, int h)
 	ctx->window.width = w;
 	ctx->window.height = h;
 	resize(ctx);
+}
+
+static void zoom(float scale, float aspect_ratio)
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	glOrtho(-aspect_ratio * scale,
+			 aspect_ratio * scale,
+			 scale,
+			-scale,
+			-1, 1);
+}
+
+void graphics_update_camera(struct graphics_ctx *ctx, struct camera_movement changes)
+{
+	ctx->camera.x += changes.move_hor;
+	ctx->camera.y += changes.move_ver;
+
+	if (changes.zoom)
+	{
+		ctx->camera.zoom_scale = MIN(ZOOM_MAX, MAX(ZOOM_MIN, ctx->camera.zoom_scale + changes.zoom));
+		zoom(ctx->camera.zoom_scale, ctx->window.aspect_ratio);
+	}
 }
 
 #endif

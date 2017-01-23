@@ -2,6 +2,7 @@
 
 #include "renderer.h"
 #include "graphics.h"
+#include "keyboard.h"
 #include "simulator/simulator.h"
 #include "entity/components.h"
 #include "world/world.h"
@@ -28,6 +29,7 @@ struct renderer
 {
 	struct simulator *sim;
 	struct graphics_ctx *graphics;
+	struct keyboard_ctx *keyboard;
 
 	struct
 	{
@@ -49,16 +51,9 @@ MODULE_IMPLEMENT(struct renderer, "renderer",
 		{
 			new_instance->sim = (struct simulator *)arg;
 
-			// allegro
 			if (!al_init())
 			{
 				LOG_INFO("Failed to init allegro");
-				return NULL;
-			}
-
-			if (!al_install_keyboard())
-			{
-				LOG_INFO("Failed to init keyboard");
 				return NULL;
 			}
 
@@ -67,10 +62,18 @@ MODULE_IMPLEMENT(struct renderer, "renderer",
 				LOG_INFO("Failed to init graphics");
 				return NULL;
 			}
+
+			if ((new_instance->keyboard = keyboard_init(NULL)) == NULL)
+			{
+				LOG_INFO("Failed to init keyboard");
+				return NULL;
+			}
+
 		},
 		renderer_destroy,
 		{
 			graphics_destroy(instance->graphics);
+			keyboard_destroy(instance->keyboard);
 		})
 
 void renderer_start_loop(struct renderer *renderer)
@@ -153,6 +156,17 @@ void renderer_start_loop(struct renderer *renderer)
 			graphics_resize(renderer->graphics, e.display.width, e.display.height);
 		}
 
+		// keyboard
+		else if (e.type == ALLEGRO_EVENT_KEY_DOWN || e.type == ALLEGRO_EVENT_KEY_UP)
+		{
+			BOOL handled = keyboard_handle_camera_key(renderer->keyboard, e.type == ALLEGRO_EVENT_KEY_DOWN, e.keyboard.keycode);
+			if (!handled)
+			{
+				// TODO pass off to gui/something else
+			}
+		}
+
+
 	}
 
 	// cleanup
@@ -168,6 +182,10 @@ void step_simulation(struct renderer *renderer)
 
 void render_simulation(struct renderer *renderer)
 {
+	struct camera_movement cam;
+	keyboard_get_camera_changes(renderer->keyboard, &cam);
+	graphics_update_camera(renderer->graphics, cam);
+
 	graphics_start(renderer->graphics);
 
 	// entities
