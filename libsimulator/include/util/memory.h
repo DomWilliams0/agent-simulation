@@ -4,9 +4,6 @@
 #include <stddef.h>
 #include <memory.h>
 
-#define MACRO_CONCAT_IMPL(a, b) a##b
-#define MACRO_CONCAT(a, b) MACRO_CONCAT_IMPL(a, b)
-
 #define safe_malloc(size, ptr) safe_malloc_wrapper(size, (void **)ptr, __FILE__, __LINE__)
 #define safe_malloc_struct(struct_type, ptr) safe_malloc(sizeof(struct_type), ptr)
 

@@ -3,6 +3,10 @@
 
 #define UNUSED(x) (void)(x)
 
+#define MACRO_CONCAT_IMPL(a, b) a##b
+#define MACRO_CONCAT(a, b) MACRO_CONCAT_IMPL(a, b)
+
+
 // forward declare
 // header file init and destroy functions
 // source file init { log; declare new_; allocate; ...init...; return new_; }
