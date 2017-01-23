@@ -12,17 +12,20 @@
 #define TICKS_PER_SECOND  (20)
 #define FRAMES_PER_SECOND (60)
 
+// awful and most likely temporary
+//           ^^^^^^^^^^^
+#define DECLARE_COLOUR(name, red, green, blue)\
+	struct colour MACRO_CONCAT(COLOUR_, name) = {red/255.f, green/255.f, blue/255.f}
+
+
 struct renderer
 {
 	struct simulator *sim;
 	struct graphics_ctx *graphics;
 };
 
-struct
-{
-	ALLEGRO_COLOR ENTITY_MALE;
-	ALLEGRO_COLOR ENTITY_FEMALE;
-} colours;
+DECLARE_COLOUR(ENTITY_MALE,   105, 80, 200);
+DECLARE_COLOUR(ENTITY_FEMALE, 200, 80, 105);
 
 void step_simulation(struct renderer *renderer);
 void render_simulation(struct renderer *renderer);
@@ -50,9 +53,6 @@ MODULE_IMPLEMENT(struct renderer, "renderer",
 				LOG_INFO("Failed to init graphics");
 				return NULL;
 			}
-
-			colours.ENTITY_MALE = al_map_rgb(105, 80, 200);
-			colours.ENTITY_FEMALE = al_map_rgb(200, 80, 105);
 		},
 		renderer_destroy,
 		{
@@ -109,6 +109,12 @@ void renderer_start_loop(struct renderer *renderer)
 			break;
 		}
 
+		// resize
+		else if (e.type == ALLEGRO_EVENT_DISPLAY_RESIZE)
+		{
+			graphics_resize(renderer->graphics, e.display.width, e.display.height);
+		}
+
 	}
 
 	// cleanup
@@ -116,6 +122,7 @@ void renderer_start_loop(struct renderer *renderer)
 	al_destroy_timer(render_timer);
 	al_destroy_event_queue(event_queue);
 }
+
 void step_simulation(struct renderer *renderer)
 {
 	simulator_step(renderer->sim);
@@ -138,8 +145,7 @@ void render_simulation(struct renderer *renderer)
 
 		struct component_human *human = entity_get_component(entity, i, COMPONENT_HUMAN);
 
-		// TODO scale view
-		graphics_draw_human(renderer->graphics, pos.x, pos.y, human->gender == MALE ? &colours.ENTITY_MALE : &colours.ENTITY_FEMALE);
+		graphics_draw_human(renderer->graphics, pos.x, pos.y, human->gender == MALE ? COLOUR_ENTITY_MALE : COLOUR_ENTITY_FEMALE);
 	}
 
 	graphics_end(renderer->graphics);
