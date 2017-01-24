@@ -39,6 +39,7 @@ MODULE_IMPLEMENT(struct entity_ctx, "entity context",
 		},
 		entity_destroy_context,
 		{
+			context_instance = NULL;
 		})
 
 struct entity_ctx *entity_get_context(struct simulator *sim)

@@ -25,7 +25,7 @@ MODULE_IMPLEMENT(struct keyboard_ctx, "keyboard",
 		},
 		keyboard_destroy,
 		{
-
+			al_uninstall_keyboard();
 		})
 
 

@@ -34,8 +34,10 @@ MODULE_IMPLEMENT(struct simulator, "simulator",
 		},
 		simulator_destroy,
 		{
-			entity_destroy_context(instance->entity);
-			world_destroy(instance->world);
+			if (instance->entity)
+				entity_destroy_context(instance->entity);
+			if (instance->world)
+				world_destroy(instance->world);
 		})
 
 void simulator_step(struct simulator *sim)

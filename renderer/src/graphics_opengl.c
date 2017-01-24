@@ -65,6 +65,8 @@ MODULE_IMPLEMENT(struct graphics_ctx, "OpenGL graphics context",
 		},
 		graphics_destroy,
 		{
+			if (instance->display)
+				al_destroy_display(instance->display);
 		})
 
 ALLEGRO_EVENT_SOURCE *graphics_get_display_event_source(struct graphics_ctx *ctx)

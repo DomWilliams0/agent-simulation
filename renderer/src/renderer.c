@@ -72,8 +72,11 @@ MODULE_IMPLEMENT(struct renderer, "renderer",
 		},
 		renderer_destroy,
 		{
-			graphics_destroy(instance->graphics);
-			keyboard_destroy(instance->keyboard);
+			if (instance->graphics)
+				graphics_destroy(instance->graphics);
+			if (instance->keyboard)
+				keyboard_destroy(instance->keyboard);
+			al_uninstall_system();
 		})
 
 void renderer_start_loop(struct renderer *renderer)
