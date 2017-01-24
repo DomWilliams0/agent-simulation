@@ -18,7 +18,13 @@ static BOOL load_params(struct world *world, struct world_parameters *params)
 
 	if (params->width <= 0 || params->height <= 0)
 	{
-		LOG_WARN("Invalid width or height");
+		LOG_WARN("Width and height must be positive");
+		return FALSE;
+	}
+
+	if (params->width % CHUNK_SIZE != 0 || params->height % CHUNK_SIZE != 0)
+	{
+		LOG_WARN("Width and height must be multiples of CHUNK_SIZE");
 		return FALSE;
 	}
 

@@ -4,8 +4,8 @@
 
 #define CREATE_WORLD \
 	struct world_parameters params = { \
-		.width = 40, \
-		.height = 50 \
+		.width = 64, \
+		.height = 96 \
 	}; \
 	struct world *w = world_create(&params);
 
@@ -17,30 +17,42 @@ UNIT_TEST(world_creation_destruction)
 	// valid creation
 	CREATE_WORLD;
 	assert_non_null(w);
-	assert_int_equal(40, world_get_width(w));
-	assert_int_equal(50, world_get_height(w));
+	assert_int_equal(64, world_get_width(w));
+	assert_int_equal(96, world_get_height(w));
 	assert_null(world_get_file_path(w));
 	world_destroy(w);
 
-	// invalid size
+	// zero
 	params.width = 0;
-	params.height = 40;
+	params.height = 32;
 	assert_null(world_create(&params));
-	params.width = 40;
+	params.width = 32;
 	params.height = 0;
 	assert_null(world_create(&params));
 	params.width = 0;
 	params.height = 0;
 	assert_null(world_create(&params));
 
-	params.width = -20;
-	params.height = 40;
+	// multiple of CHUNK_SIZE
+	params.width = 33;
+	params.height = 32;
 	assert_null(world_create(&params));
-	params.width = 40;
-	params.height = -20;
+	params.width = 32;
+	params.height = 33;
 	assert_null(world_create(&params));
-	params.width = -10;
-	params.height = -10;
+	params.width = 55;
+	params.height = 55;
+	assert_null(world_create(&params));
+
+	// negative
+	params.width = -32;
+	params.height = 32;
+	assert_null(world_create(&params));
+	params.width = 32;
+	params.height = -32;
+	assert_null(world_create(&params));
+	params.width = -32;
+	params.height = -32;
 	assert_null(world_create(&params));
 
 	// currently unsupported
