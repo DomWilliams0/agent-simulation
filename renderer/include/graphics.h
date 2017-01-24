@@ -27,7 +27,7 @@ ALLEGRO_EVENT_SOURCE *graphics_get_display_event_source(struct graphics_ctx *ctx
 
 void graphics_start(struct graphics_ctx *ctx);
 
-void graphics_draw_human(struct graphics_ctx *ctx, double x, double y, struct colour colour);
+void graphics_draw_human(struct graphics_ctx *ctx, float x, float y, struct colour colour);
 
 void graphics_end(struct graphics_ctx *ctx);
 

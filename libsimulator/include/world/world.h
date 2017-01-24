@@ -9,7 +9,7 @@
 
 struct position
 {
-	coord x, y;
+	float x, y;
 };
 
 MODULE_DECLARE(struct world, world_create, world_destroy)

@@ -81,14 +81,14 @@ void graphics_start(struct graphics_ctx *ctx)
 	glTranslatef(-ctx->camera.x, -ctx->camera.y, 0);
 }
 
-void graphics_draw_human(struct graphics_ctx *ctx, double x, double y, struct colour colour)
+void graphics_draw_human(struct graphics_ctx *ctx, float x, float y, struct colour colour)
 {
 	UNUSED(ctx);
 
 	glPushMatrix();
 	glColor3fv((GLfloat *)&colour);
 
-	glTranslated(x, y, 0);
+	glTranslatef(x, y, 0);
 
 	glBegin(GL_QUADS);
 
