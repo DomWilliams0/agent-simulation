@@ -15,7 +15,39 @@ struct world
 	dWorldID phys_id;
 	dSpaceID collision_space;
 	dJointGroupID contacts;
+
+	int width;
+	int height;
+	char *file_path;
 };
+
+static BOOL load_params(struct world *world, struct world_parameters *params)
+{
+	if (params == NULL)
+	{
+		LOG_INFO("No parameters provided");
+		return FALSE;
+	}
+
+	if (params->width <= 0 || params->height <= 0)
+	{
+		LOG_INFO("Invalid width or height");
+		return FALSE;
+	}
+
+	// currently unsupported
+	if (params->file_path != NULL)
+	{
+		LOG_INFO("World loading currently not supported");
+		return FALSE;
+	}
+
+	world->width = params->width;
+	world->height = params->height;
+	world->file_path = params->file_path;
+
+	return TRUE;
+}
 
 static void create_physics_world(struct world *world)
 {
@@ -48,12 +80,34 @@ static void destroy_physics_world(struct world *world)
 MODULE_IMPLEMENT(struct world, "world",
 		world_create,
 		{
+			struct world_parameters *params = (struct world_parameters *)arg;
+			if (!load_params(new_instance, params))
+			{
+				LOG_INFO("Invalid world parameters");
+				return NULL;
+			}
+
 			create_physics_world(new_instance);
 		},
 		world_destroy,
 		{
 			destroy_physics_world(instance);
 		})
+
+int world_get_width(struct world *w)
+{
+	return w->width;
+}
+
+int world_get_height(struct world *w)
+{
+	return w->height;
+}
+
+char *world_get_file_path(struct world *w)
+{
+	return w->file_path;
+}
 
 static void near_callback(void *data, dGeomID o1, dGeomID o2)
 {

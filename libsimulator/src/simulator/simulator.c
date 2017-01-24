@@ -19,8 +19,14 @@ MODULE_IMPLEMENT(struct simulator, "simulator",
 			static simulator_id last_id = 1;
 			new_instance->id = last_id++;
 
+			// TODO pass through simulator args
+			struct world_parameters world_params;
+			world_params.width = 128;
+			world_params.height = 128;
+			world_params.file_path = NULL;
+
 			if ((new_instance->entity = entity_create_context(NULL)) == NULL ||
-				(new_instance->world = world_create(NULL)) == NULL)
+				(new_instance->world = world_create(&world_params)) == NULL)
 			{
 				LOG_INFO("Failed to create simulator");
 				return NULL;
