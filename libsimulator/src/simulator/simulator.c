@@ -28,8 +28,7 @@ MODULE_IMPLEMENT(struct simulator, "simulator",
 			if ((new_instance->entity = entity_create_context(NULL)) == NULL ||
 				(new_instance->world = world_create(&world_params)) == NULL)
 			{
-				LOG_INFO("Failed to create simulator");
-				return NULL;
+				MODULE_INIT_ABORT;
 			}
 		},
 		simulator_destroy,

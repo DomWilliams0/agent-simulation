@@ -24,6 +24,8 @@
 	/* destroy */ \
 	void destroy_func_name(struct_type *instance);
 
+#define MODULE_INIT_ABORT break
+
 // implementation
 // TODO upgrade void* arg to va_args if necessary
 #define MODULE_IMPLEMENT(struct_type, friendly_name, \
@@ -36,7 +38,14 @@
 		LOG_DEBUG("Creating new " friendly_name); \
 		struct_type *new_instance; \
 		safe_malloc_struct(struct_type, &new_instance); \
-		do { init_impl } while(0); \
+		int great_success = 0; \
+		do { init_impl; great_success = 1; } while(0); \
+		if (great_success == 0) \
+		{ \
+			LOG_DEBUG("Aborting creation of " friendly_name); \
+			destroy_func_name(new_instance); \
+			return NULL; \
+		} \
 		return new_instance; \
 	} \
 	/* destroy */ \

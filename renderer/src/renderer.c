@@ -54,19 +54,19 @@ MODULE_IMPLEMENT(struct renderer, "renderer",
 			if (!al_init())
 			{
 				LOG_INFO("Failed to init allegro");
-				return NULL;
+				MODULE_INIT_ABORT;
 			}
 
 			if ((new_instance->graphics = graphics_init(NULL)) == NULL)
 			{
 				LOG_INFO("Failed to init graphics");
-				return NULL;
+				MODULE_INIT_ABORT;
 			}
 
 			if ((new_instance->keyboard = keyboard_init(NULL)) == NULL)
 			{
 				LOG_INFO("Failed to init keyboard");
-				return NULL;
+				MODULE_INIT_ABORT;
 			}
 
 		},

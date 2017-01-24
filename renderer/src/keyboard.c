@@ -19,7 +19,7 @@ MODULE_IMPLEMENT(struct keyboard_ctx, "keyboard",
 			if (!al_install_keyboard())
 			{
 				LOG_INFO("Failed to install keyboard");
-				return NULL;
+				MODULE_INIT_ABORT;
 			}
 
 		},

@@ -72,6 +72,9 @@ static void create_physics_world(struct world *world)
 
 static void destroy_physics_world(struct world *world)
 {
+	if (world->phys_id == NULL)
+		return;
+
 	dWorldDestroy(world->phys_id);
 	dSpaceDestroy(world->collision_space);
 	dJointGroupDestroy(world->contacts);
@@ -84,7 +87,7 @@ MODULE_IMPLEMENT(struct world, "world",
 			if (!load_params(new_instance, params))
 			{
 				LOG_INFO("Invalid world parameters");
-				return NULL;
+				MODULE_INIT_ABORT;
 			}
 
 			create_physics_world(new_instance);
