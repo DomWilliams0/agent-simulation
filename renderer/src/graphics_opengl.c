@@ -86,18 +86,34 @@ void graphics_draw_human(struct graphics_ctx *ctx, float x, float y, struct colo
 {
 	UNUSED(ctx);
 
+	// ty http://slabode.exofire.net/circle_draw.shtml
+	// values hardcoded
+	static float tangetial_factor = 0.3249196962329063;
+	static float radial_factor    = 0.9510565162951535;
+	static int segment_count      = 20;
+
 	glPushMatrix();
 	glColor3fv((GLfloat *)&colour);
 
 	glTranslatef(x, y, 0);
 
-	glBegin(GL_QUADS);
+	float cx = HUMAN_RADIUS;
+	float cy = 0;
 
-	glVertex2f(0, 0);
-	glVertex2f(0, HUMAN_RADIUS);
-	glVertex2f(HUMAN_RADIUS, HUMAN_RADIUS);
-	glVertex2f(HUMAN_RADIUS, 0);
+	glBegin(GL_POLYGON);
+	for(int ii = 0; ii < segment_count; ++ii)
+	{
+		glVertex2f(cx, cy);
 
+		float tx = -cy;
+		float ty = cx;
+
+		cx += tx * tangetial_factor;
+		cy += ty * tangetial_factor;
+
+		cx *= radial_factor;
+		cy *= radial_factor;
+	}
 	glEnd();
 
 	glPopMatrix();
