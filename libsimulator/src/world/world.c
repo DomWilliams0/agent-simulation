@@ -4,6 +4,7 @@
 #include "util/bool.h"
 #include "util/log.h"
 #include "util/util.h"
+#include "util/constants.h"
 
 #include "world/world.h"
 

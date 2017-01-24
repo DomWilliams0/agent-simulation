@@ -8,6 +8,7 @@
 #include "util/memory.h"
 #include "util/log.h"
 #include "util/util.h"
+#include "util/constants.h"
 
 #define ZOOM_MAX (16.0f)
 #define ZOOM_MIN (0.5f)
@@ -92,11 +93,10 @@ void graphics_draw_human(struct graphics_ctx *ctx, float x, float y, struct colo
 
 	glBegin(GL_QUADS);
 
-	float rad = 0.5f; // TODO temporary, move from world into constants
 	glVertex2f(0, 0);
-	glVertex2f(0, rad);
-	glVertex2f(rad, rad);
-	glVertex2f(rad, 0);
+	glVertex2f(0, HUMAN_RADIUS);
+	glVertex2f(HUMAN_RADIUS, HUMAN_RADIUS);
+	glVertex2f(HUMAN_RADIUS, 0);
 
 	glEnd();
 
