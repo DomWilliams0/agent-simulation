@@ -53,19 +53,17 @@ MODULE_IMPLEMENT(struct renderer, "renderer",
 
 			if (!al_init())
 			{
-				LOG_INFO("Failed to init allegro");
+				LOG_ERROR("Failed to init allegro");
 				MODULE_INIT_ABORT;
 			}
 
 			if ((new_instance->graphics = graphics_init(NULL)) == NULL)
 			{
-				LOG_INFO("Failed to init graphics");
 				MODULE_INIT_ABORT;
 			}
 
 			if ((new_instance->keyboard = keyboard_init(NULL)) == NULL)
 			{
-				LOG_INFO("Failed to init keyboard");
 				MODULE_INIT_ABORT;
 			}
 
@@ -86,7 +84,7 @@ void renderer_start_loop(struct renderer *renderer)
 	if ((sim_timer = al_create_timer(1.0 / TICKS_PER_SECOND)) == NULL ||
 			(render_timer = al_create_timer(1.0 / FRAMES_PER_SECOND)) == NULL)
 	{
-		LOG_INFO("Failed to create timers");
+		LOG_ERROR("Failed to create timers");
 		return;
 	}
 
@@ -94,7 +92,7 @@ void renderer_start_loop(struct renderer *renderer)
 	ALLEGRO_EVENT_QUEUE *event_queue;
 	if ((event_queue = al_create_event_queue()) == NULL)
 	{
-		LOG_INFO("Failed to create event queue");
+		LOG_ERROR("Failed to create event queue");
 		return;
 	}
 	al_register_event_source(event_queue, graphics_get_display_event_source(renderer->graphics));

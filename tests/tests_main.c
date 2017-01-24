@@ -14,7 +14,7 @@ int main()
 
 	if (test_count >= MAX_TEST_COUNT)
 	{
-		LOG_INFO("Maximum number of tests reached, increase MAX_TEST_COUNT");
+		LOG_ERROR("Maximum number of tests reached, increase MAX_TEST_COUNT");
 		return 2;
 	}
 

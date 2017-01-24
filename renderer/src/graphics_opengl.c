@@ -48,7 +48,7 @@ MODULE_IMPLEMENT(struct graphics_ctx, "OpenGL graphics context",
 			al_set_new_display_flags(ALLEGRO_OPENGL);
 			if ((new_instance->display = al_create_display(WINDOW_WIDTH, WINDOW_HEIGHT)) == NULL)
 			{
-				LOG_INFO("Failed to create display");
+				LOG_ERROR("Failed to create display");
 				MODULE_INIT_ABORT;
 			}
 

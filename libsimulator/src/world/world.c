@@ -25,20 +25,20 @@ static BOOL load_params(struct world *world, struct world_parameters *params)
 {
 	if (params == NULL)
 	{
-		LOG_INFO("No parameters provided");
+		LOG_WARN("No parameters provided");
 		return FALSE;
 	}
 
 	if (params->width <= 0 || params->height <= 0)
 	{
-		LOG_INFO("Invalid width or height");
+		LOG_WARN("Invalid width or height");
 		return FALSE;
 	}
 
 	// currently unsupported
 	if (params->file_path != NULL)
 	{
-		LOG_INFO("World loading currently not supported");
+		LOG_WARN("World loading currently not supported");
 		return FALSE;
 	}
 
@@ -86,7 +86,7 @@ MODULE_IMPLEMENT(struct world, "world",
 			struct world_parameters *params = (struct world_parameters *)arg;
 			if (!load_params(new_instance, params))
 			{
-				LOG_INFO("Invalid world parameters");
+				LOG_WARN("Invalid world parameters");
 				MODULE_INIT_ABORT;
 			}
 

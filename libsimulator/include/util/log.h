@@ -2,18 +2,22 @@
 #define LOG_H
 
 #include <stdio.h>
+#include <string.h>
 
 // defined in Makefile
 // #define DEBUGGING
 
 #define EXPAND_VA_ARGS(...) __VA_ARGS__
+#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
 #define LOG_STREAM (stderr)
 
-#define LOG_INFO(msg, ...) fprintf(LOG_STREAM, "%s:%d:%s(): " msg "\n", __FILE__, __LINE__, __func__, ##__VA_ARGS__);
+#define LOG_INFO(msg, ...)  fprintf(LOG_STREAM, "INFO  %s:%d:%s(): " msg "\n", __FILENAME__, __LINE__, __func__, ##__VA_ARGS__);
+#define LOG_WARN(msg, ...)  fprintf(LOG_STREAM, "WARN  %s:%d:%s(): " msg "\n", __FILENAME__, __LINE__, __func__, ##__VA_ARGS__);
+#define LOG_ERROR(msg, ...) fprintf(LOG_STREAM, "ERROR %s:%d:%s(): " msg "\n", __FILENAME__, __LINE__, __func__, ##__VA_ARGS__);
 
 #ifdef DEBUGGING
-#define LOG_DEBUG(msg, ...) fprintf(LOG_STREAM, "%s:%d:%s(): " msg "\n", __FILE__, __LINE__, __func__, ##__VA_ARGS__);
+#define LOG_DEBUG(msg, ...) fprintf(LOG_STREAM, "DEBUG %s:%d:%s(): " msg "\n", __FILENAME__, __LINE__, __func__, ##__VA_ARGS__);
 #else
 #define LOG_DEBUG(msg, ...) do {} while (0)
 #endif
