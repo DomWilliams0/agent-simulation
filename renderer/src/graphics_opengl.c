@@ -4,13 +4,14 @@
 #include <allegro5/allegro_opengl.h>
 
 #include "graphics.h"
+#include "world/world.h"
 
 #include "util/memory.h"
 #include "util/log.h"
 #include "util/util.h"
 #include "util/constants.h"
 
-#define ZOOM_MAX (16.0f)
+#define ZOOM_MAX (64.f)
 #define ZOOM_MIN (0.5f)
 
 struct graphics_ctx
@@ -57,8 +58,8 @@ MODULE_IMPLEMENT(struct graphics_ctx, "OpenGL graphics context",
 			new_instance->window.aspect_ratio = 0;
 
 			new_instance->camera.zoom_scale = 10.f;
-			new_instance->camera.x = 50;
-			new_instance->camera.y = 50;
+			new_instance->camera.x = 0;
+			new_instance->camera.y = 0;
 
 			init_opengl(new_instance);
 
@@ -82,6 +83,55 @@ void graphics_start(struct graphics_ctx *ctx)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glTranslatef(-ctx->camera.x, -ctx->camera.y, 0);
+}
+
+void graphics_draw_world(struct world *world)
+{
+	const unsigned int width = world_get_chunk_width(world);
+	const unsigned int height = world_get_chunk_height(world);
+
+	unsigned int chunk_count;
+	struct chunk * chunk = world_get_chunk_array(world, &chunk_count);
+
+	glPushMatrix();
+	glColor3f(1, 0, 0);
+
+	glBegin(GL_QUADS);
+
+	for (unsigned int y = height; y; y--)
+	{
+		for (unsigned int x = width; x; x--)
+		{
+			tile * tile = world_get_chunk_tiles(chunk);
+			unsigned int tile_count = CHUNK_TILE_COUNT;
+
+			while (tile_count--)
+			{
+				// TODO temporary obvious colours
+				if (*tile == TILE_BLANK && tile_count % 3 == 0)
+					glColor3f(0.25f, 0.25f, 0.25f);
+				else
+					glColor3f(0, 1, 0);
+
+				unsigned int tile_x = tile_count % CHUNK_SIZE;
+				unsigned int tile_y = tile_count / CHUNK_SIZE;
+
+				glVertex2f(tile_x + 0, tile_y + 0);
+				glVertex2f(tile_x + 0, tile_y + 1);
+				glVertex2f(tile_x + 1, tile_y + 1);
+				glVertex2f(tile_x + 1, tile_y + 0);
+
+				tile++;
+			}
+
+			chunk++;
+		}
+	}
+
+	glEnd();
+
+	glPopMatrix();
+
 }
 
 void graphics_draw_human(struct graphics_ctx *ctx, float x, float y, struct colour colour)

@@ -21,8 +21,8 @@ MODULE_IMPLEMENT(struct simulator, "simulator",
 
 			// TODO pass through simulator args
 			struct world_parameters world_params;
-			world_params.chunk_width = 5;
-			world_params.chunk_height = 5;
+			world_params.chunk_width = 16;
+			world_params.chunk_height = 16;
 			world_params.file_path = NULL;
 
 			if ((new_instance->entity = entity_create_context(NULL)) == NULL ||
@@ -57,7 +57,7 @@ struct world *simulator_get_world(struct simulator *sim)
 void simulator_populate(struct simulator *sim)
 {
 	struct entity_ctx *entity = sim->entity;
-	struct position pos = {40, 40};
+	struct position pos = {0, 0};
 
 	for (int i = 0; i < 10; ++i)
 	{
@@ -74,6 +74,12 @@ void simulator_populate(struct simulator *sim)
 		hum->age = 20 + i;
 		hum->gender = i % 2 == 0 ? MALE : FEMALE;
 	}
+
+	// some fun terrain
+	struct world *world = sim->world;
+	for (int i = 0; i < 10; ++i)
+		world_set_tile(world, i, i, TILE_GRASS);
+
 }
 
 struct entity_ctx *entity_get_context(struct simulator *sim)

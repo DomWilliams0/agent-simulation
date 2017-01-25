@@ -42,15 +42,34 @@ UNIT_TEST(world_creation_destruction)
 
 UNIT_TEST(world_initial_state)
 {
-	struct world_parameters params = {400, 400};
+	UNUSED(state);
+
+	struct world_parameters params = {400, 400, NULL};
 	struct world *w = world_create(&params);
 
+	// tile by tile
 	for (unsigned int y = 0; y < params.chunk_height; ++y)
 	{
 		for (unsigned int x = 0; x < params.chunk_width; ++x)
 		{
 			assert_int_equal(TILE_BLANK, world_get_tile(w, x, y));
 		}
+	}
+
+	// using array functions
+	unsigned int chunk_count;
+	struct chunk *chunk = world_get_chunk_array(w, &chunk_count);
+
+	while (chunk_count--)
+	{
+		tile *tiles = world_get_chunk_tiles(chunk);
+		unsigned int tile_count = CHUNK_SIZE * CHUNK_SIZE;
+		while (tile_count--)
+		{
+			assert_int_equal(TILE_BLANK, tiles[tile_count]);
+		}
+
+		chunk++;
 	}
 }
 

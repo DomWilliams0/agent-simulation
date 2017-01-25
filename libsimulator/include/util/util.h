@@ -14,7 +14,6 @@
 // source file init { log; declare new_; allocate; ...init...; return new_; }
 // source file destroy {log; ...destroy...; safe_free}
 
-
 // header file
 #define MODULE_DECLARE(struct_type, init_func_name, destroy_func_name) \
 	/* forward declare */ \

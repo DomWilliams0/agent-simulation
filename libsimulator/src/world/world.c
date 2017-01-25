@@ -123,9 +123,6 @@ static void load_terrain(struct world *world)
 	safe_malloc(world->chunk_width * world->chunk_height * sizeof(struct chunk), &world->chunks);
 }
 
-// #define GET_CHUNK_UNSAFE(w, x, y) \
-// 	struct chunk *chunk = w->chunks + ((x / CHUNK_SIZE) + (w->width * (y / CHUNK_SIZE)))
-
 #define GET_CHUNK(w, x, y) \
 	unsigned int chunk_x  = x / CHUNK_SIZE; \
 	unsigned int chunk_y  = y / CHUNK_SIZE; \
@@ -162,4 +159,15 @@ void world_set_tile(struct world *w, unsigned int x, unsigned int y, enum tile_t
 	unsigned int tile_y = y % CHUNK_SIZE;
 	unsigned int tile_i = tile_x + (CHUNK_SIZE * tile_y);
 	chunk->tiles[tile_i] = type;
+}
+
+struct chunk *world_get_chunk_array(struct world *w, unsigned int *chunk_count)
+{
+	*chunk_count = w->chunk_width * w->chunk_height;
+	return w->chunks;
+}
+
+tile *world_get_chunk_tiles(struct chunk *chunk)
+{
+	return chunk->tiles;
 }

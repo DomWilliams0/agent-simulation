@@ -40,8 +40,11 @@ struct renderer
 	} times;
 };
 
-DECLARE_COLOUR(ENTITY_MALE,   105, 80, 200);
-DECLARE_COLOUR(ENTITY_FEMALE, 200, 80, 105);
+// TODO move these to graphics
+DECLARE_COLOUR(ENTITY_MALE,   105, 80 , 200);
+DECLARE_COLOUR(ENTITY_FEMALE, 200, 80 , 105);
+DECLARE_COLOUR(GRASS,         60 , 200, 80 );
+DECLARE_COLOUR(GROUND,        30 , 30 , 30 );
 
 void step_simulation(struct renderer *renderer);
 void render_simulation(struct renderer *renderer);
@@ -108,7 +111,7 @@ void renderer_start_loop(struct renderer *renderer)
 		ALLEGRO_EVENT e;
 		al_wait_for_event(event_queue, &e);
 
-		if (e.type == ALLEGRO_EVENT_TIMER)
+		if (e.type == ALLEGRO_EVENT_TIMER && al_is_event_queue_empty(event_queue))
 		{
 			double start_time = al_get_time();
 			double total_time;
@@ -181,18 +184,10 @@ void step_simulation(struct renderer *renderer)
 	simulator_step(renderer->sim);
 }
 
-void render_simulation(struct renderer *renderer)
+static void render_entities(struct graphics_ctx *graphics, struct entity_ctx *entities)
 {
-	struct camera_movement cam;
-	keyboard_get_camera_changes(renderer->keyboard, &cam);
-	graphics_update_camera(renderer->graphics, cam);
-
-	graphics_start(renderer->graphics);
-
-	// entities
-	struct entity_ctx *entity = entity_get_context(renderer->sim);
-	struct component_physics *physics = (struct component_physics *)entity_get_component_array(entity, COMPONENT_PHYSICS);
-	entity_id count = entity_get_count(entity);
+	struct component_physics *physics = (struct component_physics *)entity_get_component_array(entities, COMPONENT_PHYSICS);
+	entity_id count = entity_get_count(entities);
 
 	struct position pos;
 	for (entity_id i = 0; i < count; ++i)
@@ -200,10 +195,29 @@ void render_simulation(struct renderer *renderer)
 		struct component_physics *phys = physics + i;
 		world_get_position(phys->body, &pos);
 
-		struct component_human *human = entity_get_component(entity, i, COMPONENT_HUMAN);
+		struct component_human *human = entity_get_component(entities, i, COMPONENT_HUMAN);
 
-		graphics_draw_human(renderer->graphics, pos.x, pos.y, human->gender == MALE ? COLOUR_ENTITY_MALE : COLOUR_ENTITY_FEMALE);
+		graphics_draw_human(graphics, pos.x, pos.y, human->gender == MALE ? COLOUR_ENTITY_MALE : COLOUR_ENTITY_FEMALE);
 	}
+}
 
-	graphics_end(renderer->graphics);
+void render_simulation(struct renderer *renderer)
+{
+	struct graphics_ctx *graphics = renderer->graphics;
+
+	struct camera_movement cam;
+	keyboard_get_camera_changes(renderer->keyboard, &cam);
+	graphics_update_camera(graphics, cam);
+
+	graphics_start(graphics);
+
+	// world
+	struct world *world = world_get_world(renderer->sim);
+	graphics_draw_world(world);
+
+	// entities
+	struct entity_ctx *entities = entity_get_context(renderer->sim);
+	render_entities(graphics, entities);
+
+	graphics_end(graphics);
 }

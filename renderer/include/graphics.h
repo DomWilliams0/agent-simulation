@@ -21,11 +21,15 @@ struct camera_movement
 	float zoom;
 };
 
+struct world;
+
 MODULE_DECLARE(struct graphics_ctx, graphics_init, graphics_destroy)
 
 ALLEGRO_EVENT_SOURCE *graphics_get_display_event_source(struct graphics_ctx *ctx);
 
 void graphics_start(struct graphics_ctx *ctx);
+
+void graphics_draw_world(struct world *world);
 
 void graphics_draw_human(struct graphics_ctx *ctx, float x, float y, struct colour colour);
 

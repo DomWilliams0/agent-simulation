@@ -21,9 +21,4 @@ struct world
 	struct chunk *chunks;
 };
 
-struct chunk
-{
-	uint8_t tiles[CHUNK_SIZE * CHUNK_SIZE];
-};
-
 #endif

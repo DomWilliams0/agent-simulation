@@ -6,6 +6,7 @@
 
 #define HUMAN_MASS (10.0)
 #define CHUNK_SIZE (32)
+#define CHUNK_TILE_COUNT (CHUNK_SIZE * CHUNK_SIZE)
 
 struct simulator;
 
@@ -29,6 +30,13 @@ enum tile_type
 	TILE_MAX
 };
 
+typedef int tile;
+
+struct chunk
+{
+	tile tiles[CHUNK_SIZE * CHUNK_SIZE];
+};
+
 
 MODULE_DECLARE(struct world, world_create, world_destroy);
 
@@ -49,5 +57,8 @@ void world_set_position(world_body body, struct position *pos);
 // tiles
 enum tile_type world_get_tile(struct world *w, unsigned int x, unsigned int y);
 void world_set_tile(struct world *w, unsigned int x, unsigned int y, enum tile_type type);
+
+struct chunk *world_get_chunk_array(struct world *w, unsigned int *chunk_count);
+tile *world_get_chunk_tiles(struct chunk *chunk);
 
 #endif
