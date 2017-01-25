@@ -11,7 +11,8 @@
 #include "util/log.h"
 
 #define TICKS_PER_SECOND  (20)
-#define FRAMES_PER_SECOND (60)
+#define SKIP_TICKS        (1000 / TICKS_PER_SECOND)
+#define MAX_FRAMESKIP     (5)
 
 struct time_collector
 {
@@ -69,9 +70,22 @@ MODULE_IMPLEMENT(struct renderer, "renderer",
 			SDL_Quit();
 		})
 
+#define TIME_FUNCTION(what, how) \
+		unsigned int MACRO_CONCAT(what, _pre) = SDL_GetTicks(); \
+		how;\
+		unsigned int MACRO_CONCAT(what, _time) = SDL_GetTicks() - MACRO_CONCAT(what, _pre); \
+		MACRO_CONCAT(what, _tc)->accumulator += MACRO_CONCAT(what, _time); \
+		MACRO_CONCAT(what, _tc)->count += 1;
+
 void renderer_start_loop(struct renderer *renderer)
 {
-	double total_time = 0;
+	unsigned int next_tick = SDL_GetTicks();
+	int loops;
+	float interpolation;
+
+	struct time_collector *logic_tc  = &renderer->times.logic;
+	struct time_collector *render_tc = &renderer->times.render;
+
 	while (TRUE)
 	{
 		SDL_Event e;
@@ -109,53 +123,31 @@ void renderer_start_loop(struct renderer *renderer)
 			}
 		}
 
-		unsigned int update_start_time = SDL_GetTicks();
-		while (total_time >= TICKS_PER_SECOND)
+		// merci http://www.koonsolo.com/news/dewitters-gameloop/
+		loops = 0;
+		while (SDL_GetTicks() > next_tick && loops < MAX_FRAMESKIP)
 		{
-			step_simulation(renderer);
-			total_time -= TICKS_PER_SECOND;
+			TIME_FUNCTION(logic, step_simulation(renderer));
+
+			next_tick += SKIP_TICKS;
+			loops += 1;
 		}
 
-		render_simulation(renderer);
+		interpolation = (float)(SDL_GetTicks() + SKIP_TICKS - next_tick) / SKIP_TICKS;
 
-		total_time += SDL_GetTicks() - update_start_time;
+		TIME_FUNCTION(render, render_simulation(renderer));
 
-		//if (e.type == ALLEGRO_EVENT_TIMER && al_is_event_queue_empty(event_queue))
-		//{
-		//	double start_time = al_get_time();
-		//	double total_time;
-		//	struct time_collector *tc;
+		// print every second
+		if (logic_tc->count == TICKS_PER_SECOND)
+		{
+			float avg_render = render_tc->accumulator / render_tc->count;
+			memset(render_tc, 0, sizeof(struct time_collector));
 
-		//	if (e.timer.source == sim_timer)
-		//	{
-		//		step_simulation(renderer);
-		//		total_time = al_get_time() - start_time;
-		//		tc = &renderer->times.logic;
+			float avg_logic = logic_tc->accumulator / logic_tc->count;
+			memset(logic_tc, 0, sizeof(struct time_collector));
 
-		//		// piggyback off simulator timer to print once per second
-		//		if (tc->count == TICKS_PER_SECOND)
-		//		{
-		//			float avg_logic = tc->accumulator / tc->count;
-		//			memset(tc, 0, sizeof(struct time_collector));
-
-		//			struct time_collector *render_tc = &renderer->times.render;
-		//			float avg_render = render_tc->accumulator / render_tc->count;
-		//			memset(render_tc, 0, sizeof(struct time_collector));
-
-		//			LOG_INFO("sim %.4f (%.2f) | render %.4f (%.2f)", avg_logic, 1./avg_logic, avg_render, 1./avg_render);
-		//		}
-		//	}
-		//	else
-		//	{
-		//		render_simulation(renderer);
-		//		total_time = al_get_time() - start_time;
-		//		tc = &renderer->times.render;
-		//	}
-
-		//	tc->accumulator += total_time;
-		//	tc->count += 1;
-		//}
-
+			LOG_INFO("sim %.2fms (%.2f/s) | render %.2fms (%.2f/s)", avg_logic, 1000./avg_logic, avg_render, 1000./avg_render);
+		}
 	}
 
 break_out:
