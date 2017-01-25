@@ -44,17 +44,6 @@ UNIT_TEST(world_creation_destruction)
 	params.height = 55;
 	assert_null(world_create(&params));
 
-	// negative
-	params.width = -32;
-	params.height = 32;
-	assert_null(world_create(&params));
-	params.width = 32;
-	params.height = -32;
-	assert_null(world_create(&params));
-	params.width = -32;
-	params.height = -32;
-	assert_null(world_create(&params));
-
 	// currently unsupported
 	params.width = 40;
 	params.height = 50;

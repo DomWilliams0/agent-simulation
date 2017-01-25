@@ -14,8 +14,8 @@ struct world
 	dSpaceID collision_space;
 	dJointGroupID contacts;
 
-	int width;
-	int height;
+	unsigned int width;
+	unsigned int height;
 	char *file_path;
 
 	struct chunk *chunks;

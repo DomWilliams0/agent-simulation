@@ -35,12 +35,12 @@ MODULE_IMPLEMENT(struct world, "world",
 				safe_free(instance->chunks);
 		})
 
-int world_get_width(struct world *w)
+unsigned int world_get_width(struct world *w)
 {
 	return w->width;
 }
 
-int world_get_height(struct world *w)
+unsigned int world_get_height(struct world *w)
 {
 	return w->height;
 }
@@ -119,8 +119,8 @@ static BOOL load_params(struct world *world, struct world_parameters *params)
 
 static void load_terrain(struct world *world)
 {
-	int chunks_hor = ceilf(world->width / (float)CHUNK_SIZE);
-	int chunks_ver = ceilf(world->height / (float)CHUNK_SIZE);
+	unsigned int chunks_hor = ceilf(world->width / (float)CHUNK_SIZE);
+	unsigned int chunks_ver = ceilf(world->height / (float)CHUNK_SIZE);
 
 	safe_malloc(chunks_hor * chunks_ver * sizeof(world->chunks[0]), &world->chunks);
 }
@@ -129,11 +129,11 @@ static void load_terrain(struct world *world)
 // 	struct chunk *chunk = w->chunks + ((x / CHUNK_SIZE) + (w->width * (y / CHUNK_SIZE)))
 
 #define GET_CHUNK(w, x, y) \
-	int chunk_x  = x / CHUNK_SIZE; \
-	int chunk_y  = y / CHUNK_SIZE; \
-	int chunk_i = chunk_x + (w->width * chunk_y); \
+	unsigned int chunk_x  = x / CHUNK_SIZE; \
+	unsigned int chunk_y  = y / CHUNK_SIZE; \
+	unsigned int chunk_i = chunk_x + (w->width * chunk_y); \
 	BOOL good = TRUE; \
-	if (chunk_x < 0 || chunk_y < 0 || x >= w->width || y >= w->height) \
+	if (x >= w->width || y >= w->height) \
 	{ \
 		LOG_WARN("Attempted to access out of range chunk at (%d, %d) in world %d", x, y, w->id); \
 		good = FALSE; \
@@ -147,9 +147,9 @@ enum tile_type world_get_tile(struct world *w, unsigned int x, unsigned int y)
 	if (!good)
 		return TILE_BLANK;
 
-	int tile_x = x % CHUNK_SIZE;
-	int tile_y = y % CHUNK_SIZE;
-	int tile_i = tile_x + (CHUNK_SIZE * tile_y);
+	unsigned int tile_x = x % CHUNK_SIZE;
+	unsigned int tile_y = y % CHUNK_SIZE;
+	unsigned int tile_i = tile_x + (CHUNK_SIZE * tile_y);
 
 	return (enum tile_type) chunk->tiles[tile_i];
 }
@@ -160,8 +160,8 @@ void world_set_tile(struct world *w, unsigned int x, unsigned int y, enum tile_t
 	if (!good)
 		return;
 
-	int tile_x = x % CHUNK_SIZE;
-	int tile_y = y % CHUNK_SIZE;
-	int tile_i = tile_x + (CHUNK_SIZE * tile_y);
+	unsigned int tile_x = x % CHUNK_SIZE;
+	unsigned int tile_y = y % CHUNK_SIZE;
+	unsigned int tile_i = tile_x + (CHUNK_SIZE * tile_y);
 	chunk->tiles[tile_i] = type;
 }
