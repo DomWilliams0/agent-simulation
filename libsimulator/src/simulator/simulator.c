@@ -76,3 +76,13 @@ void simulator_populate(struct simulator *sim)
 	}
 }
 
+struct entity_ctx *entity_get_context(struct simulator *sim)
+{
+	return sim->entity;
+}
+
+struct world *world_get_world(struct simulator *sim)
+{
+	return sim->world;
+}
+

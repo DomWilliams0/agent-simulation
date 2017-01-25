@@ -28,28 +28,14 @@ struct entity_ctx
 	struct component_human components_human[MAX_ENTITIES];
 };
 
-// TODO temporary: add module for context lookup when others are added
-static struct entity_ctx *context_instance;
-
 MODULE_IMPLEMENT(struct entity_ctx, "entity context",
 		entity_create_context,
 		{
 			new_instance->count = 0;
-			context_instance = new_instance;
 		},
 		entity_destroy_context,
 		{
-			context_instance = NULL;
 		})
-
-struct entity_ctx *entity_get_context(struct simulator *sim)
-{
-	// TODO awful but temporary
-	if (simulator_get_id(sim) != 1)
-		return NULL;
-
-	return context_instance;
-}
 
 static BOOL is_valid(entity_id e)
 {
