@@ -1,7 +1,7 @@
 #ifdef GRAPHICS_OPENGL
 
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 #include "graphics.h"
 #include "world/world.h"
@@ -27,7 +27,8 @@ DECLARE_COLOUR(GROUND,        30 , 30 , 30 );
 
 struct graphics_ctx
 {
-	ALLEGRO_DISPLAY *display;
+	SDL_Window *display;
+	SDL_GLContext gl;
 
 	struct
 	{
@@ -57,10 +58,18 @@ static void init_opengl(struct graphics_ctx *ctx)
 MODULE_IMPLEMENT(struct graphics_ctx, "OpenGL graphics context",
 		graphics_init,
 		{
-			al_set_new_display_flags(ALLEGRO_OPENGL);
-			if ((new_instance->display = al_create_display(WINDOW_WIDTH, WINDOW_HEIGHT)) == NULL)
+			SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+			if ((new_instance->display = SDL_CreateWindow(WINDOW_TITLE,
+							SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+							WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_OPENGL)) == NULL)
 			{
 				LOG_ERROR("Failed to create display");
+				MODULE_INIT_ABORT;
+			}
+
+			if ((new_instance->gl = SDL_GL_CreateContext(new_instance->display)) == NULL)
+			{
+				LOG_ERROR("Failed to create OpenGL context");
 				MODULE_INIT_ABORT;
 			}
 
@@ -78,13 +87,11 @@ MODULE_IMPLEMENT(struct graphics_ctx, "OpenGL graphics context",
 		graphics_destroy,
 		{
 			if (instance->display)
-				al_destroy_display(instance->display);
+				SDL_DestroyWindow(instance->display);
+			if (instance->gl)
+				SDL_GL_DeleteContext(instance->gl);
 		})
 
-ALLEGRO_EVENT_SOURCE *graphics_get_display_event_source(struct graphics_ctx *ctx)
-{
-	return al_get_display_event_source(ctx->display);
-}
 
 void graphics_start(struct graphics_ctx *ctx)
 {
@@ -183,9 +190,9 @@ void graphics_draw_human(float x, float y, struct component_human *human)
 	glPopMatrix();
 }
 
-void graphics_end()
+void graphics_end(struct graphics_ctx *ctx)
 {
-	al_flip_display();
+	SDL_GL_SwapWindow(ctx->display);
 }
 
 static void resize(struct graphics_ctx *ctx)

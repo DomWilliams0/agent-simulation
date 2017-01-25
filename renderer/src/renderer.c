@@ -1,4 +1,4 @@
-#include <allegro5/allegro.h>
+#include <SDL2/SDL.h>
 
 #include "renderer.h"
 #include "graphics.h"
@@ -42,9 +42,9 @@ MODULE_IMPLEMENT(struct renderer, "renderer",
 		{
 			new_instance->sim = (struct simulator *)arg;
 
-			if (!al_init())
+			if (SDL_Init(SDL_INIT_VIDEO))
 			{
-				LOG_ERROR("Failed to init allegro");
+				LOG_ERROR("Failed to init SDL");
 				MODULE_INIT_ABORT;
 			}
 
@@ -65,106 +65,101 @@ MODULE_IMPLEMENT(struct renderer, "renderer",
 				graphics_destroy(instance->graphics);
 			if (instance->keyboard)
 				keyboard_destroy(instance->keyboard);
-			al_uninstall_system();
+
+			SDL_Quit();
 		})
 
 void renderer_start_loop(struct renderer *renderer)
 {
-	// timers
-	ALLEGRO_TIMER *sim_timer, *render_timer;
-	if ((sim_timer = al_create_timer(1.0 / TICKS_PER_SECOND)) == NULL ||
-			(render_timer = al_create_timer(1.0 / FRAMES_PER_SECOND)) == NULL)
-	{
-		LOG_ERROR("Failed to create timers");
-		return;
-	}
-
-	// events
-	ALLEGRO_EVENT_QUEUE *event_queue;
-	if ((event_queue = al_create_event_queue()) == NULL)
-	{
-		LOG_ERROR("Failed to create event queue");
-		return;
-	}
-	al_register_event_source(event_queue, graphics_get_display_event_source(renderer->graphics));
-	al_register_event_source(event_queue, al_get_keyboard_event_source());
-	al_register_event_source(event_queue, al_get_timer_event_source(sim_timer));
-	al_register_event_source(event_queue, al_get_timer_event_source(render_timer));
-
-	al_start_timer(sim_timer);
-	al_start_timer(render_timer);
-
+	double total_time = 0;
 	while (TRUE)
 	{
-		ALLEGRO_EVENT e;
-		al_wait_for_event(event_queue, &e);
-
-		if (e.type == ALLEGRO_EVENT_TIMER && al_is_event_queue_empty(event_queue))
+		SDL_Event e;
+		BOOL key_handled, key_down;
+		while (SDL_PollEvent(&e))
 		{
-			double start_time = al_get_time();
-			double total_time;
-			struct time_collector *tc;
-
-			if (e.timer.source == sim_timer)
+			switch(e.type)
 			{
-				step_simulation(renderer);
-				total_time = al_get_time() - start_time;
-				tc = &renderer->times.logic;
+				case SDL_QUIT:
+					goto break_out;
+					break;
 
-				// piggyback off simulator timer to print once per second
-				if (tc->count == TICKS_PER_SECOND)
-				{
-					float avg_logic = tc->accumulator / tc->count;
-					memset(tc, 0, sizeof(struct time_collector));
+				case SDL_KEYUP:
+				case SDL_KEYDOWN:
+					key_down = e.type == SDL_KEYDOWN;
 
-					struct time_collector *render_tc = &renderer->times.render;
-					float avg_render = render_tc->accumulator / render_tc->count;
-					memset(render_tc, 0, sizeof(struct time_collector));
+					// quitting
+					if (key_down && e.key.keysym.sym == SDLK_ESCAPE)
+					{
+						goto break_out;
+					}
 
-					LOG_INFO("sim %.4f (%.2f) | render %.4f (%.2f)", avg_logic, 1./avg_logic, avg_render, 1./avg_render);
-				}
-			}
-			else
-			{
-				render_simulation(renderer);
-				total_time = al_get_time() - start_time;
-				tc = &renderer->times.render;
-			}
+					// camera
+					key_handled = keyboard_handle_camera_key(renderer->keyboard, e.type == SDL_KEYDOWN, e.key.keysym.sym);
+					if (!key_handled)
+					{
+						// TODO pass off to gui/something else
+					}
 
-			tc->accumulator += total_time;
-			tc->count += 1;
-		}
-
-		// quit
-		else if (e.type == ALLEGRO_EVENT_DISPLAY_CLOSE ||
-				(e.type == ALLEGRO_EVENT_KEY_DOWN && e.keyboard.keycode == ALLEGRO_KEY_ESCAPE))
-		{
-			break;
-		}
-
-		// resize
-		else if (e.type == ALLEGRO_EVENT_DISPLAY_RESIZE)
-		{
-			graphics_resize(renderer->graphics, e.display.width, e.display.height);
-		}
-
-		// keyboard
-		else if (e.type == ALLEGRO_EVENT_KEY_DOWN || e.type == ALLEGRO_EVENT_KEY_UP)
-		{
-			BOOL handled = keyboard_handle_camera_key(renderer->keyboard, e.type == ALLEGRO_EVENT_KEY_DOWN, e.keyboard.keycode);
-			if (!handled)
-			{
-				// TODO pass off to gui/something else
+				case SDL_WINDOWEVENT:
+					if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+					{
+						graphics_resize(renderer->graphics, e.window.data1, e.window.data2);
+					}
 			}
 		}
 
+		unsigned int update_start_time = SDL_GetTicks();
+		while (total_time >= TICKS_PER_SECOND)
+		{
+			step_simulation(renderer);
+			total_time -= TICKS_PER_SECOND;
+		}
+
+		render_simulation(renderer);
+
+		total_time += SDL_GetTicks() - update_start_time;
+
+		//if (e.type == ALLEGRO_EVENT_TIMER && al_is_event_queue_empty(event_queue))
+		//{
+		//	double start_time = al_get_time();
+		//	double total_time;
+		//	struct time_collector *tc;
+
+		//	if (e.timer.source == sim_timer)
+		//	{
+		//		step_simulation(renderer);
+		//		total_time = al_get_time() - start_time;
+		//		tc = &renderer->times.logic;
+
+		//		// piggyback off simulator timer to print once per second
+		//		if (tc->count == TICKS_PER_SECOND)
+		//		{
+		//			float avg_logic = tc->accumulator / tc->count;
+		//			memset(tc, 0, sizeof(struct time_collector));
+
+		//			struct time_collector *render_tc = &renderer->times.render;
+		//			float avg_render = render_tc->accumulator / render_tc->count;
+		//			memset(render_tc, 0, sizeof(struct time_collector));
+
+		//			LOG_INFO("sim %.4f (%.2f) | render %.4f (%.2f)", avg_logic, 1./avg_logic, avg_render, 1./avg_render);
+		//		}
+		//	}
+		//	else
+		//	{
+		//		render_simulation(renderer);
+		//		total_time = al_get_time() - start_time;
+		//		tc = &renderer->times.render;
+		//	}
+
+		//	tc->accumulator += total_time;
+		//	tc->count += 1;
+		//}
 
 	}
 
-	// cleanup
-	al_destroy_timer(sim_timer);
-	al_destroy_timer(render_timer);
-	al_destroy_event_queue(event_queue);
+break_out:
+	return;
 }
 
 void step_simulation(struct renderer *renderer)
@@ -207,5 +202,5 @@ void render_simulation(struct renderer *renderer)
 	struct entity_ctx *entities = entity_get_context(renderer->sim);
 	render_entities(entities);
 
-	graphics_end();
+	graphics_end(renderer->graphics);
 }

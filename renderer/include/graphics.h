@@ -3,11 +3,9 @@
 
 #include "util/util.h"
 
+#define WINDOW_TITLE  "Simulator"
 #define WINDOW_WIDTH  (600)
 #define WINDOW_HEIGHT (400)
-
-// shhh
-typedef struct ALLEGRO_EVENT_SOURCE ALLEGRO_EVENT_SOURCE;
 
 struct colour
 {
@@ -26,15 +24,13 @@ struct component_human;
 
 MODULE_DECLARE(struct graphics_ctx, graphics_init, graphics_destroy)
 
-ALLEGRO_EVENT_SOURCE *graphics_get_display_event_source(struct graphics_ctx *ctx);
-
 void graphics_start(struct graphics_ctx *ctx);
 
 void graphics_draw_world(struct world *world);
 
 void graphics_draw_human(float x, float y, struct component_human *human);
 
-void graphics_end();
+void graphics_end(struct graphics_ctx *ctx);
 
 void graphics_resize(struct graphics_ctx *ctx, int w, int h);
 

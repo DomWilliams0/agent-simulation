@@ -75,6 +75,8 @@ world_body world_create_entity(struct world *w)
 	dGeomID geom = dCreateSphere(w->collision_space, HUMAN_RADIUS);
 	dGeomSetBody(geom, b);
 
+	dBodyAddForce(b, 400, 300, 0);
+
 	return b;
 }
 

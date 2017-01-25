@@ -1,4 +1,4 @@
-#include <allegro5/allegro.h>
+#include <SDL2/SDL.h>
 #include "keyboard.h"
 #include "graphics.h"
 
@@ -16,44 +16,39 @@ struct keyboard_ctx
 MODULE_IMPLEMENT(struct keyboard_ctx, "keyboard",
 		keyboard_init,
 		{
-			if (!al_install_keyboard())
-			{
-				LOG_ERROR("Failed to install keyboard");
-				MODULE_INIT_ABORT;
-			}
 
 		},
 		keyboard_destroy,
 		{
-			al_uninstall_keyboard();
 		})
-
 
 BOOL keyboard_handle_camera_key(struct keyboard_ctx *ctx, BOOL is_down, int key)
 {
 	switch(key)
 	{
-		case ALLEGRO_KEY_A:
+		case SDLK_a:
 			ctx->camera.move_hor = is_down * -MOVE_SPEED;
 			break;
 
-		case ALLEGRO_KEY_D:
+		case SDLK_d:
 			ctx->camera.move_hor = is_down * MOVE_SPEED;
 			break;
 
-		case ALLEGRO_KEY_S:
+		case SDLK_s:
 			ctx->camera.move_ver = is_down * MOVE_SPEED;
 			break;
 
-		case ALLEGRO_KEY_W:
+		case SDLK_w:
 			ctx->camera.move_ver = is_down * -MOVE_SPEED;
 			break;
 
-		case ALLEGRO_KEY_PAD_PLUS:
+		case SDLK_KP_PLUS:
+		case SDLK_PLUS:
 			ctx->camera.zoom = is_down * -ZOOM_SPEED;
 			break;
 
-		case ALLEGRO_KEY_PAD_MINUS:
+		case SDLK_KP_MINUS:
+		case SDLK_MINUS:
 			ctx->camera.zoom = is_down * ZOOM_SPEED;
 			break;
 
