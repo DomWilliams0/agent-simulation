@@ -16,6 +16,8 @@ enum TILE_TYPE
 
 struct world
 {
+	unsigned int id;
+
 	dWorldID phys_id;
 	dSpaceID collision_space;
 	dJointGroupID contacts;

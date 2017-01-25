@@ -45,13 +45,15 @@ static BOOL load_params(struct world *world, struct world_parameters *params)
 MODULE_IMPLEMENT(struct world, "world",
 		world_create,
 		{
+			static unsigned int last_id = 0;
+
 			struct world_parameters *params = (struct world_parameters *)arg;
 			if (!load_params(new_instance, params))
 			{
 				LOG_WARN("Invalid world parameters");
 				MODULE_INIT_ABORT;
 			}
-
+			new_instance->id = last_id++;
 			create_physics_world(new_instance);
 		},
 		world_destroy,
@@ -72,6 +74,11 @@ int world_get_height(struct world *w)
 char *world_get_file_path(struct world *w)
 {
 	return w->file_path;
+}
+
+unsigned int world_get_id(struct world *w)
+{
+	return w->id;
 }
 
 void world_step(struct world *w)
