@@ -5,6 +5,7 @@
 
 #include "graphics.h"
 #include "world/world.h"
+#include "entity/components.h"
 
 #include "util/memory.h"
 #include "util/log.h"
@@ -13,6 +14,16 @@
 
 #define ZOOM_MAX (64.f)
 #define ZOOM_MIN (0.5f)
+
+// awful and most likely temporary
+//           ^^^^^^^^^^^
+#define DECLARE_COLOUR(name, red, green, blue)\
+	struct colour MACRO_CONCAT(COLOUR_, name) = {red/255.f, green/255.f, blue/255.f}
+
+DECLARE_COLOUR(ENTITY_MALE,   105, 80 , 200);
+DECLARE_COLOUR(ENTITY_FEMALE, 200, 80 , 105);
+DECLARE_COLOUR(GRASS,         60 , 200, 80 );
+DECLARE_COLOUR(GROUND,        30 , 30 , 30 );
 
 struct graphics_ctx
 {
@@ -134,10 +145,8 @@ void graphics_draw_world(struct world *world)
 
 }
 
-void graphics_draw_human(struct graphics_ctx *ctx, float x, float y, struct colour colour)
+void graphics_draw_human(float x, float y, struct component_human *human)
 {
-	UNUSED(ctx);
-
 	// ty http://slabode.exofire.net/circle_draw.shtml
 	// values hardcoded
 	static float tangetial_factor = 0.3249196962329063;
@@ -145,7 +154,10 @@ void graphics_draw_human(struct graphics_ctx *ctx, float x, float y, struct colo
 	static int segment_count      = 20;
 
 	glPushMatrix();
-	glColor3fv((GLfloat *)&colour);
+	if (human->gender == MALE)
+		glColor3fv((GLfloat *)&COLOUR_ENTITY_MALE);
+	else
+		glColor3fv((GLfloat *)&COLOUR_ENTITY_FEMALE);
 
 	glTranslatef(x, y, 0);
 
@@ -171,10 +183,8 @@ void graphics_draw_human(struct graphics_ctx *ctx, float x, float y, struct colo
 	glPopMatrix();
 }
 
-void graphics_end(struct graphics_ctx *ctx)
+void graphics_end()
 {
-	UNUSED(ctx);
-
 	al_flip_display();
 }
 

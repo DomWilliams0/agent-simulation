@@ -22,6 +22,7 @@ struct camera_movement
 };
 
 struct world;
+struct component_human;
 
 MODULE_DECLARE(struct graphics_ctx, graphics_init, graphics_destroy)
 
@@ -31,9 +32,9 @@ void graphics_start(struct graphics_ctx *ctx);
 
 void graphics_draw_world(struct world *world);
 
-void graphics_draw_human(struct graphics_ctx *ctx, float x, float y, struct colour colour);
+void graphics_draw_human(float x, float y, struct component_human *human);
 
-void graphics_end(struct graphics_ctx *ctx);
+void graphics_end();
 
 void graphics_resize(struct graphics_ctx *ctx, int w, int h);
 

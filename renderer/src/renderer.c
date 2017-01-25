@@ -13,12 +13,6 @@
 #define TICKS_PER_SECOND  (20)
 #define FRAMES_PER_SECOND (60)
 
-// awful and most likely temporary
-//           ^^^^^^^^^^^
-#define DECLARE_COLOUR(name, red, green, blue)\
-	struct colour MACRO_CONCAT(COLOUR_, name) = {red/255.f, green/255.f, blue/255.f}
-
-
 struct time_collector
 {
 	double accumulator;
@@ -39,12 +33,6 @@ struct renderer
 		float last_frame;
 	} times;
 };
-
-// TODO move these to graphics
-DECLARE_COLOUR(ENTITY_MALE,   105, 80 , 200);
-DECLARE_COLOUR(ENTITY_FEMALE, 200, 80 , 105);
-DECLARE_COLOUR(GRASS,         60 , 200, 80 );
-DECLARE_COLOUR(GROUND,        30 , 30 , 30 );
 
 void step_simulation(struct renderer *renderer);
 void render_simulation(struct renderer *renderer);
@@ -184,7 +172,7 @@ void step_simulation(struct renderer *renderer)
 	simulator_step(renderer->sim);
 }
 
-static void render_entities(struct graphics_ctx *graphics, struct entity_ctx *entities)
+static void render_entities(struct entity_ctx *entities)
 {
 	struct component_physics *physics = (struct component_physics *)entity_get_component_array(entities, COMPONENT_PHYSICS);
 	entity_id count = entity_get_count(entities);
@@ -197,7 +185,7 @@ static void render_entities(struct graphics_ctx *graphics, struct entity_ctx *en
 
 		struct component_human *human = entity_get_component(entities, i, COMPONENT_HUMAN);
 
-		graphics_draw_human(graphics, pos.x, pos.y, human->gender == MALE ? COLOUR_ENTITY_MALE : COLOUR_ENTITY_FEMALE);
+		graphics_draw_human(pos.x, pos.y, human);
 	}
 }
 
@@ -217,7 +205,7 @@ void render_simulation(struct renderer *renderer)
 
 	// entities
 	struct entity_ctx *entities = entity_get_context(renderer->sim);
-	render_entities(graphics, entities);
+	render_entities(entities);
 
-	graphics_end(graphics);
+	graphics_end();
 }
