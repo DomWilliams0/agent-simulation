@@ -4,15 +4,7 @@
 #include <ode/ode.h>
 #include <stdint.h>
 
-#define CHUNK_SIZE (32)
-
-enum TILE_TYPE
-{
-	TILE_BLANK = 0,
-	TILE_GRASS,
-
-	TILE_MAX
-};
+#include "world/world.h"
 
 struct world
 {
@@ -26,7 +18,7 @@ struct world
 	int height;
 	char *file_path;
 
-	struct chunk *chunks[];
+	struct chunk *chunks;
 };
 
 struct chunk

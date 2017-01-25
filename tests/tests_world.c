@@ -76,5 +76,25 @@ UNIT_TEST(world_entity_creation)
 	world_destroy(w);
 }
 
+UNIT_TEST(world_tile_set_get)
+{
+	UNUSED(state);
+
+	CREATE_WORLD;
+
+	// valid
+	assert_int_equal(TILE_BLANK, world_get_tile(w, 1, 1));
+	world_set_tile(w, 1, 1, TILE_GRASS);
+	assert_int_equal(TILE_GRASS, world_get_tile(w, 1, 1));
+
+	// invalid
+	assert_int_equal(TILE_BLANK, world_get_tile(w, 100, 100));
+	world_set_tile(w, 100, 100, TILE_GRASS);
+	assert_int_equal(TILE_BLANK, world_get_tile(w, 100, 100));
+
+	world_destroy(w);
+}
+
 REGISTER_TEST(world_creation_destruction);
 REGISTER_TEST(world_entity_creation);
+REGISTER_TEST(world_tile_set_get);

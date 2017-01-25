@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "util/memory.h"
 #include "util/bool.h"
 #include "util/log.h"
@@ -8,39 +10,8 @@
 #include "world/internal/physics.h"
 #include "world/internal/world.h"
 
-static BOOL load_params(struct world *world, struct world_parameters *params)
-{
-	if (params == NULL)
-	{
-		LOG_WARN("No parameters provided");
-		return FALSE;
-	}
-
-	if (params->width <= 0 || params->height <= 0)
-	{
-		LOG_WARN("Width and height must be positive");
-		return FALSE;
-	}
-
-	if (params->width % CHUNK_SIZE != 0 || params->height % CHUNK_SIZE != 0)
-	{
-		LOG_WARN("Width and height must be multiples of CHUNK_SIZE");
-		return FALSE;
-	}
-
-	// currently unsupported
-	if (params->file_path != NULL)
-	{
-		LOG_WARN("World loading currently not supported");
-		return FALSE;
-	}
-
-	world->width = params->width;
-	world->height = params->height;
-	world->file_path = params->file_path;
-
-	return TRUE;
-}
+static void load_terrain(struct world *world);
+static BOOL load_params(struct world *world, struct world_parameters *params);
 
 MODULE_IMPLEMENT(struct world, "world",
 		world_create,
@@ -55,10 +26,13 @@ MODULE_IMPLEMENT(struct world, "world",
 			}
 			new_instance->id = last_id++;
 			create_physics_world(new_instance);
+			load_terrain(new_instance);
 		},
 		world_destroy,
 		{
 			destroy_physics_world(instance);
+			if (instance->chunks)
+				safe_free(instance->chunks);
 		})
 
 int world_get_width(struct world *w)
@@ -114,4 +88,80 @@ void world_get_position(world_body body, struct position *pos)
 void world_set_position(world_body body, struct position *pos)
 {
 	dBodySetPosition(body, pos->x, pos->y, 0);
+}
+
+static BOOL load_params(struct world *world, struct world_parameters *params)
+{
+	if (params == NULL)
+	{
+		LOG_WARN("No parameters provided");
+		return FALSE;
+	}
+
+	if (params->width <= 0 || params->height <= 0)
+	{
+		LOG_WARN("Width and height must be positive");
+		return FALSE;
+	}
+
+	if (params->width % CHUNK_SIZE != 0 || params->height % CHUNK_SIZE != 0)
+	{
+		LOG_WARN("Width and height must be multiples of CHUNK_SIZE");
+		return FALSE;
+	}
+
+	world->width = params->width;
+	world->height = params->height;
+	world->file_path = params->file_path;
+
+	return TRUE;
+}
+
+static void load_terrain(struct world *world)
+{
+	int chunks_hor = ceilf(world->width / (float)CHUNK_SIZE);
+	int chunks_ver = ceilf(world->height / (float)CHUNK_SIZE);
+
+	safe_malloc(chunks_hor * chunks_ver * sizeof(world->chunks[0]), &world->chunks);
+}
+
+// #define GET_CHUNK_UNSAFE(w, x, y) \
+// 	struct chunk *chunk = w->chunks + ((x / CHUNK_SIZE) + (w->width * (y / CHUNK_SIZE)))
+
+#define GET_CHUNK(w, x, y) \
+	int chunk_x  = x / CHUNK_SIZE; \
+	int chunk_y  = y / CHUNK_SIZE; \
+	int chunk_i = chunk_x + (w->width * chunk_y); \
+	BOOL good = TRUE; \
+	if (chunk_x < 0 || chunk_y < 0 || x >= w->width || y >= w->height) \
+	{ \
+		LOG_WARN("Attempted to access out of range chunk at (%d, %d) in world %d", x, y, w->id); \
+		good = FALSE; \
+	} \
+	struct chunk *chunk = w->chunks + chunk_i;
+
+
+enum tile_type world_get_tile(struct world *w, unsigned int x, unsigned int y)
+{
+	GET_CHUNK(w, x, y);
+	if (!good)
+		return TILE_BLANK;
+
+	int tile_x = x % CHUNK_SIZE;
+	int tile_y = y % CHUNK_SIZE;
+	int tile_i = tile_x + (CHUNK_SIZE * tile_y);
+
+	return (enum tile_type) chunk->tiles[tile_i];
+}
+
+void world_set_tile(struct world *w, unsigned int x, unsigned int y, enum tile_type type)
+{
+	GET_CHUNK(w, x, y);
+	if (!good)
+		return;
+
+	int tile_x = x % CHUNK_SIZE;
+	int tile_y = y % CHUNK_SIZE;
+	int tile_i = tile_x + (CHUNK_SIZE * tile_y);
+	chunk->tiles[tile_i] = type;
 }
