@@ -35,14 +35,14 @@ MODULE_IMPLEMENT(struct world, "world",
 				safe_free(instance->chunks);
 		})
 
-unsigned int world_get_width(struct world *w)
+unsigned int world_get_chunk_width(struct world *w)
 {
-	return w->width;
+	return w->chunk_width;
 }
 
-unsigned int world_get_height(struct world *w)
+unsigned int world_get_chunk_height(struct world *w)
 {
-	return w->height;
+	return w->chunk_width;
 }
 
 char *world_get_file_path(struct world *w)
@@ -98,20 +98,21 @@ static BOOL load_params(struct world *world, struct world_parameters *params)
 		return FALSE;
 	}
 
-	if (params->width <= 0 || params->height <= 0)
+	if (params->chunk_width == 0 || params->chunk_height == 0)
 	{
 		LOG_WARN("Width and height must be positive");
 		return FALSE;
 	}
 
-	if (params->width % CHUNK_SIZE != 0 || params->height % CHUNK_SIZE != 0)
+	// currently unsupported
+	if (params->file_path != NULL)
 	{
-		LOG_WARN("Width and height must be multiples of CHUNK_SIZE");
+		LOG_WARN("World loading currently not supported");
 		return FALSE;
 	}
 
-	world->width = params->width;
-	world->height = params->height;
+	world->chunk_width = params->chunk_width;
+	world->chunk_height = params->chunk_height;
 	world->file_path = params->file_path;
 
 	return TRUE;
@@ -119,10 +120,7 @@ static BOOL load_params(struct world *world, struct world_parameters *params)
 
 static void load_terrain(struct world *world)
 {
-	unsigned int chunks_hor = ceilf(world->width / (float)CHUNK_SIZE);
-	unsigned int chunks_ver = ceilf(world->height / (float)CHUNK_SIZE);
-
-	safe_malloc(chunks_hor * chunks_ver * sizeof(world->chunks[0]), &world->chunks);
+	safe_malloc(world->chunk_width * world->chunk_height * sizeof(struct chunk), &world->chunks);
 }
 
 // #define GET_CHUNK_UNSAFE(w, x, y) \
@@ -131,9 +129,9 @@ static void load_terrain(struct world *world)
 #define GET_CHUNK(w, x, y) \
 	unsigned int chunk_x  = x / CHUNK_SIZE; \
 	unsigned int chunk_y  = y / CHUNK_SIZE; \
-	unsigned int chunk_i = chunk_x + (w->width * chunk_y); \
+	unsigned int chunk_i = chunk_x + (w->chunk_width * chunk_y); \
 	BOOL good = TRUE; \
-	if (x >= w->width || y >= w->height) \
+	if (chunk_x >= w->chunk_width || chunk_y >= w->chunk_height) \
 	{ \
 		LOG_WARN("Attempted to access out of range chunk at (%d, %d) in world %d", x, y, w->id); \
 		good = FALSE; \

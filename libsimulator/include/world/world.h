@@ -16,8 +16,8 @@ struct position
 
 struct world_parameters
 {
-	unsigned int width;
-	unsigned int height;
+	unsigned int chunk_width;
+	unsigned int chunk_height;
 	char *file_path;
 };
 
@@ -34,8 +34,8 @@ MODULE_DECLARE(struct world, world_create, world_destroy);
 
 struct world *world_get_world(struct simulator *sim); // TODO add support for multiple
 
-unsigned int world_get_width(struct world *w);
-unsigned int world_get_height(struct world *w);
+unsigned int world_get_chunk_width(struct world *w);
+unsigned int world_get_chunk_height(struct world *w);
 char *world_get_file_path(struct world *w);
 unsigned int world_get_id(struct world *w);
 

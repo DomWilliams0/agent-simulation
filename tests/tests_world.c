@@ -4,8 +4,8 @@
 
 #define CREATE_WORLD \
 	struct world_parameters params = { \
-		.width = 64, \
-		.height = 96 \
+		.chunk_width = 2, \
+		.chunk_height = 2 \
 	}; \
 	struct world *w = world_create(&params);
 
@@ -17,38 +17,41 @@ UNIT_TEST(world_creation_destruction)
 	// valid creation
 	CREATE_WORLD;
 	assert_non_null(w);
-	assert_int_equal(64, world_get_width(w));
-	assert_int_equal(96, world_get_height(w));
+	assert_int_equal(2, world_get_chunk_width(w));
+	assert_int_equal(2, world_get_chunk_height(w));
 	assert_null(world_get_file_path(w));
 	world_destroy(w);
 
 	// zero
-	params.width = 0;
-	params.height = 32;
+	params.chunk_width = 0;
+	params.chunk_height = 10;
 	assert_null(world_create(&params));
-	params.width = 32;
-	params.height = 0;
+	params.chunk_width = 10;
+	params.chunk_height = 0;
 	assert_null(world_create(&params));
-	params.width = 0;
-	params.height = 0;
-	assert_null(world_create(&params));
-
-	// multiple of CHUNK_SIZE
-	params.width = 33;
-	params.height = 32;
-	assert_null(world_create(&params));
-	params.width = 32;
-	params.height = 33;
-	assert_null(world_create(&params));
-	params.width = 55;
-	params.height = 55;
+	params.chunk_width = 0;
+	params.chunk_height = 0;
 	assert_null(world_create(&params));
 
 	// currently unsupported
-	params.width = 40;
-	params.height = 50;
+	params.chunk_width = 10;
+	params.chunk_height = 20;
 	params.file_path = "not null";
 	assert_null(world_create(&params));
+}
+
+UNIT_TEST(world_initial_state)
+{
+	struct world_parameters params = {400, 400};
+	struct world *w = world_create(&params);
+
+	for (unsigned int y = 0; y < params.chunk_height; ++y)
+	{
+		for (unsigned int x = 0; x < params.chunk_width; ++x)
+		{
+			assert_int_equal(TILE_BLANK, world_get_tile(w, x, y));
+		}
+	}
 }
 
 UNIT_TEST(world_entity_creation)
@@ -87,3 +90,4 @@ UNIT_TEST(world_tile_set_get)
 REGISTER_TEST(world_creation_destruction);
 REGISTER_TEST(world_entity_creation);
 REGISTER_TEST(world_tile_set_get);
+REGISTER_TEST(world_initial_state);
