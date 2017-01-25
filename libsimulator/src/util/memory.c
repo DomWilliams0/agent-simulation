@@ -6,7 +6,14 @@
 
 void safe_malloc_wrapper(size_t size, void **ptr, const char *file, unsigned int line)
 {
-	void *p = calloc(1, size);
+	void *p = NULL;
+
+	if (size > 0)
+	{
+		LOG_DEBUG("Allocating %lu bytes at %s:%d", size, file, line);
+		p = calloc(1, size);
+	}
+
 	if (!p)
 	{
 		LOG_ERROR("Failed to allocate %lu bytes at %s:%d", size, file, line);
@@ -17,8 +24,11 @@ void safe_malloc_wrapper(size_t size, void **ptr, const char *file, unsigned int
 	*ptr = p;
 }
 
-void safe_free(void *ptr)
+void safe_free_wrapper(void *ptr, const char *file, unsigned int line)
 {
 	if (ptr)
+	{
+		LOG_DEBUG("Freeing %p at %s:%d", ptr, file, line);
 		free(ptr);
+	}
 }
