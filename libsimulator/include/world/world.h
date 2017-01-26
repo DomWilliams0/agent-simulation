@@ -34,7 +34,7 @@ typedef int tile;
 
 struct chunk
 {
-	tile tiles[CHUNK_SIZE * CHUNK_SIZE];
+	tile tiles[CHUNK_TILE_COUNT];
 };
 
 

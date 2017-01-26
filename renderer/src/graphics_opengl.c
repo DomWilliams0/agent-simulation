@@ -51,6 +51,7 @@ static void init_opengl(struct graphics_ctx *ctx)
 {
 	glClearColor(17.f/255, 17.f/255, 19.f/255, 1.f);
 	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_TEXTURE_2D);
 
 	resize(ctx);
 }
@@ -106,48 +107,54 @@ void graphics_start(struct graphics_ctx *ctx)
 void graphics_draw_world(struct world *world)
 {
 	const unsigned int width = world_get_chunk_width(world);
-	const unsigned int height = world_get_chunk_height(world);
 
 	unsigned int chunk_count;
 	struct chunk * chunk = world_get_chunk_array(world, &chunk_count);
 
 	glPushMatrix();
-	glColor3f(1, 0, 0);
 
-	glBegin(GL_QUADS);
-
-	for (unsigned int y = height; y; y--)
+	for (int chunk_i = 0; chunk_i < chunk_count; ++chunk_i)
 	{
-		for (unsigned int x = width; x; x--)
+		tile * tile = world_get_chunk_tiles(chunk);
+
+		glBegin(GL_QUADS);
+		for (int t = 0; t < CHUNK_TILE_COUNT; ++t)
 		{
-			tile * tile = world_get_chunk_tiles(chunk);
-			unsigned int tile_count = CHUNK_TILE_COUNT;
+			// TODO temporary obvious colours
+			if (*tile == TILE_BLANK)
+				glColor3f(0.25f, 0.25f, 0.25f);
+			else
+				glColor3f(0, 1, 0);
 
-			while (tile_count--)
-			{
-				// TODO temporary obvious colours
-				if (*tile == TILE_BLANK && tile_count % 3 == 0)
-					glColor3f(0.25f, 0.25f, 0.25f);
-				else
-					glColor3f(0, 1, 0);
+			unsigned int tile_x = t % CHUNK_SIZE;
+			unsigned int tile_y = t / CHUNK_SIZE;
 
-				unsigned int tile_x = tile_count % CHUNK_SIZE;
-				unsigned int tile_y = tile_count / CHUNK_SIZE;
+			glVertex2f(tile_x + 0, tile_y + 0);
+			glVertex2f(tile_x + 0, tile_y + 1);
+			glVertex2f(tile_x + 1, tile_y + 1);
+			glVertex2f(tile_x + 1, tile_y + 0);
 
-				glVertex2f(tile_x + 0, tile_y + 0);
-				glVertex2f(tile_x + 0, tile_y + 1);
-				glVertex2f(tile_x + 1, tile_y + 1);
-				glVertex2f(tile_x + 1, tile_y + 0);
-
-				tile++;
-			}
-
-			chunk++;
+			tile++;
 		}
+		glEnd();
+
+		if ((chunk_i + 1) % width == 0)
+		{
+			// new row
+			int col_reset = -(width - 1) * CHUNK_SIZE;
+			int row_shift = CHUNK_SIZE;
+			glTranslatef(col_reset, row_shift, 0);
+		}
+		else
+		{
+			// move along
+			glTranslatef(CHUNK_SIZE, 0, 0);
+		}
+
+		chunk++;
 	}
 
-	glEnd();
-
+	glLoadIdentity();
 	glPopMatrix();
 
 }
