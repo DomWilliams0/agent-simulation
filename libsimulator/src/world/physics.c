@@ -25,6 +25,28 @@ void create_physics_world(struct world *world)
     world->phys_id = w;
     world->collision_space = s;
     world->contacts = dJointGroupCreate(0);
+
+	// borders
+	const float radius = 1;
+	const float width = world->chunk_width * CHUNK_SIZE;
+	const float height = world->chunk_height * CHUNK_SIZE;
+
+	dGeomID border;
+	// top
+	border = dCreateBox(s, width, radius, 1);
+	dGeomSetPosition(border, width / 2, -radius/2, 0);
+
+	// bottom
+	border = dCreateBox(s, width, radius, 1);
+	dGeomSetPosition(border, width / 2, height + radius/2, 0);
+
+	// left
+	border = dCreateBox(s, radius, height, 1);
+	dGeomSetPosition(border, -radius / 2, height / 2, 0);
+
+	// right
+	border = dCreateBox(s, radius, height, 1);
+	dGeomSetPosition(border, width + radius / 2, height / 2, 0);
 }
 
 void destroy_physics_world(struct world *world)
