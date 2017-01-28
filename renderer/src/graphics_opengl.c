@@ -17,13 +17,17 @@
 
 // awful and most likely temporary
 //           ^^^^^^^^^^^
-#define DECLARE_COLOUR(name, red, green, blue)\
-	struct colour MACRO_CONCAT(COLOUR_, name) = {red/255.f, green/255.f, blue/255.f}
+#define DECLARE_COLOUR(red, green, blue) {red/255.f, green/255.f, blue/255.f}
+#define DECLARE_COLOUR_CONSTANT(name, red, green, blue)\
+	struct colour MACRO_CONCAT(COLOUR_, name) = DECLARE_COLOUR(red, green, blue)
 
-DECLARE_COLOUR(ENTITY_MALE,   105, 80 , 200);
-DECLARE_COLOUR(ENTITY_FEMALE, 200, 80 , 105);
-DECLARE_COLOUR(GRASS,         60 , 200, 80 );
-DECLARE_COLOUR(GROUND,        30 , 30 , 30 );
+DECLARE_COLOUR_CONSTANT(ENTITY_MALE,   105, 80 , 200);
+DECLARE_COLOUR_CONSTANT(ENTITY_FEMALE, 200, 80 , 105);
+
+static struct colour TILE_COLOURS[] = {
+	DECLARE_COLOUR(40, 40,  48), // TILE_BLANK
+	DECLARE_COLOUR(50, 140, 80), // TILE_GRASS
+};
 
 struct graphics_ctx
 {
@@ -120,11 +124,8 @@ void graphics_draw_world(struct world *world)
 		glBegin(GL_QUADS);
 		for (int t = 0; t < CHUNK_TILE_COUNT; ++t)
 		{
-			// TODO temporary obvious colours
-			if (*tile == TILE_BLANK)
-				glColor3f(0.25f, 0.25f, 0.25f);
-			else
-				glColor3f(0, 1, 0);
+			struct colour *colour = TILE_COLOURS + *tile;
+			glColor3fv((GLfloat *)colour);
 
 			unsigned int tile_x = t % CHUNK_SIZE;
 			unsigned int tile_y = t / CHUNK_SIZE;
