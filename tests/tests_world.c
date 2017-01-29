@@ -5,7 +5,7 @@
 #define CREATE_WORLD \
 	struct world_parameters params = { \
 		.chunk_width = 2, \
-		.chunk_height = 2 \
+		.chunk_height = 7 \
 	}; \
 	struct world *w = world_create(&params);
 
@@ -18,7 +18,7 @@ UNIT_TEST(world_creation_destruction)
 	CREATE_WORLD;
 	assert_non_null(w);
 	assert_int_equal(2, world_get_chunk_width(w));
-	assert_int_equal(2, world_get_chunk_height(w));
+	assert_int_equal(7, world_get_chunk_height(w));
 	assert_null(world_get_file_path(w));
 	world_destroy(w);
 

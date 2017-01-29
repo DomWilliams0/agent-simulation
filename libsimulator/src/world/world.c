@@ -42,7 +42,7 @@ unsigned int world_get_chunk_width(struct world *w)
 
 unsigned int world_get_chunk_height(struct world *w)
 {
-	return w->chunk_width;
+	return w->chunk_height;
 }
 
 char *world_get_file_path(struct world *w)
