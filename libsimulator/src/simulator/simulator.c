@@ -21,8 +21,8 @@ MODULE_IMPLEMENT(struct simulator, "simulator",
 
 			// TODO pass through simulator args
 			struct world_parameters world_params;
-			world_params.chunk_width = 8;
-			world_params.chunk_height = 8;
+			world_params.chunk_width = 4;
+			world_params.chunk_height = 4;
 			world_params.file_path = NULL;
 
 			if ((new_instance->entity = entity_create_context(NULL)) == NULL ||

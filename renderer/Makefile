@@ -7,7 +7,7 @@ else
 	Leaving this here in case it's useful in the future)
 endif
 
-CFLAGS  += $(addprefix -I,$(INC)) -D$(RENDERER)
+CFLAGS  += $(addprefix -I,$(INC)) -D$(RENDERER) -DDEBUGGING_OVERLAY
 LDFLAGS += -lode -lsimulator -lGL -lSDL2 -lm -L$(BIN)
 
 SRCS    := $(shell find $(SRC) -type f -name '*.c')
