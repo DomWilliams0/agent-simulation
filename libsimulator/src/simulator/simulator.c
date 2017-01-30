@@ -57,7 +57,7 @@ struct world *simulator_get_world(struct simulator *sim)
 void simulator_populate(struct simulator *sim)
 {
 	struct entity_ctx *entity = sim->entity;
-	struct position pos = {0, 0};
+	float pos[2] = {0, 0};
 
 	for (int i = 0; i < 10; ++i)
 	{
@@ -67,9 +67,9 @@ void simulator_populate(struct simulator *sim)
 		struct component_human *hum = entity_add_component(entity, e, COMPONENT_HUMAN); // cache miss, hissss
 
 		phys->body = world_create_entity(sim->world);
-		world_set_position(phys->body, &pos);
-		pos.x += 5;
-		pos.y += 5;
+		world_set_position(phys->body, pos);
+		pos[0] += 5;
+		pos[1] += 5;
 
 		hum->age = 20 + i;
 		hum->gender = i % 2 == 0 ? MALE : FEMALE;

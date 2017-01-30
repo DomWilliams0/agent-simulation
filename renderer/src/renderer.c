@@ -167,17 +167,17 @@ static void render_entities(struct entity_ctx *entities)
 	entity_id count = entity_get_count(entities);
 	const entity_mask render_mask = COMPONENT_PHYSICS | COMPONENT_HUMAN;
 
-	struct position pos;
+	float pos[2];
 	for (entity_id i = 0; i < count; ++i)
 	{
 		if (!entity_has_component(entities, i, render_mask))
 			continue;
 
 		struct component_physics *phys = physics + i;
-		world_get_position(phys->body, &pos);
+		world_get_position(phys->body, pos);
 
 		struct component_human *human = humans + i;
-		graphics_draw_human(pos.x, pos.y, human);
+		graphics_draw_human(pos[0], pos[1], human);
 	}
 }
 

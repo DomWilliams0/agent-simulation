@@ -10,10 +10,7 @@
 
 struct simulator;
 
-struct position
-{
-	float x, y;
-};
+typedef float position[2];
 
 struct world_parameters
 {
@@ -51,8 +48,8 @@ void world_step(struct world *w);
 
 // entities
 world_body world_create_entity(struct world *w);
-void world_get_position(world_body body, struct position *pos);
-void world_set_position(world_body body, struct position *pos);
+void world_get_position(world_body body, position pos);
+void world_set_position(world_body body, position pos);
 
 // tiles
 enum tile_type world_get_tile(struct world *w, unsigned int x, unsigned int y);

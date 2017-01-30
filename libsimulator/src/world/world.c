@@ -80,16 +80,16 @@ world_body world_create_entity(struct world *w)
 	return b;
 }
 
-void world_get_position(world_body body, struct position *pos)
+void world_get_position(world_body body, position pos)
 {
-	const dReal *position = dBodyGetPosition(body);
-	pos->x = position[0];
-	pos->y = position[1];
+	const double *dpos = dBodyGetPosition(body);
+	pos[0] = dpos[0];
+	pos[1] = dpos[1];
 }
 
-void world_set_position(world_body body, struct position *pos)
+void world_set_position(world_body body, position pos)
 {
-	dBodySetPosition(body, pos->x + 0.5, pos->y + 0.5, 0);
+	dBodySetPosition(body, pos[0] + 0.5, pos[1] + 0.5, 0);
 }
 
 static BOOL load_params(struct world *world, struct world_parameters *params)
