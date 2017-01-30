@@ -89,7 +89,7 @@ void world_get_position(world_body body, struct position *pos)
 
 void world_set_position(world_body body, struct position *pos)
 {
-	dBodySetPosition(body, pos->x, pos->y, 0);
+	dBodySetPosition(body, pos->x + 0.5, pos->y + 0.5, 0);
 }
 
 static BOOL load_params(struct world *world, struct world_parameters *params)
