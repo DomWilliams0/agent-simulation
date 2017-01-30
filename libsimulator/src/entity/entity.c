@@ -176,7 +176,8 @@ void* entity_get_component_array(struct entity_ctx *ctx, component_type c)
 
 		default:
 			// TODO assert false
-			LOG_DEBUG("Component not implemented!");
+			LOG_ERROR("Component not implemented!");
+			LOG_FLUSH;
 			exit(3);
 	}
 }
@@ -193,7 +194,8 @@ static void* get_component(struct entity_ctx *ctx, entity_id e, component_type c
 
 		default:
 			// TODO assert false, just like above
-			LOG_DEBUG("Component not implemented!");
+			LOG_ERROR("Component not implemented!");
+			LOG_FLUSH;
 			exit(3);
 	}
 }

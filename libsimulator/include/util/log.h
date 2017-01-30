@@ -12,6 +12,7 @@
 
 #define LOG_STREAM (stderr)
 
+#define LOG_FLUSH fflush(LOG_STREAM)
 #define LOG_INFO(msg, ...)  fprintf(LOG_STREAM, "INFO  %s:%d:%s(): " msg "\n", __FILENAME__, __LINE__, __func__, ##__VA_ARGS__);
 #define LOG_WARN(msg, ...)  fprintf(LOG_STREAM, "WARN  %s:%d:%s(): " msg "\n", __FILENAME__, __LINE__, __func__, ##__VA_ARGS__);
 #define LOG_ERROR(msg, ...) fprintf(LOG_STREAM, "ERROR %s:%d:%s(): " msg "\n", __FILENAME__, __LINE__, __func__, ##__VA_ARGS__);
