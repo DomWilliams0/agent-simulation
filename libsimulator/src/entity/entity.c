@@ -159,11 +159,6 @@ entity_mask entity_get_component_mask(struct entity_ctx *ctx, entity_id e)
 	return ctx->masks[e];
 }
 
-static BOOL entity_has_component(struct entity_ctx *ctx, entity_id e, component_type c)
-{
-	return ctx->masks[e] & c;
-}
-
 void* entity_get_component_array(struct entity_ctx *ctx, component_type c)
 {
 	switch(c)
@@ -180,6 +175,14 @@ void* entity_get_component_array(struct entity_ctx *ctx, component_type c)
 			LOG_FLUSH;
 			exit(3);
 	}
+}
+
+BOOL entity_has_component(struct entity_ctx *ctx, entity_id e, entity_mask mask)
+{
+	if (entity_is_alive(ctx, e))
+		return (ctx->masks[e] & mask) == mask;
+
+	return FALSE;
 }
 
 static void* get_component(struct entity_ctx *ctx, entity_id e, component_type c)
@@ -211,7 +214,7 @@ void *entity_add_component(struct entity_ctx *ctx, entity_id e, component_type c
 
 void entity_remove_component(struct entity_ctx *ctx, entity_id e, component_type c)
 {
-	if (entity_is_alive(ctx, e) && entity_has_component(ctx, e, c))
+	if (entity_has_component(ctx, e, c))
 		ctx->masks[e] &= ~c;
 }
 

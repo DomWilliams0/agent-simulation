@@ -35,4 +35,6 @@ void* entity_get_component(struct entity_ctx *ctx, entity_id e, component_type c
 // component type BEFORE iterating through it. see test_entity_component_get
 void* entity_get_component_array(struct entity_ctx *ctx, component_type c);
 
+BOOL entity_has_component(struct entity_ctx *ctx, entity_id e, entity_mask mask);
+
 #endif

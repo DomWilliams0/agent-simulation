@@ -162,16 +162,21 @@ void step_simulation(struct renderer *renderer)
 static void render_entities(struct entity_ctx *entities)
 {
 	struct component_physics *physics = (struct component_physics *)entity_get_component_array(entities, COMPONENT_PHYSICS);
+	struct component_human *humans = (struct component_human *)entity_get_component_array(entities, COMPONENT_HUMAN);
+
 	entity_id count = entity_get_count(entities);
+	const entity_mask render_mask = COMPONENT_PHYSICS | COMPONENT_HUMAN;
 
 	struct position pos;
 	for (entity_id i = 0; i < count; ++i)
 	{
+		if (!entity_has_component(entities, i, render_mask))
+			continue;
+
 		struct component_physics *phys = physics + i;
 		world_get_position(phys->body, &pos);
 
-		struct component_human *human = entity_get_component(entities, i, COMPONENT_HUMAN);
-
+		struct component_human *human = humans + i;
 		graphics_draw_human(pos.x, pos.y, human);
 	}
 }
