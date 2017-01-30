@@ -151,7 +151,6 @@ UNIT_TEST(entity_component_add_remove)
 	assert_int_equal(COMPONENT_HUMAN, entity_get_component_mask(ctx, e));
 }
 
-#include "util/log.h"
 UNIT_TEST(entity_component_get)
 {
 	struct simulator *sim = (struct simulator *)*state;
