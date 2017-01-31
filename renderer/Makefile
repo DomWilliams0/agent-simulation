@@ -2,9 +2,10 @@
 RENDER_BACKEND ?= hardware
 ifeq ($(RENDER_BACKEND),hardware)
     RENDERER = GRAPHICS_OPENGL
+else ifeq ($(RENDER_BACKEND),terminal)
+    RENDERER = GRAPHICS_TERMINAL
 else
-    $(error RENDER_BACKEND must be either 'hardware' or ... nope, that's it.\
-	Leaving this here in case it's useful in the future)
+    $(error RENDER_BACKEND must be either 'hardware' or 'terminal')
 endif
 
 CFLAGS  += $(addprefix -I,$(INC)) -D$(RENDERER) -DDEBUGGING_OVERLAY
