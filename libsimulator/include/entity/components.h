@@ -2,11 +2,13 @@
 #define COMPONENTS_H
 
 #include "entity/entity.h"
+#include "entity/steering.h"
 #include "world/world_forward.h"
 
 #define COMPONENT_NONE    (0)
 #define COMPONENT_PHYSICS (1 << 0)
 #define COMPONENT_HUMAN   (1 << 1)
+#define COMPONENT_STEER   (1 << 2)
 
 typedef unsigned int entity_mask;
 typedef unsigned int component_type;
@@ -20,6 +22,13 @@ struct component_human
 {
 	human_age age;
 	human_gender gender;
+};
+
+struct component_steer
+{
+	enum steering_type type;
+	int goal_x;
+	int goal_y;
 };
 
 

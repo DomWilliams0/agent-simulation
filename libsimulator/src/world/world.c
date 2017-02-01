@@ -9,6 +9,8 @@
 #include "world/world.h"
 #include "world/internal/physics.h"
 #include "world/internal/world.h"
+#include "entity/steering.h"
+#include "entity/entity.h"
 
 static void load_terrain(struct world *world);
 static BOOL load_params(struct world *world, struct world_parameters *params);
@@ -70,12 +72,11 @@ world_body world_create_entity(struct world *w)
 	dMass mass;
 	dMassSetSphereTotal(&mass, HUMAN_MASS, HUMAN_RADIUS);
 	dBodySetMass(b, &mass);
+	dBodySetLinearDamping(b, HUMAN_DAMPING);
 
 	// collision
 	dGeomID geom = dCreateSphere(w->collision_space, HUMAN_RADIUS);
 	dGeomSetBody(geom, b);
-
-	dBodyAddForce(b, 400, 300, 0);
 
 	return b;
 }

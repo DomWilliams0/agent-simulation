@@ -1,4 +1,5 @@
 #include "helper.h"
+#include "entity/steering.h"
 #include "entity/components.h"
 #include "entity/entity.h"
 #include "util/util.h"
@@ -185,6 +186,19 @@ UNIT_TEST(entity_component_get)
 	assert_int_equal(human2->age, 80);
 }
 
+UNIT_TEST(entity_steering)
+{
+	struct simulator *sim = (struct simulator *)*state;
+	struct entity_ctx *ctx = entity_get_context(sim);
+
+	// add an entity
+	entity_id e = entity_create(ctx);
+	struct component_steer *steer = entity_add_component(ctx, e, COMPONENT_STEER);
+
+	steer->type = STEERING_SEEK;
+	steer->goal_x = 5;
+	steer->goal_y = 5;
+}
 
 REGISTER_TEST_TEARDOWN(entity_creation_destruction, teardown_remove_all_entities);
 REGISTER_TEST_TEARDOWN(entity_creation_max, teardown_remove_all_entities);

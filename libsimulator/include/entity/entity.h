@@ -4,6 +4,9 @@
 #include "util/bool.h"
 #include "util/util.h"
 
+#define HUMAN_DAMPING      (0.9f) // this limits the maximum speed
+#define HUMAN_ACCELERATION (200.f)
+
 // TODO entity IDs will be unique across all worlds
 typedef unsigned int entity_id;
 typedef unsigned int human_age;

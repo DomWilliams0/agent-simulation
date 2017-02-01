@@ -41,6 +41,7 @@ MODULE_IMPLEMENT(struct simulator, "simulator",
 
 void simulator_step(struct simulator *sim)
 {
+	steering_update_system(sim->entity, sim->world);
 	world_step(sim->world);
 }
 
@@ -58,22 +59,20 @@ void simulator_populate(struct simulator *sim)
 {
 	struct entity_ctx *entity = sim->entity;
 	float pos[2] = {0, 0};
+	entity_id e = entity_create(entity);
 
-	for (int i = 0; i < 10; ++i)
-	{
-		entity_id e = entity_create(entity);
+	struct component_physics *phys = entity_add_component(entity, e, COMPONENT_PHYSICS);
+	phys->body = world_create_entity(sim->world);
+	world_set_position(phys->body, pos);
 
-		struct component_physics *phys = entity_add_component(entity, e, COMPONENT_PHYSICS);
-		struct component_human *hum = entity_add_component(entity, e, COMPONENT_HUMAN); // cache miss, hissss
+	struct component_human *hum = entity_add_component(entity, e, COMPONENT_HUMAN);
+	hum->age = 20;
+	hum->gender = MALE;
 
-		phys->body = world_create_entity(sim->world);
-		world_set_position(phys->body, pos);
-		pos[0] += 5;
-		pos[1] += 5;
-
-		hum->age = 20 + i;
-		hum->gender = i % 2 == 0 ? MALE : FEMALE;
-	}
+	struct component_steer *steer = entity_add_component(entity, e, COMPONENT_STEER);
+	steer->type = STEERING_SEEK;
+	steer->goal_x = 15;
+	steer->goal_y = 15;
 
 	// some fun terrain
 	struct world *world = sim->world;

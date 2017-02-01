@@ -26,6 +26,7 @@ struct entity_ctx
 	entity_mask masks[MAX_ENTITIES];
 	struct component_physics components_physics[MAX_ENTITIES];
 	struct component_human components_human[MAX_ENTITIES];
+	struct component_steer components_steer[MAX_ENTITIES];
 };
 
 MODULE_IMPLEMENT(struct entity_ctx, "entity context",
@@ -119,6 +120,7 @@ void entity_destroy(struct entity_ctx *ctx, entity_id e)
 	SWAP_IN_ARRAY(entity_mask, ctx->masks, e, new_count);
 	SWAP_IN_ARRAY(struct component_physics, ctx->components_physics, e, new_count);
 	SWAP_IN_ARRAY(struct component_human, ctx->components_human, e, new_count);
+	SWAP_IN_ARRAY(struct component_steer, ctx->components_steer, e, new_count);
 
 	// attr_destroy(ctx, e);
 }
@@ -169,6 +171,9 @@ void* entity_get_component_array(struct entity_ctx *ctx, component_type c)
 		case COMPONENT_HUMAN:
 			return ctx->components_human;
 
+		case COMPONENT_STEER:
+			return ctx->components_steer;
+
 		default:
 			// TODO assert false
 			LOG_ERROR("Component not implemented!");
@@ -194,6 +199,9 @@ static void* get_component(struct entity_ctx *ctx, entity_id e, component_type c
 
 		case COMPONENT_HUMAN:
 			return ctx->components_human + e;
+
+		case COMPONENT_STEER:
+			return ctx->components_steer + e;
 
 		default:
 			// TODO assert false, just like above
