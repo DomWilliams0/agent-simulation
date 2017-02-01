@@ -35,18 +35,40 @@ void steering_update_system(struct entity_ctx *entities, struct world *world)
 
 }
 
-static double length_sqrd(float *v)
+static double length(float *v)
 {
-	return (v[0] * v[0]) + (v[1] * v[1]);
+	return sqrt((v[0] * v[0]) + (v[1] * v[1]));
 }
 
-static void scale(float *velocity)
+static void scale(float *velocity, float speed)
 {
-	double ls = length_sqrd(velocity);
-	double l = sqrt(ls);
+	double l = length(velocity);
+	if (l < VELOCITY_MINIMUM)
+		l = 1;
 
-	velocity[0] *= HUMAN_ACCELERATION / l;
-	velocity[1] *= HUMAN_ACCELERATION / l;
+	velocity[0] *= speed / l;
+	velocity[1] *= speed / l;
+}
+
+static inline void handle_seek(position pos, float goal_x, float goal_y, float *velocity)
+{
+	// full speed ahead
+	velocity[0] = goal_x - pos[0];
+	velocity[1] = goal_y - pos[1];
+	scale(velocity, HUMAN_ACCELERATION);
+}
+
+static inline void handle_arrive(position pos, float goal_x, float goal_y, float *velocity)
+{
+	velocity[0] = goal_x - pos[0];
+	velocity[1] = goal_y - pos[1];
+
+	double distance = length(velocity);
+	float speed = HUMAN_ACCELERATION;
+	if (distance < STEERING_ARRIVE_RADIUS)
+		speed *= distance / STEERING_ARRIVE_RADIUS;
+
+	scale(velocity, speed);
 }
 
 void steering_apply(struct component_steer *steer, position current_pos, float *velocity)
@@ -55,12 +77,12 @@ void steering_apply(struct component_steer *steer, position current_pos, float *
 	switch(steer->type)
 	{
 		case STEERING_SEEK:
-			velocity[0] = steer->goal_x - current_pos[0];
-			velocity[1] = steer->goal_y - current_pos[1];
-			scale(velocity);
+			handle_seek(current_pos, steer->goal_x, steer->goal_y, velocity);
+			break;
 
 		case STEERING_ARRIVE:
-			// slow down
+			handle_arrive(current_pos, steer->goal_x, steer->goal_y, velocity);
+			break;
 
 		default:
 			break;

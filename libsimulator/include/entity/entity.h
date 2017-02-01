@@ -6,6 +6,7 @@
 
 #define HUMAN_DAMPING      (0.9f) // this limits the maximum speed
 #define HUMAN_ACCELERATION (200.f)
+#define VELOCITY_MINIMUM   (0.001f)
 
 // TODO entity IDs will be unique across all worlds
 typedef unsigned int entity_id;

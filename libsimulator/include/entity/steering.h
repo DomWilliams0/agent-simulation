@@ -3,6 +3,8 @@
 
 #include "world/world.h"
 
+#define STEERING_ARRIVE_RADIUS (1.5f)
+
 enum steering_type
 {
 	STEERING_SEEK = 1,
