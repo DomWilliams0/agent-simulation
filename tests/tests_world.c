@@ -44,7 +44,7 @@ UNIT_TEST(world_initial_state)
 {
 	UNUSED(state);
 
-	struct world_parameters params = {400, 400, NULL};
+	struct world_parameters params = {40, 40, NULL};
 	struct world *w = world_create(&params);
 
 	// tile by tile
