@@ -19,6 +19,8 @@ MODULE_IMPLEMENT(struct simulator, "simulator",
 			static simulator_id last_id = 1;
 			new_instance->id = last_id++;
 
+			random_init();
+
 			// TODO pass through simulator args
 			struct world_parameters world_params;
 			world_params.chunk_width = 4;

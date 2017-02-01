@@ -57,3 +57,6 @@
 	} \
 
 #endif
+
+void random_init();
+float random_get(float max);
