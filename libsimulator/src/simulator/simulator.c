@@ -73,7 +73,7 @@ void simulator_populate(struct simulator *sim)
 	steer->type = STEERING_PATH_FOLLOW;
 
 	// silly path
-	float path[4][2] = {{5, 0}, {5, 5}, {0, 5}, {5, 5}};
+	float path[4][2] = {{5, 0}, {5, 5}, {0, 5}, {0, 0}};
 	steering_path_set(steer, (float *)path, 4);
 
 	// some fun terrain

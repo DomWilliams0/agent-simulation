@@ -4,7 +4,7 @@
 #include "world/world.h"
 #include "util/bool.h"
 
-#define STEERING_ARRIVE_RADIUS (1.5f)
+#define STEERING_ARRIVE_RADIUS (0.5f)
 
 enum steering_type
 {

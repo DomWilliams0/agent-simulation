@@ -8,6 +8,8 @@
 #include "util/log.h"
 #include "util/memory.h"
 
+#define CENTRE_TILE(coord) (coord + 0.5f)
+
 void steering_update_system(struct entity_ctx *entities)
 {
 	struct component_physics *physics = (struct component_physics *)entity_get_component_array(entities, COMPONENT_PHYSICS);
@@ -54,22 +56,49 @@ static void scale(float *velocity, float speed)
 static inline void handle_seek(float pos[2], float goal_x, float goal_y, float *velocity)
 {
 	// full speed ahead
-	velocity[0] = goal_x - pos[0];
-	velocity[1] = goal_y - pos[1];
+	velocity[0] = CENTRE_TILE(goal_x) - pos[0];
+	velocity[1] = CENTRE_TILE(goal_y) - pos[1];
 	scale(velocity, HUMAN_ACCELERATION);
 }
 
-static inline void handle_arrive(float pos[2], float goal_x, float goal_y, float *velocity)
+// returns if arrived
+static inline BOOL handle_arrive(float pos[2], float goal_x, float goal_y, float *velocity)
 {
-	velocity[0] = goal_x - pos[0];
-	velocity[1] = goal_y - pos[1];
+	velocity[0] = CENTRE_TILE(goal_x) - pos[0];
+	velocity[1] = CENTRE_TILE(goal_y) - pos[1];
 
 	double distance = length(velocity);
 	float speed = HUMAN_ACCELERATION;
-	if (distance < STEERING_ARRIVE_RADIUS)
+	BOOL arriving = distance < STEERING_ARRIVE_RADIUS;
+	if (arriving)
 		speed *= distance / STEERING_ARRIVE_RADIUS;
 
 	scale(velocity, speed);
+
+	return arriving;
+}
+
+static inline void handle_path_follow(float pos[2], struct component_steer *steer, float *velocity)
+{
+	struct steering_path_waypoint *current = steer->path_front;
+
+	// no path
+	if (!current)
+	{
+		return;
+	}
+
+	// move towards current waypoint
+	if (handle_arrive(pos, current->pos[0], current->pos[1], velocity))
+	{
+		// arrived, move onto next
+		float tmp[2];
+		steering_path_pop(steer, tmp); // TODO remove out
+
+		// try again
+		handle_path_follow(pos, steer, velocity);
+		return;
+	}
 }
 
 void steering_apply(struct component_steer *steer, float current_pos[2], float *velocity)
@@ -83,6 +112,10 @@ void steering_apply(struct component_steer *steer, float current_pos[2], float *
 
 		case STEERING_ARRIVE:
 			handle_arrive(current_pos, steer->goal_x, steer->goal_y, velocity);
+			break;
+
+		case STEERING_PATH_FOLLOW:
+			handle_path_follow(current_pos, steer, velocity);
 			break;
 
 		default:
