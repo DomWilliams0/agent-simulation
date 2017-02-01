@@ -70,9 +70,11 @@ void simulator_populate(struct simulator *sim)
 	hum->gender = MALE;
 
 	struct component_steer *steer = entity_add_component(entity, e, COMPONENT_STEER);
-	steer->type = STEERING_ARRIVE;
-	steer->goal_x = 5;
-	steer->goal_y = 5;
+	steer->type = STEERING_PATH_FOLLOW;
+
+	// silly path
+	float path[4][2] = {{5, 0}, {5, 5}, {0, 5}, {5, 5}};
+	steering_path_set(steer, (float *)path, 4);
 
 	// some fun terrain
 	struct world *world = sim->world;

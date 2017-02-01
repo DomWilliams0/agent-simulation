@@ -6,6 +6,7 @@
 #include "world/world.h"
 
 #include "util/log.h"
+#include "util/memory.h"
 
 void steering_update_system(struct entity_ctx *entities, struct world *world)
 {
@@ -86,5 +87,75 @@ void steering_apply(struct component_steer *steer, float current_pos[2], float *
 
 		default:
 			break;
+	}
+}
+
+static struct steering_path_waypoint *create_node(float pos[2])
+{
+	struct steering_path_waypoint *waypoint;
+	safe_malloc_struct(struct steering_path_waypoint, &waypoint);
+
+	waypoint->next = NULL;
+	waypoint->pos[0] = pos[0];
+	waypoint->pos[1] = pos[1];
+
+	return waypoint;
+};
+
+static void free_node(struct steering_path_waypoint *waypoint)
+{
+	safe_free(waypoint);
+}
+
+void steering_path_add(struct component_steer *steer, float waypoint[2])
+{
+	struct steering_path_waypoint *wp = create_node(waypoint);
+
+	if (steer->path_end)
+		steer->path_end->next = wp;
+
+	steer->path_end = wp;
+}
+
+BOOL steering_path_pop(struct component_steer *steer, float *out)
+{
+	struct steering_path_waypoint *front = steer->path_front;
+
+	// empty
+	if (!front)
+		return FALSE;
+
+	out[0] = front->pos[0];
+	out[1] = front->pos[1];
+
+	steer->path_front = front->next;
+	free_node(front);
+
+	return TRUE;
+}
+
+
+void steering_path_set(struct component_steer *steer, float waypoints[2], unsigned int n)
+{
+	// remove old
+	float rm[2];
+	while (steering_path_pop(steer, rm));
+
+	if (n == 0)
+	{
+		LOG_WARN("Path length must be at least 0");
+		return;
+	}
+
+	// first element
+	struct steering_path_waypoint *wp = create_node(waypoints);
+	steer->path_front = wp;
+
+	// the rest
+	for (unsigned int i = 1; i < n; ++i)
+	{
+		struct steering_path_waypoint *next = create_node(waypoints + (i * 2));
+		wp->next = next;
+		wp = next;
 	}
 }

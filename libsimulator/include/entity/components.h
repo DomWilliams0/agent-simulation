@@ -27,8 +27,23 @@ struct component_human
 struct component_steer
 {
 	enum steering_type type;
-	int goal_x;
-	int goal_y;
+	union
+	{
+		struct
+		{
+			int goal_x;
+			int goal_y;
+		};
+
+		struct
+		{
+			// pop off from the front
+			struct steering_path_waypoint *path_front;
+
+			// add to the end
+			struct steering_path_waypoint *path_end;
+		};
+	};
 };
 
 

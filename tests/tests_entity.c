@@ -186,6 +186,8 @@ UNIT_TEST(entity_component_get)
 	assert_int_equal(human2->age, 80);
 }
 
+#define assert_pos_equal(a, b) assert_true(a[0] == b[0] && a[1] == b[1])
+
 UNIT_TEST(entity_steering)
 {
 	struct simulator *sim = (struct simulator *)*state;
@@ -194,10 +196,55 @@ UNIT_TEST(entity_steering)
 	// add an entity
 	entity_id e = entity_create(ctx);
 	struct component_steer *steer = entity_add_component(ctx, e, COMPONENT_STEER);
+	steer->type = STEERING_PATH_FOLLOW;
 
-	steer->type = STEERING_SEEK;
-	steer->goal_x = 5;
-	steer->goal_y = 5;
+	// empty path shouldn't crash
+	steering_path_set(steer, NULL, 0);
+
+	// path setting
+	float path[3][2] = {{4, 5}, {6, 7}, {8, 9}};
+	steering_path_set(steer, (float *)path, 3);
+
+	// ensure path was set correctly
+	struct steering_path_waypoint *waypoint = steer->path_front;
+	assert_non_null(waypoint);
+
+	for (int i = 0; i < 3; ++i)
+	{
+		assert_non_null(waypoint);
+		assert_pos_equal(waypoint->pos, path[i]);
+		waypoint = waypoint->next;
+	}
+
+	assert_null(waypoint);
+
+	// add one extra
+	float extra[2] = {20, 40};
+	steering_path_add(steer, extra);
+
+	// ensure it was added to the end
+	struct steering_path_waypoint *end = steer->path_end;
+	assert_non_null(end);
+	assert_pos_equal(end->pos, extra);
+
+	// pop from the front
+	float top[2];
+	BOOL popped = steering_path_pop(steer, top);
+	assert_true(popped);
+	assert_pos_equal(top, path[0]);
+
+	// ensure it's gone
+	assert_non_null(steer->path_front);
+	assert_pos_equal(steer->path_front->pos, path[1]);
+
+	// exhaust
+	for (int i = 0; i < 2; ++i)
+	{
+		assert_true(steering_path_pop(steer, top));
+	}
+
+	assert_false(steering_path_pop(steer, top));
+
 }
 
 REGISTER_TEST_TEARDOWN(entity_creation_destruction, teardown_remove_all_entities);
@@ -206,3 +253,4 @@ REGISTER_TEST_TEARDOWN(entity_iteration, teardown_remove_all_entities);
 REGISTER_TEST_TEARDOWN(entity_is_alive, teardown_remove_all_entities);
 REGISTER_TEST_TEARDOWN(entity_component_add_remove, teardown_remove_all_entities);
 REGISTER_TEST_TEARDOWN(entity_component_get, teardown_remove_all_entities);
+REGISTER_TEST_TEARDOWN(entity_steering, teardown_remove_all_entities);
