@@ -50,7 +50,7 @@ static void scale(float *velocity, float speed)
 	velocity[1] *= speed / l;
 }
 
-static inline void handle_seek(position pos, float goal_x, float goal_y, float *velocity)
+static inline void handle_seek(float pos[2], float goal_x, float goal_y, float *velocity)
 {
 	// full speed ahead
 	velocity[0] = goal_x - pos[0];
@@ -58,7 +58,7 @@ static inline void handle_seek(position pos, float goal_x, float goal_y, float *
 	scale(velocity, HUMAN_ACCELERATION);
 }
 
-static inline void handle_arrive(position pos, float goal_x, float goal_y, float *velocity)
+static inline void handle_arrive(float pos[2], float goal_x, float goal_y, float *velocity)
 {
 	velocity[0] = goal_x - pos[0];
 	velocity[1] = goal_y - pos[1];
@@ -71,7 +71,7 @@ static inline void handle_arrive(position pos, float goal_x, float goal_y, float
 	scale(velocity, speed);
 }
 
-void steering_apply(struct component_steer *steer, position current_pos, float *velocity)
+void steering_apply(struct component_steer *steer, float current_pos[2], float *velocity)
 {
 	// how lovely
 	switch(steer->type)
