@@ -8,7 +8,7 @@
 #include "util/log.h"
 #include "util/memory.h"
 
-void steering_update_system(struct entity_ctx *entities, struct world *world)
+void steering_update_system(struct entity_ctx *entities)
 {
 	struct component_physics *physics = (struct component_physics *)entity_get_component_array(entities, COMPONENT_PHYSICS);
 	struct component_steer *steers = (struct component_steer *)entity_get_component_array(entities, COMPONENT_STEER);

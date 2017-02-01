@@ -23,7 +23,7 @@ struct entity_ctx;
 struct world;
 struct component_steer;
 
-void steering_update_system(struct entity_ctx *entities, struct world *world);
+void steering_update_system(struct entity_ctx *entities);
 
 void steering_apply(struct component_steer *steer, float current_pos[2], float *velocity);
 

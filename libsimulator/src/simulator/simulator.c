@@ -41,7 +41,7 @@ MODULE_IMPLEMENT(struct simulator, "simulator",
 
 void simulator_step(struct simulator *sim)
 {
-	steering_update_system(sim->entity, sim->world);
+	steering_update_system(sim->entity);
 	world_step(sim->world);
 }
 
