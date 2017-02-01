@@ -92,8 +92,7 @@ static inline void handle_path_follow(float pos[2], struct component_steer *stee
 	if (handle_arrive(pos, current->pos[0], current->pos[1], velocity))
 	{
 		// arrived, move onto next
-		float tmp[2];
-		steering_path_pop(steer, tmp); // TODO remove out
+		steering_path_pop(steer);
 
 		// try again
 		handle_path_follow(pos, steer, velocity);
@@ -156,16 +155,13 @@ void steering_path_add(struct component_steer *steer, float waypoint[2])
 	steer->path_end = wp;
 }
 
-BOOL steering_path_pop(struct component_steer *steer, float *out)
+BOOL steering_path_pop(struct component_steer *steer)
 {
 	struct steering_path_waypoint *front = steer->path_front;
 
 	// empty
 	if (!front)
 		return FALSE;
-
-	out[0] = front->pos[0];
-	out[1] = front->pos[1];
 
 	steer->path_front = front->next;
 
@@ -181,8 +177,7 @@ BOOL steering_path_pop(struct component_steer *steer, float *out)
 void steering_path_set(struct component_steer *steer, float waypoints[2], unsigned int n)
 {
 	// remove old
-	float rm[2];
-	while (steering_path_pop(steer, rm));
+	while (steering_path_pop(steer));
 
 	if (n == 0)
 	{

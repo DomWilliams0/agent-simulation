@@ -28,7 +28,7 @@ void steering_update_system(struct entity_ctx *entities);
 void steering_apply(struct component_steer *steer, float current_pos[2], float *velocity);
 
 void steering_path_add(struct component_steer *steer, float waypoint[2]);
-BOOL steering_path_pop(struct component_steer *steer, float out[2]);
+BOOL steering_path_pop(struct component_steer *steer);
 void steering_path_set(struct component_steer *steer, float *waypoints, unsigned int n);
 
 #endif

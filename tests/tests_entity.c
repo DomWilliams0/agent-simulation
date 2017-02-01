@@ -228,22 +228,18 @@ UNIT_TEST(entity_steering)
 	assert_pos_equal(end->pos, extra);
 
 	// pop from the front
-	float top[2];
-	BOOL popped = steering_path_pop(steer, top);
+	BOOL popped = steering_path_pop(steer);
 	assert_true(popped);
-	assert_pos_equal(top, path[0]);
-
-	// ensure it's gone
 	assert_non_null(steer->path_front);
 	assert_pos_equal(steer->path_front->pos, path[1]);
 
 	// exhaust
 	for (int i = 0; i < 2; ++i)
 	{
-		assert_true(steering_path_pop(steer, top));
+		assert_true(steering_path_pop(steer));
 	}
 
-	assert_false(steering_path_pop(steer, top));
+	assert_false(steering_path_pop(steer));
 	assert_null(steer->path_front);
 	assert_null(steer->path_end);
 
