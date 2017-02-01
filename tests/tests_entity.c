@@ -244,6 +244,8 @@ UNIT_TEST(entity_steering)
 	}
 
 	assert_false(steering_path_pop(steer, top));
+	assert_null(steer->path_front);
+	assert_null(steer->path_end);
 
 }
 

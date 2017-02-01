@@ -111,8 +111,14 @@ void steering_path_add(struct component_steer *steer, float waypoint[2])
 {
 	struct steering_path_waypoint *wp = create_node(waypoint);
 
-	if (steer->path_end)
+	if (!steer->path_front)
+	{
+		steer->path_front = wp;
+	}
+	else if (steer->path_end)
+	{
 		steer->path_end->next = wp;
+	}
 
 	steer->path_end = wp;
 }
@@ -129,6 +135,10 @@ BOOL steering_path_pop(struct component_steer *steer, float *out)
 	out[1] = front->pos[1];
 
 	steer->path_front = front->next;
+
+	if (steer->path_front == NULL)
+		steer->path_end = NULL;
+
 	free_node(front);
 
 	return TRUE;
