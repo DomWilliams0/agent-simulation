@@ -1,4 +1,5 @@
 #include "helper.h"
+
 #include "world/world.h"
 #include "util/util.h"
 
@@ -19,7 +20,6 @@ UNIT_TEST(world_creation_destruction)
 	assert_non_null(w);
 	assert_int_equal(2, world_get_chunk_width(w));
 	assert_int_equal(7, world_get_chunk_height(w));
-	assert_null(world_get_file_path(w));
 	world_destroy(w);
 
 	// zero
@@ -32,19 +32,13 @@ UNIT_TEST(world_creation_destruction)
 	params.chunk_width = 0;
 	params.chunk_height = 0;
 	assert_null(world_create(&params));
-
-	// currently unsupported
-	params.chunk_width = 10;
-	params.chunk_height = 20;
-	params.file_path = "not null";
-	assert_null(world_create(&params));
 }
 
 UNIT_TEST(world_initial_state)
 {
 	UNUSED(state);
 
-	struct world_parameters params = {40, 40, NULL};
+	struct world_parameters params = {40, 40};
 	struct world *w = world_create(&params);
 
 	// tile by tile
@@ -106,7 +100,37 @@ UNIT_TEST(world_tile_set_get)
 	world_destroy(w);
 }
 
+UNIT_TEST(world_serialization)
+{
+	// non existent file
+	assert_null(world_load(NULL));
+	assert_null(world_load("non existent"));
+
+	// create and populate
+	CREATE_WORLD;
+	const int check_count = 4;
+	float tiles[8] = {0, 0, 0, 1, 100, 10, 20, 60};
+	for (int i = 0; i < check_count; i += 2)
+		world_set_tile(w, tiles[i], tiles[i + 1], TILE_GRASS);
+
+	// dump to file
+	const char * const path = "/tmp/test-world";
+	assert_false(world_save(w, NULL));
+	assert_true(world_save(w, path));
+
+	// read back
+	struct world *loaded = world_load(path);
+	assert_non_null(loaded);
+
+	for (int i = 0; i < check_count; i += 2)
+		assert_int_equal(TILE_GRASS, world_get_tile(w, tiles[i], tiles[i + 1]));
+
+	world_destroy(w);
+	world_destroy(loaded);
+}
+
 REGISTER_TEST(world_creation_destruction);
 REGISTER_TEST(world_entity_creation);
 REGISTER_TEST(world_tile_set_get);
 REGISTER_TEST(world_initial_state);
+REGISTER_TEST(world_serialization);

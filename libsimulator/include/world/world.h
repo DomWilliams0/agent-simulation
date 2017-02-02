@@ -3,6 +3,7 @@
 
 #include "world/world_forward.h"
 #include "util/util.h"
+#include "util/bool.h"
 
 #define HUMAN_MASS (10.0)
 #define CHUNK_SIZE (32)
@@ -14,7 +15,6 @@ struct world_parameters
 {
 	unsigned int chunk_width;
 	unsigned int chunk_height;
-	char *file_path;
 };
 
 enum tile_type
@@ -39,7 +39,6 @@ struct world *world_get_world(struct simulator *sim); // TODO add support for mu
 
 unsigned int world_get_chunk_width(struct world *w);
 unsigned int world_get_chunk_height(struct world *w);
-char *world_get_file_path(struct world *w);
 unsigned int world_get_id(struct world *w);
 
 void world_step(struct world *w);
@@ -55,5 +54,9 @@ void world_set_tile(struct world *w, unsigned int x, unsigned int y, enum tile_t
 
 struct chunk *world_get_chunk_array(struct world *w, unsigned int *chunk_count);
 tile *world_get_chunk_tiles(struct chunk *chunk);
+
+// serialization
+BOOL world_save(struct world *w, const char * const file_path);
+struct world *world_load(const char * const file_path);
 
 #endif

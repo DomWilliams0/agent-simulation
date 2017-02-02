@@ -47,11 +47,6 @@ unsigned int world_get_chunk_height(struct world *w)
 	return w->chunk_height;
 }
 
-char *world_get_file_path(struct world *w)
-{
-	return w->file_path;
-}
-
 unsigned int world_get_id(struct world *w)
 {
 	return w->id;
@@ -107,16 +102,8 @@ static BOOL load_params(struct world *world, struct world_parameters *params)
 		return FALSE;
 	}
 
-	// currently unsupported
-	if (params->file_path != NULL)
-	{
-		LOG_WARN("World loading currently not supported");
-		return FALSE;
-	}
-
 	world->chunk_width = params->chunk_width;
 	world->chunk_height = params->chunk_height;
-	world->file_path = params->file_path;
 
 	return TRUE;
 }

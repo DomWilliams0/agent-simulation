@@ -25,7 +25,6 @@ MODULE_IMPLEMENT(struct simulator, "simulator",
 			struct world_parameters world_params;
 			world_params.chunk_width = 4;
 			world_params.chunk_height = 4;
-			world_params.file_path = NULL;
 
 			if ((new_instance->entity = entity_create_context(NULL)) == NULL ||
 				(new_instance->world = world_create(&world_params)) == NULL)

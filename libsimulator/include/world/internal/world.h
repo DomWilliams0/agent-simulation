@@ -16,7 +16,6 @@ struct world
 
 	unsigned int chunk_width;
 	unsigned int chunk_height;
-	char *file_path;
 
 	struct chunk *chunks;
 };
