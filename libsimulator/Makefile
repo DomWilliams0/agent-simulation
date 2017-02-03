@@ -1,8 +1,13 @@
-SRCS  := $(shell find $(SRC) -type f -name '*.c')
-INCS  := $(shell find $(INC) -type f -name '*.h')
-OBJS  := $(addprefix $(OBJ)/,$(notdir $(SRCS:%.c=%.o)))
+LIB   = lib
+CFLAGS += -I$(LIB)
 
-VPATH  = $(shell find $(SRC) $(INC) -type d)
+SRCS  := $(shell find $(SRC) -type f -name '*.c')
+LIBS  := $(shell find $(LIB) -type f -name '*.c')
+
+OBJS  := $(addprefix $(OBJ)/,$(notdir $(SRCS:%.c=%.o)))
+OBJS  += $(addprefix $(OBJ)/,$(notdir $(LIBS:%.c=%.o)))
+
+VPATH  = $(shell find $(SRC) $(INC) $(LIB) -type d)
 
 $(TARGET): $(OBJS)
 	$(CC) $(LDFLAGS) $(OBJS) -o $@ -shared
