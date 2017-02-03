@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "helper.h"
 
 #include "world/world.h"
@@ -107,10 +109,12 @@ UNIT_TEST(world_serialization)
 	assert_null(world_load("non existent"));
 
 	// create and populate
-	CREATE_WORLD;
-	const int check_count = 4;
-	float tiles[8] = {0, 0, 0, 1, 100, 10, 20, 60};
-	for (int i = 0; i < check_count; i += 2)
+	struct world_parameters params = {4, 4};
+	struct world *w = world_create(&params);
+
+	const int check_count = 6;
+	float tiles[12] = {0, 0, 1, 0, 2, 0, 3, 0, 100, 10, 20, 60};
+	for (int i = 0; i < check_count * 2; i += 2)
 		world_set_tile(w, tiles[i], tiles[i + 1], TILE_GRASS);
 
 	// dump to file
@@ -127,6 +131,9 @@ UNIT_TEST(world_serialization)
 
 	world_destroy(w);
 	world_destroy(loaded);
+
+	// delete temp file
+	remove(path);
 }
 
 REGISTER_TEST(world_creation_destruction);
