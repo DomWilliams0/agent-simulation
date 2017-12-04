@@ -9,7 +9,7 @@
 
 struct colour
 {
-	double r, g, b;
+	float r, g, b;
 };
 
 struct camera_movement
