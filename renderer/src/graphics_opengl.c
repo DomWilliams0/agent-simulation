@@ -110,25 +110,25 @@ void graphics_start(struct graphics_ctx *ctx)
 
 void graphics_draw_world(struct world *world)
 {
-	const unsigned int width = world_get_chunk_width(world);
+	const chunk_coord width = world_get_chunk_width(world);
 
-	unsigned int chunk_count;
+	chunk_coord chunk_count;
 	struct chunk * chunk = world_get_chunk_array(world, &chunk_count);
 
 	glPushMatrix();
 
-	for (unsigned int chunk_i = 0; chunk_i < chunk_count; ++chunk_i)
+	for (chunk_coord chunk_i = 0; chunk_i < chunk_count; ++chunk_i)
 	{
-		tile * tile = world_get_chunk_tiles(chunk);
+		tile *tile = world_get_chunk_tiles(chunk);
 
 		glBegin(GL_QUADS);
-		for (int t = 0; t < CHUNK_TILE_COUNT; ++t)
+		for (tile_coord t = 0; t < CHUNK_TILE_COUNT; ++t)
 		{
 			struct colour *colour = TILE_COLOURS + *tile;
 			glColor3fv((GLfloat *)colour);
 
-			unsigned int tile_x = t % CHUNK_SIZE;
-			unsigned int tile_y = t / CHUNK_SIZE;
+			tile_coord tile_x = t % CHUNK_SIZE;
+			tile_coord tile_y = t / CHUNK_SIZE;
 
 			glVertex2f(tile_x + 0, tile_y + 0);
 			glVertex2f(tile_x + 0, tile_y + 1);
@@ -156,41 +156,40 @@ void graphics_draw_world(struct world *world)
 	}
 
 #ifdef DEBUGGING_OVERLAY
-	const unsigned int height = world_get_chunk_height(world);
+	const chunk_coord height = world_get_chunk_height(world);
 
 	glTranslatef(0, -CHUNK_SIZE * (float)height, 0);
 	glBegin(GL_LINES);
 
-	const unsigned int line_hor_count = (height * CHUNK_SIZE) + 1;
-	const unsigned int line_ver_count = (width * CHUNK_SIZE) + 1;
+	const tile_coord line_hor_count = (height * CHUNK_SIZE) + 1;
+	const tile_coord line_ver_count = (width * CHUNK_SIZE) + 1;
 
 	// tile outlines
 	glColor3f(0.75f, 0.1f, 0.1f);
-	for (unsigned int line_hor = 0; line_hor < line_hor_count; ++line_hor)
+	for (tile_coord line_hor = 0; line_hor < line_hor_count; ++line_hor)
 	{
 		glVertex2f(0, line_hor);
 		glVertex2f(width * CHUNK_SIZE, line_hor);
 	}
 
-	for (unsigned int line_ver = 0; line_ver < line_ver_count; ++line_ver)
+	for (tile_coord line_ver = 0; line_ver < line_ver_count; ++line_ver)
 	{
 		glVertex2f(line_ver, 0);
 		glVertex2f(line_ver, height * CHUNK_SIZE);
 	}
 
 	// chunk outlines
-	const unsigned int chunk_line_hor_count = height + 1;
-	const unsigned int chunk_line_ver_count = width + 1;
+	const chunk_coord chunk_line_hor_count = height + 1;
+	const chunk_coord chunk_line_ver_count = width + 1;
 
-	// tile outlines
 	glColor3f(0.5f, 0.2f, 0.5f);
-	for (unsigned int line_hor = 0; line_hor < chunk_line_hor_count; ++line_hor)
+	for (tile_coord line_hor = 0; line_hor < chunk_line_hor_count; ++line_hor)
 	{
 		glVertex2f(0, line_hor * CHUNK_SIZE);
 		glVertex2f(width * CHUNK_SIZE, line_hor * CHUNK_SIZE);
 	}
 
-	for (unsigned int line_ver = 0; line_ver < chunk_line_ver_count; ++line_ver)
+	for (tile_coord line_ver = 0; line_ver < chunk_line_ver_count; ++line_ver)
 	{
 		glVertex2f(line_ver * CHUNK_SIZE, 0);
 		glVertex2f(line_ver * CHUNK_SIZE, height * CHUNK_SIZE);

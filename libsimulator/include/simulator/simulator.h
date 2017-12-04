@@ -1,9 +1,11 @@
 #ifndef SIMULATOR_H
 #define SIMULATOR_H
 
+#include <stdint.h>
+
 #include "util/util.h"
 
-typedef unsigned int simulator_id;
+typedef uint8_t simulator_id;
 
 MODULE_DECLARE(struct simulator, simulator_create, simulator_destroy)
 

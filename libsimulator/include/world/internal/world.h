@@ -8,14 +8,14 @@
 
 struct world
 {
-	unsigned int id;
+	world_id id;
 
 	dWorldID phys_id;
 	dSpaceID collision_space;
 	dJointGroupID contacts;
 
-	unsigned int chunk_width;
-	unsigned int chunk_height;
+	uint32_t chunk_width;
+	uint32_t chunk_height;
 
 	struct chunk *chunks;
 };

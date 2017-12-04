@@ -174,7 +174,7 @@ BOOL steering_path_pop(struct component_steer *steer)
 }
 
 
-void steering_path_set(struct component_steer *steer, float waypoints[2], unsigned int n)
+void steering_path_set(struct component_steer *steer, float waypoints[2], uint32_t n)
 {
 	// remove old
 	while (steering_path_pop(steer));
@@ -190,7 +190,7 @@ void steering_path_set(struct component_steer *steer, float waypoints[2], unsign
 	steer->path_front = wp;
 
 	// the rest
-	for (unsigned int i = 1; i < n; ++i)
+	for (uint32_t i = 1; i < n; ++i)
 	{
 		struct steering_path_waypoint *next = create_node(waypoints + (i * 2));
 		wp->next = next;

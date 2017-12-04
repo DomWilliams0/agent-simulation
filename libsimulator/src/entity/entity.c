@@ -4,10 +4,8 @@
 
 #include "entity/entity.h"
 #include "entity/components.h"
-#include "simulator/simulator.h"
 #include "util/log.h"
 #include "util/memory.h"
-#include "util/util.h"
 
 #define INVALID_ENTITY (MAX_ENTITIES)
 #define EMPTY_MASK     (0)
@@ -161,7 +159,7 @@ entity_mask entity_get_component_mask(struct entity_ctx *ctx, entity_id e)
 	return ctx->masks[e];
 }
 
-void* entity_get_component_array(struct entity_ctx *ctx, component_type c)
+void* entity_get_component_array(struct entity_ctx *ctx, enum component_type c)
 {
 	switch(c)
 	{
@@ -190,7 +188,7 @@ BOOL entity_has_component(struct entity_ctx *ctx, entity_id e, entity_mask mask)
 	return FALSE;
 }
 
-static void* get_component(struct entity_ctx *ctx, entity_id e, component_type c)
+static void* get_component(struct entity_ctx *ctx, entity_id e, enum component_type c)
 {
 	switch(c)
 	{
@@ -211,7 +209,7 @@ static void* get_component(struct entity_ctx *ctx, entity_id e, component_type c
 	}
 }
 
-void *entity_add_component(struct entity_ctx *ctx, entity_id e, component_type c)
+void *entity_add_component(struct entity_ctx *ctx, entity_id e, enum component_type c)
 {
 	// TODO assert
 	if (entity_is_alive(ctx, e))
@@ -220,13 +218,13 @@ void *entity_add_component(struct entity_ctx *ctx, entity_id e, component_type c
 	return get_component(ctx, e, c);
 }
 
-void entity_remove_component(struct entity_ctx *ctx, entity_id e, component_type c)
+void entity_remove_component(struct entity_ctx *ctx, entity_id e, enum component_type c)
 {
 	if (entity_has_component(ctx, e, c))
 		ctx->masks[e] &= ~c;
 }
 
-void* entity_get_component(struct entity_ctx *ctx, entity_id e, component_type c)
+void* entity_get_component(struct entity_ctx *ctx, entity_id e, enum component_type c)
 {
 	if (!entity_has_component(ctx, e, c))
 		return NULL;

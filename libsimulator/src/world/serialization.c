@@ -11,8 +11,8 @@
 
 struct serialize_header
 {
-	unsigned int chunk_width;
-	unsigned int chunk_height;
+	chunk_coord chunk_width;
+	chunk_coord chunk_height;
 };
 
 struct serialize_body

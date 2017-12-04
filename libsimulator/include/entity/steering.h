@@ -29,6 +29,6 @@ void steering_apply(struct component_steer *steer, float current_pos[2], float *
 
 void steering_path_add(struct component_steer *steer, float waypoint[2]);
 BOOL steering_path_pop(struct component_steer *steer);
-void steering_path_set(struct component_steer *steer, float *waypoints, unsigned int n);
+void steering_path_set(struct component_steer *steer, float *waypoints, uint32_t n);
 
 #endif

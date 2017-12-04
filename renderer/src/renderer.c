@@ -71,15 +71,15 @@ MODULE_IMPLEMENT(struct renderer, "renderer",
 		})
 
 #define TIME_FUNCTION(what, how) \
-		unsigned int MACRO_CONCAT(what, _pre) = SDL_GetTicks(); \
+		uint32_t MACRO_CONCAT(what, _pre) = SDL_GetTicks(); \
 		how;\
-		unsigned int MACRO_CONCAT(what, _time) = SDL_GetTicks() - MACRO_CONCAT(what, _pre); \
+		uint32_t MACRO_CONCAT(what, _time) = SDL_GetTicks() - MACRO_CONCAT(what, _pre); \
 		MACRO_CONCAT(what, _tc)->accumulator += MACRO_CONCAT(what, _time); \
 		MACRO_CONCAT(what, _tc)->count += 1;
 
 void renderer_start_loop(struct renderer *renderer)
 {
-	unsigned int next_tick = SDL_GetTicks();
+	uint32_t next_tick = SDL_GetTicks();
 	int loops;
 	float interpolation;
 

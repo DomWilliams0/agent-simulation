@@ -18,7 +18,7 @@ static BOOL load_params(struct world *world, struct world_parameters *params);
 MODULE_IMPLEMENT(struct world, "world",
 		world_create,
 		{
-			static unsigned int last_id = 0;
+			static world_id last_id = 0;
 
 			struct world_parameters *params = (struct world_parameters *)arg;
 			if (!load_params(new_instance, params))
@@ -37,17 +37,17 @@ MODULE_IMPLEMENT(struct world, "world",
 				safe_free(instance->chunks);
 		})
 
-unsigned int world_get_chunk_width(struct world *w)
+chunk_coord world_get_chunk_width(struct world *w)
 {
 	return w->chunk_width;
 }
 
-unsigned int world_get_chunk_height(struct world *w)
+chunk_coord world_get_chunk_height(struct world *w)
 {
 	return w->chunk_height;
 }
 
-unsigned int world_get_id(struct world *w)
+world_id world_get_id(struct world *w)
 {
 	return w->id;
 }
@@ -114,9 +114,9 @@ static void load_terrain(struct world *world)
 }
 
 #define GET_CHUNK(w, x, y) \
-	unsigned int chunk_x  = x / CHUNK_SIZE; \
-	unsigned int chunk_y  = y / CHUNK_SIZE; \
-	unsigned int chunk_i = chunk_x + (w->chunk_width * chunk_y); \
+	chunk_coord chunk_x  = x / CHUNK_SIZE; \
+	chunk_coord chunk_y  = y / CHUNK_SIZE; \
+	chunk_coord chunk_i = chunk_x + (w->chunk_width * chunk_y); \
 	BOOL good = TRUE; \
 	if (chunk_x >= w->chunk_width || chunk_y >= w->chunk_height) \
 	{ \
@@ -126,32 +126,32 @@ static void load_terrain(struct world *world)
 	struct chunk *chunk = w->chunks + chunk_i;
 
 
-enum tile_type world_get_tile(struct world *w, unsigned int x, unsigned int y)
+enum tile_type world_get_tile(struct world *w, tile_coord x, tile_coord y)
 {
 	GET_CHUNK(w, x, y);
 	if (!good)
 		return TILE_BLANK;
 
-	unsigned int tile_x = x % CHUNK_SIZE;
-	unsigned int tile_y = y % CHUNK_SIZE;
-	unsigned int tile_i = tile_x + (CHUNK_SIZE * tile_y);
+	tile_coord tile_x = x % CHUNK_SIZE;
+	tile_coord tile_y = y % CHUNK_SIZE;
+	tile_coord tile_i = tile_x + (CHUNK_SIZE * tile_y);
 
 	return (enum tile_type) chunk->tiles[tile_i];
 }
 
-void world_set_tile(struct world *w, unsigned int x, unsigned int y, enum tile_type type)
+void world_set_tile(struct world *w, tile_coord x, tile_coord y, enum tile_type type)
 {
 	GET_CHUNK(w, x, y);
 	if (!good)
 		return;
 
-	unsigned int tile_x = x % CHUNK_SIZE;
-	unsigned int tile_y = y % CHUNK_SIZE;
-	unsigned int tile_i = tile_x + (CHUNK_SIZE * tile_y);
+	tile_coord tile_x = x % CHUNK_SIZE;
+	tile_coord tile_y = y % CHUNK_SIZE;
+	tile_coord tile_i = tile_x + (CHUNK_SIZE * tile_y);
 	chunk->tiles[tile_i] = type;
 }
 
-struct chunk *world_get_chunk_array(struct world *w, unsigned int *chunk_count)
+struct chunk *world_get_chunk_array(struct world *w, uint32_t *chunk_count)
 {
 	*chunk_count = w->chunk_width * w->chunk_height;
 	return w->chunks;

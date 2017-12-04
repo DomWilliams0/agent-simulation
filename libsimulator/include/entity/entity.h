@@ -1,6 +1,8 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
+#include <stdint.h>
+
 #include "util/bool.h"
 #include "util/util.h"
 
@@ -9,8 +11,8 @@
 #define VELOCITY_MINIMUM   (0.001f)
 
 // TODO entity IDs will be unique across all worlds
-typedef unsigned int entity_id;
-typedef unsigned int human_age;
+typedef uint32_t entity_id;
+typedef uint8_t human_age;
 
 typedef enum { MALE = 1, FEMALE } human_gender;
 

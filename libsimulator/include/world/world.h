@@ -1,6 +1,8 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <stdint.h>
+
 #include "world/world_forward.h"
 #include "util/util.h"
 #include "util/bool.h"
@@ -11,10 +13,16 @@
 
 struct simulator;
 
+
+typedef uint8_t tile;
+typedef uint8_t world_id;
+typedef uint32_t tile_coord;
+typedef uint32_t chunk_coord;
+
 struct world_parameters
 {
-	unsigned int chunk_width;
-	unsigned int chunk_height;
+	chunk_coord chunk_width;
+	chunk_coord chunk_height;
 };
 
 enum tile_type
@@ -24,8 +32,6 @@ enum tile_type
 
 	TILE_MAX
 };
-
-typedef int tile;
 
 struct chunk
 {
@@ -37,9 +43,9 @@ MODULE_DECLARE(struct world, world_create, world_destroy);
 
 struct world *world_get_world(struct simulator *sim); // TODO add support for multiple
 
-unsigned int world_get_chunk_width(struct world *w);
-unsigned int world_get_chunk_height(struct world *w);
-unsigned int world_get_id(struct world *w);
+chunk_coord world_get_chunk_width(struct world *w);
+chunk_coord world_get_chunk_height(struct world *w);
+world_id world_get_id(struct world *w);
 
 void world_step(struct world *w);
 
@@ -49,10 +55,10 @@ void world_get_position(world_body body, float pos[2]);
 void world_set_position(world_body body, float pos[2]);
 
 // tiles
-enum tile_type world_get_tile(struct world *w, unsigned int x, unsigned int y);
-void world_set_tile(struct world *w, unsigned int x, unsigned int y, enum tile_type type);
+enum tile_type world_get_tile(struct world *w, tile_coord x, tile_coord y);
+void world_set_tile(struct world *w, tile_coord x, tile_coord y, enum tile_type type);
 
-struct chunk *world_get_chunk_array(struct world *w, unsigned int *chunk_count);
+struct chunk *world_get_chunk_array(struct world *w, chunk_coord *chunk_count);
 tile *world_get_chunk_tiles(struct chunk *chunk);
 
 // serialization
