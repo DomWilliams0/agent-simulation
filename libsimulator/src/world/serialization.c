@@ -20,12 +20,12 @@ struct serialize_body
 	struct chunk *chunks;
 };
 
-BOOL world_save(struct world *w, const char * const file_path)
+bool world_save(struct world *w, const char * const file_path)
 {
 	if (file_path == NULL)
 	{
 		LOG_ERROR("Null world path");
-		return FALSE;
+		return false;
 	}
 
 	struct serialize_header header = {
@@ -38,7 +38,7 @@ BOOL world_save(struct world *w, const char * const file_path)
 	};
 
 	tpl_node *tpl_header, *tpl_body;
-	BOOL success = FALSE;
+	bool success = false;
 
 	// header
 	if ((tpl_header = tpl_map(TPL_HEADER, &header)) != NULL)
@@ -58,7 +58,7 @@ BOOL world_save(struct world *w, const char * const file_path)
 						int fd = fileno(f);
 						if (tpl_dump(tpl_header, TPL_FD, fd) == 0 && tpl_dump(tpl_body, TPL_FD, fd) == 0)
 						{
-							success = TRUE;
+							success = true;
 						}
 					}
 				}
@@ -86,7 +86,7 @@ struct world *world_load(const char * const file_path)
 
 	struct world *world = NULL;
 	tpl_node *tpl_header, *tpl_body;
-	BOOL success = FALSE;
+	bool success = false;
 
 	// load header
 	if ((tpl_header = tpl_map(TPL_HEADER, &header)) != NULL)
@@ -109,7 +109,7 @@ struct world *world_load(const char * const file_path)
 					{
 						if (tpl_load(tpl_body, TPL_FD, fd) == 0 && tpl_unpack(tpl_body, 0))
 						{
-							success = TRUE;
+							success = true;
 						}
 
 						tpl_free(tpl_body);

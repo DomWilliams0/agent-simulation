@@ -62,14 +62,14 @@ static inline void handle_seek(double pos[2], double goal_x, double goal_y, doub
 }
 
 // returns if arrived
-static inline BOOL handle_arrive(double pos[2], double goal_x, double goal_y, double *velocity)
+static inline bool handle_arrive(double pos[2], double goal_x, double goal_y, double *velocity)
 {
 	velocity[0] = CENTRE_TILE(goal_x) - pos[0];
 	velocity[1] = CENTRE_TILE(goal_y) - pos[1];
 
 	double distance = length(velocity);
 	double speed = HUMAN_ACCELERATION;
-	BOOL arriving = distance < STEERING_ARRIVE_RADIUS;
+	bool arriving = distance < STEERING_ARRIVE_RADIUS;
 	if (arriving)
 		speed *= distance / STEERING_ARRIVE_RADIUS;
 
@@ -155,13 +155,13 @@ void steering_path_add(struct component_steer *steer, double waypoint[2])
 	steer->path_end = wp;
 }
 
-BOOL steering_path_pop(struct component_steer *steer)
+bool steering_path_pop(struct component_steer *steer)
 {
 	struct steering_path_waypoint *front = steer->path_front;
 
 	// empty
 	if (!front)
-		return FALSE;
+		return false;
 
 	steer->path_front = front->next;
 
@@ -170,7 +170,7 @@ BOOL steering_path_pop(struct component_steer *steer)
 
 	free_node(front);
 
-	return TRUE;
+	return true;
 }
 
 

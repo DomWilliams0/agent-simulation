@@ -22,7 +22,7 @@ MODULE_IMPLEMENT(struct keyboard_ctx, "keyboard",
 		{
 		})
 
-BOOL keyboard_handle_camera_key(struct keyboard_ctx *ctx, BOOL is_down, int key)
+bool keyboard_handle_camera_key(struct keyboard_ctx *ctx, bool is_down, int key)
 {
 	switch(key)
 	{
@@ -53,10 +53,10 @@ BOOL keyboard_handle_camera_key(struct keyboard_ctx *ctx, BOOL is_down, int key)
 			break;
 
 		default:
-			return FALSE;
+			return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 void keyboard_get_camera_changes(struct keyboard_ctx *ctx, struct camera_movement *out)

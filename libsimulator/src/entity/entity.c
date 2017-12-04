@@ -36,13 +36,13 @@ MODULE_IMPLEMENT(struct entity_ctx, "entity context",
 		{
 		})
 
-static BOOL is_valid(entity_id e)
+static bool is_valid(entity_id e)
 {
 	return e < MAX_ENTITIES;
 }
 
 /*
-static BOOL attr_does_exist(struct entity_ctx *ctx, entity_id e)
+static bool attr_does_exist(struct entity_ctx *ctx, entity_id e)
 {
 	return ctx->attributes[e] != 0;
 }
@@ -123,7 +123,7 @@ void entity_destroy(struct entity_ctx *ctx, entity_id e)
 	// attr_destroy(ctx, e);
 }
 
-BOOL entity_is_alive(struct entity_ctx *ctx, entity_id e)
+bool entity_is_alive(struct entity_ctx *ctx, entity_id e)
 {
 	return is_valid(e) && e < ctx->count;
 }
@@ -180,12 +180,12 @@ void* entity_get_component_array(struct entity_ctx *ctx, enum component_type c)
 	}
 }
 
-BOOL entity_has_component(struct entity_ctx *ctx, entity_id e, entity_mask mask)
+bool entity_has_component(struct entity_ctx *ctx, entity_id e, entity_mask mask)
 {
 	if (entity_is_alive(ctx, e))
 		return (ctx->masks[e] & mask) == mask;
 
-	return FALSE;
+	return false;
 }
 
 static void* get_component(struct entity_ctx *ctx, entity_id e, enum component_type c)

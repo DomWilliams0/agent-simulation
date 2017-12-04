@@ -2,15 +2,13 @@
 #include "world/internal/world.h"
 #include "world/world.h"
 
-#include "util/bool.h"
-
-static BOOL ode_init;
+static bool ode_init;
 
 void create_physics_world(struct world *world)
 {
     if (!ode_init)
     {
-	ode_init = TRUE;
+	ode_init = true;
 	dInitODE();
     }
 

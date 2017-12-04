@@ -228,7 +228,7 @@ UNIT_TEST(entity_steering)
 	assert_pos_equal(end->pos, extra);
 
 	// pop from the front
-	BOOL popped = steering_path_pop(steer);
+	bool popped = steering_path_pop(steer);
 	assert_true(popped);
 	assert_non_null(steer->path_front);
 	assert_pos_equal(steer->path_front->pos, path[1]);

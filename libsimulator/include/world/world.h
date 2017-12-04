@@ -2,10 +2,10 @@
 #define WORLD_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "world/world_forward.h"
 #include "util/util.h"
-#include "util/bool.h"
 
 #define HUMAN_MASS (10.0)
 #define CHUNK_SIZE (32)
@@ -62,7 +62,7 @@ struct chunk *world_get_chunk_array(struct world *w, chunk_coord *chunk_count);
 tile *world_get_chunk_tiles(struct chunk *chunk);
 
 // serialization
-BOOL world_save(struct world *w, const char * const file_path);
+bool world_save(struct world *w, const char * const file_path);
 struct world *world_load(const char * const file_path);
 
 #endif

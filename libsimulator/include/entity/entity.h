@@ -2,8 +2,8 @@
 #define ENTITY_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
-#include "util/bool.h"
 #include "util/util.h"
 
 #define HUMAN_DAMPING      (0.15f) // this limits the maximum speed
@@ -28,7 +28,7 @@ entity_id entity_create(struct entity_ctx *ctx);
 
 void entity_destroy(struct entity_ctx *ctx, entity_id e);
 
-BOOL entity_is_alive(struct entity_ctx *ctx, entity_id e);
+bool entity_is_alive(struct entity_ctx *ctx, entity_id e);
 
 entity_id entity_get_first(struct entity_ctx *ctx);
 

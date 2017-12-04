@@ -86,10 +86,10 @@ void renderer_start_loop(struct renderer *renderer)
 	struct time_collector *logic_tc  = &renderer->times.logic;
 	struct time_collector *render_tc = &renderer->times.render;
 
-	while (TRUE)
+	while (true)
 	{
 		SDL_Event e;
-		BOOL key_handled, key_down;
+		bool key_handled, key_down;
 		while (SDL_PollEvent(&e))
 		{
 			switch(e.type)

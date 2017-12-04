@@ -2,7 +2,6 @@
 #define STEERING_H
 
 #include "world/world.h"
-#include "util/bool.h"
 
 #define STEERING_ARRIVE_RADIUS (0.5f)
 
@@ -28,7 +27,7 @@ void steering_update_system(struct entity_ctx *entities);
 void steering_apply(struct component_steer *steer, double current_pos[2], double *velocity);
 
 void steering_path_add(struct component_steer *steer, double waypoint[2]);
-BOOL steering_path_pop(struct component_steer *steer);
+bool steering_path_pop(struct component_steer *steer);
 void steering_path_set(struct component_steer *steer, double *waypoints, uint32_t n);
 
 #endif

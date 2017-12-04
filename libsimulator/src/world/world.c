@@ -1,7 +1,6 @@
 #include <math.h>
 
 #include "util/memory.h"
-#include "util/bool.h"
 #include "util/log.h"
 #include "util/util.h"
 #include "util/constants.h"
@@ -13,7 +12,7 @@
 #include "entity/entity.h"
 
 static void load_terrain(struct world *world);
-static BOOL load_params(struct world *world, struct world_parameters *params);
+static bool load_params(struct world *world, struct world_parameters *params);
 
 MODULE_IMPLEMENT(struct world, "world",
 		world_create,
@@ -88,24 +87,24 @@ void world_set_position(world_body body, double pos[2])
 	dBodySetPosition(body, pos[0] + 0.5, pos[1] + 0.5, 0);
 }
 
-static BOOL load_params(struct world *world, struct world_parameters *params)
+static bool load_params(struct world *world, struct world_parameters *params)
 {
 	if (params == NULL)
 	{
 		LOG_WARN("No parameters provided");
-		return FALSE;
+		return false;
 	}
 
 	if (params->chunk_width == 0 || params->chunk_height == 0)
 	{
 		LOG_WARN("Width and height must be positive");
-		return FALSE;
+		return false;
 	}
 
 	world->chunk_width = params->chunk_width;
 	world->chunk_height = params->chunk_height;
 
-	return TRUE;
+	return true;
 }
 
 static void load_terrain(struct world *world)
@@ -117,11 +116,11 @@ static void load_terrain(struct world *world)
 	chunk_coord chunk_x  = x / CHUNK_SIZE; \
 	chunk_coord chunk_y  = y / CHUNK_SIZE; \
 	chunk_coord chunk_i = chunk_x + (w->chunk_width * chunk_y); \
-	BOOL good = TRUE; \
+	bool good = true; \
 	if (chunk_x >= w->chunk_width || chunk_y >= w->chunk_height) \
 	{ \
 		LOG_WARN("Attempted to access out of range chunk at (%d, %d) in world %d", x, y, w->id); \
-		good = FALSE; \
+		good = false; \
 	} \
 	struct chunk *chunk = w->chunks + chunk_i;
 
