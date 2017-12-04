@@ -96,7 +96,6 @@ void renderer_start_loop(struct renderer *renderer)
 			{
 				case SDL_QUIT:
 					goto break_out;
-					break;
 
 				case SDL_KEYUP:
 				case SDL_KEYDOWN:
@@ -114,12 +113,14 @@ void renderer_start_loop(struct renderer *renderer)
 					{
 						// TODO pass off to gui/something else
 					}
+                    break;
 
 				case SDL_WINDOWEVENT:
 					if (e.window.event == SDL_WINDOWEVENT_RESIZED)
 					{
 						graphics_resize(renderer->graphics, e.window.data1, e.window.data2);
 					}
+                    break;
 			}
 		}
 
