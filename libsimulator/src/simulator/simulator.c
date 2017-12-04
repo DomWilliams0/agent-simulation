@@ -59,7 +59,7 @@ struct world *simulator_get_world(struct simulator *sim)
 void simulator_populate(struct simulator *sim)
 {
 	struct entity_ctx *entity = sim->entity;
-	float pos[2] = {0, 0};
+	double pos[2] = {0, 0};
 	entity_id e = entity_create(entity);
 
 	struct component_physics *phys = entity_add_component(entity, e, COMPONENT_PHYSICS);
@@ -74,12 +74,12 @@ void simulator_populate(struct simulator *sim)
 	steer->type = STEERING_PATH_FOLLOW;
 
 	// silly path
-	float path[4][2] = {{5, 0}, {5, 5}, {0, 5}, {0, 0}};
-	steering_path_set(steer, (float *)path, 4);
+	double path[4][2] = {{5, 0}, {5, 5}, {0, 5}, {0, 0}};
+	steering_path_set(steer, (double *)path, 4);
 
 	// some fun terrain
 	struct world *world = sim->world;
-	for (int i = 0; i < 10; ++i)
+	for (tile_coord i = 0; i < 10; ++i)
 		world_set_tile(world, i, i, TILE_GRASS);
 
 }

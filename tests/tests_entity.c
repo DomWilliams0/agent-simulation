@@ -202,8 +202,8 @@ UNIT_TEST(entity_steering)
 	steering_path_set(steer, NULL, 0);
 
 	// path setting
-	float path[3][2] = {{4, 5}, {6, 7}, {8, 9}};
-	steering_path_set(steer, (float *)path, 3);
+	double path[3][2] = {{4, 5}, {6, 7}, {8, 9}};
+	steering_path_set(steer, (double *)path, 3);
 
 	// ensure path was set correctly
 	struct steering_path_waypoint *waypoint = steer->path_front;
@@ -219,7 +219,7 @@ UNIT_TEST(entity_steering)
 	assert_null(waypoint);
 
 	// add one extra
-	float extra[2] = {20, 40};
+	double extra[2] = {20, 40};
 	steering_path_add(steer, extra);
 
 	// ensure it was added to the end

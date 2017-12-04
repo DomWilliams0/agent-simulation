@@ -9,14 +9,14 @@
 
 struct colour
 {
-	float r, g, b;
+	double r, g, b;
 };
 
 struct camera_movement
 {
-	float move_hor;
-	float move_ver;
-	float zoom;
+	double move_hor;
+	double move_ver;
+	double zoom;
 };
 
 struct world;
@@ -28,7 +28,7 @@ void graphics_start(struct graphics_ctx *ctx);
 
 void graphics_draw_world(struct world *world);
 
-void graphics_draw_human(float x, float y, struct component_human *human);
+void graphics_draw_human(double x, double y, struct component_human *human);
 
 void graphics_end(struct graphics_ctx *ctx);
 

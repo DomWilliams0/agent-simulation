@@ -51,8 +51,8 @@ void world_step(struct world *w);
 
 // entities
 world_body world_create_entity(struct world *w);
-void world_get_position(world_body body, float pos[2]);
-void world_set_position(world_body body, float pos[2]);
+void world_get_position(world_body body, double pos[2]);
+void world_set_position(world_body body, double pos[2]);
 
 // tiles
 enum tile_type world_get_tile(struct world *w, tile_coord x, tile_coord y);

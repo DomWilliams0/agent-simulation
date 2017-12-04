@@ -113,7 +113,7 @@ UNIT_TEST(world_serialization)
 	struct world *w = world_create(&params);
 
 	const int check_count = 6;
-	float tiles[12] = {0, 0, 1, 0, 2, 0, 3, 0, 100, 10, 20, 60};
+	tile_coord tiles[12] = {0, 0, 1, 0, 2, 0, 3, 0, 100, 10, 20, 60};
 	for (int i = 0; i < check_count * 2; i += 2)
 		world_set_tile(w, tiles[i], tiles[i + 1], TILE_GRASS);
 

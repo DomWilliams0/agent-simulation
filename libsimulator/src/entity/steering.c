@@ -18,8 +18,8 @@ void steering_update_system(struct entity_ctx *entities)
 	entity_id count = entity_get_count(entities);
 	const entity_mask render_mask = COMPONENT_PHYSICS | COMPONENT_STEER;
 
-	float velocity[2];
-	float position[2];
+	double velocity[2];
+	double position[2];
 	for (entity_id i = 0; i < count; ++i)
 	{
 		if (!entity_has_component(entities, i, render_mask))
@@ -38,12 +38,12 @@ void steering_update_system(struct entity_ctx *entities)
 
 }
 
-static double length(float *v)
+static double length(double *v)
 {
 	return sqrt((v[0] * v[0]) + (v[1] * v[1]));
 }
 
-static void scale(float *velocity, float speed)
+static void scale(double *velocity, double speed)
 {
 	double l = length(velocity);
 	if (l < VELOCITY_MINIMUM)
@@ -53,7 +53,7 @@ static void scale(float *velocity, float speed)
 	velocity[1] *= speed / l;
 }
 
-static inline void handle_seek(float pos[2], float goal_x, float goal_y, float *velocity)
+static inline void handle_seek(double pos[2], double goal_x, double goal_y, double *velocity)
 {
 	// full speed ahead
 	velocity[0] = CENTRE_TILE(goal_x) - pos[0];
@@ -62,13 +62,13 @@ static inline void handle_seek(float pos[2], float goal_x, float goal_y, float *
 }
 
 // returns if arrived
-static inline BOOL handle_arrive(float pos[2], float goal_x, float goal_y, float *velocity)
+static inline BOOL handle_arrive(double pos[2], double goal_x, double goal_y, double *velocity)
 {
 	velocity[0] = CENTRE_TILE(goal_x) - pos[0];
 	velocity[1] = CENTRE_TILE(goal_y) - pos[1];
 
 	double distance = length(velocity);
-	float speed = HUMAN_ACCELERATION;
+	double speed = HUMAN_ACCELERATION;
 	BOOL arriving = distance < STEERING_ARRIVE_RADIUS;
 	if (arriving)
 		speed *= distance / STEERING_ARRIVE_RADIUS;
@@ -78,7 +78,7 @@ static inline BOOL handle_arrive(float pos[2], float goal_x, float goal_y, float
 	return arriving;
 }
 
-static inline void handle_path_follow(float pos[2], struct component_steer *steer, float *velocity)
+static inline void handle_path_follow(double pos[2], struct component_steer *steer, double *velocity)
 {
 	struct steering_path_waypoint *current = steer->path_front;
 
@@ -100,7 +100,7 @@ static inline void handle_path_follow(float pos[2], struct component_steer *stee
 	}
 }
 
-void steering_apply(struct component_steer *steer, float current_pos[2], float *velocity)
+void steering_apply(struct component_steer *steer, double current_pos[2], double *velocity)
 {
 	// how lovely
 	switch(steer->type)
@@ -122,7 +122,7 @@ void steering_apply(struct component_steer *steer, float current_pos[2], float *
 	}
 }
 
-static struct steering_path_waypoint *create_node(float pos[2])
+static struct steering_path_waypoint *create_node(double pos[2])
 {
 	struct steering_path_waypoint *waypoint;
 	safe_malloc_struct(struct steering_path_waypoint, &waypoint);
@@ -139,7 +139,7 @@ static void free_node(struct steering_path_waypoint *waypoint)
 	safe_free(waypoint);
 }
 
-void steering_path_add(struct component_steer *steer, float waypoint[2])
+void steering_path_add(struct component_steer *steer, double waypoint[2])
 {
 	struct steering_path_waypoint *wp = create_node(waypoint);
 
@@ -174,7 +174,7 @@ BOOL steering_path_pop(struct component_steer *steer)
 }
 
 
-void steering_path_set(struct component_steer *steer, float waypoints[2], uint32_t n)
+void steering_path_set(struct component_steer *steer, double waypoints[2], uint32_t n)
 {
 	// remove old
 	while (steering_path_pop(steer));

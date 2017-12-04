@@ -31,7 +31,7 @@ struct renderer
 		struct time_collector logic;
 		struct time_collector render;
 		struct time_collector frame;
-		float last_frame;
+		double last_frame;
 	} times;
 };
 
@@ -81,7 +81,7 @@ void renderer_start_loop(struct renderer *renderer)
 {
 	uint32_t next_tick = SDL_GetTicks();
 	int loops;
-	float interpolation;
+	double interpolation;
 
 	struct time_collector *logic_tc  = &renderer->times.logic;
 	struct time_collector *render_tc = &renderer->times.render;
@@ -134,17 +134,17 @@ void renderer_start_loop(struct renderer *renderer)
 			loops += 1;
 		}
 
-		interpolation = (float)(SDL_GetTicks() + SKIP_TICKS - next_tick) / SKIP_TICKS;
+		interpolation = (double)(SDL_GetTicks() + SKIP_TICKS - next_tick) / SKIP_TICKS;
 
 		TIME_FUNCTION(render, render_simulation(renderer));
 
 		// print every second
 		if (logic_tc->count == TICKS_PER_SECOND)
 		{
-			float avg_render = render_tc->accumulator / render_tc->count;
+			double avg_render = render_tc->accumulator / render_tc->count;
 			memset(render_tc, 0, sizeof(struct time_collector));
 
-			float avg_logic = logic_tc->accumulator / logic_tc->count;
+			double avg_logic = logic_tc->accumulator / logic_tc->count;
 			memset(logic_tc, 0, sizeof(struct time_collector));
 
 			LOG_INFO("sim %.2fms (%.2f/s) | render %.2fms (%.2f/s)", avg_logic, 1000./avg_logic, avg_render, 1000./avg_render);
@@ -168,7 +168,7 @@ static void render_entities(struct entity_ctx *entities)
 	entity_id count = entity_get_count(entities);
 	const entity_mask render_mask = COMPONENT_PHYSICS | COMPONENT_HUMAN;
 
-	float pos[2];
+	double pos[2];
 	for (entity_id i = 0; i < count; ++i)
 	{
 		if (!entity_has_component(entities, i, render_mask))

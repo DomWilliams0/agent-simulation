@@ -8,7 +8,7 @@ void random_init()
 	srand(time(NULL));
 }
 
-float random_get(float max)
+double random_get(double max)
 {
-	return (float) rand() / (float) (RAND_MAX / max);
+	return (double) rand() / (RAND_MAX / max);
 }

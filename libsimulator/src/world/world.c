@@ -76,14 +76,14 @@ world_body world_create_entity(struct world *w)
 	return b;
 }
 
-void world_get_position(world_body body, float pos[2])
+void world_get_position(world_body body, double pos[2])
 {
 	const double *dpos = dBodyGetPosition(body);
 	pos[0] = dpos[0];
 	pos[1] = dpos[1];
 }
 
-void world_set_position(world_body body, float pos[2])
+void world_set_position(world_body body, double pos[2])
 {
 	dBodySetPosition(body, pos[0] + 0.5, pos[1] + 0.5, 0);
 }

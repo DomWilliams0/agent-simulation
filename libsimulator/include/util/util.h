@@ -59,4 +59,4 @@
 #endif
 
 void random_init();
-float random_get(float max);
+double random_get(double max);

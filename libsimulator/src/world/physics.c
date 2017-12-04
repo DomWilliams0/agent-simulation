@@ -27,9 +27,9 @@ void create_physics_world(struct world *world)
     world->contacts = dJointGroupCreate(0);
 
 	// borders
-	const float radius = 1;
-	const float width = world->chunk_width * CHUNK_SIZE;
-	const float height = world->chunk_height * CHUNK_SIZE;
+	const double radius = 1;
+	const double width = world->chunk_width * CHUNK_SIZE;
+	const double height = world->chunk_height * CHUNK_SIZE;
 
 	dGeomID border;
 	// top

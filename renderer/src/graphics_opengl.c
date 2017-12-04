@@ -38,14 +38,14 @@ struct graphics_ctx
 	{
 		int width;
 		int height;
-		float aspect_ratio;
+		double aspect_ratio;
 	} window;
 
 	struct
 	{
-		float zoom_scale;
-		float x;
-		float y;
+		double zoom_scale;
+		double x;
+		double y;
 	} camera;
 };
 
@@ -201,12 +201,12 @@ void graphics_draw_world(struct world *world)
 
 }
 
-void graphics_draw_human(float x, float y, struct component_human *human)
+void graphics_draw_human(double x, double y, struct component_human *human)
 {
 	// ty http://slabode.exofire.net/circle_draw.shtml
 	// values hardcoded
-	static float tangetial_factor = 0.3249196962329063;
-	static float radial_factor    = 0.9510565162951535;
+	static double tangetial_factor = 0.3249196962329063;
+	static double radial_factor    = 0.9510565162951535;
 	static int segment_count      = 20;
 
 	glPushMatrix();
@@ -215,18 +215,18 @@ void graphics_draw_human(float x, float y, struct component_human *human)
 	else
 		glColor3fv((GLfloat *)&COLOUR_ENTITY_FEMALE);
 
-	glTranslatef(x, y, 0);
+	glTranslatef((GLfloat) x, (GLfloat) y, 0);
 
-	float cx = HUMAN_RADIUS;
-	float cy = 0;
+	double cx = HUMAN_RADIUS;
+	double cy = 0;
 
 	glBegin(GL_POLYGON);
 	for(int ii = 0; ii < segment_count; ++ii)
 	{
-		glVertex2f(cx, cy);
+		glVertex2f((GLfloat) cx, (GLfloat) cy);
 
-		float tx = -cy;
-		float ty = cx;
+		double tx = -cy;
+		double ty = cx;
 
 		cx += tx * tangetial_factor;
 		cy += ty * tangetial_factor;
@@ -251,7 +251,7 @@ static void resize(struct graphics_ctx *ctx)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	ctx->window.aspect_ratio = (float)ctx->window.width / ctx->window.height;
+	ctx->window.aspect_ratio = (double) ctx->window.width / ctx->window.height;
 	glOrtho(-ctx->window.aspect_ratio * ctx->camera.zoom_scale,
 			 ctx->window.aspect_ratio * ctx->camera.zoom_scale,
 			 ctx->camera.zoom_scale,
@@ -269,7 +269,7 @@ void graphics_resize(struct graphics_ctx *ctx, int w, int h)
 	resize(ctx);
 }
 
-static void zoom(float scale, float aspect_ratio)
+static void zoom(double scale, double aspect_ratio)
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
