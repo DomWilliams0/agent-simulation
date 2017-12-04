@@ -6,3 +6,5 @@ obj/
 bin/
 .ycm_extra_conf.py
 .exrc
+CMakeLists.txt
+cmake-build-debug/
