@@ -13,7 +13,6 @@
 
 struct simulator;
 
-
 typedef uint8_t tile;
 typedef uint8_t world_id;
 typedef uint32_t tile_coord;
