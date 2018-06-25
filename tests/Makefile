@@ -1,5 +1,5 @@
 CFLAGS  += $(addprefix -I,$(INC))
-LDFLAGS += -lode -lsimulator -L$(BIN) -lcmocka
+LDFLAGS += -lode -lsimulator -L$(BIN)
 
 SRCS    := $(shell find $(SRC) -type f -name '*.c')
 INCS    := $(shell find $(INC) -type f -name '*.h')

@@ -1,15 +1,11 @@
 OBJ        = obj
 BIN        = bin
-
 SRC        = src
 INC        = include
-LIB_INC    = $(LIB_DIR)/$(INC)
 
+# TODO: move -O0 into debug flags
 CFLAGS     = -std=c11 -c -Wall -Wextra -fPIC -I$(INC) -g -O0
 LDFLAGS    = -Wall
-
-CC         = gcc
-MAKE      := $(MAKE) --no-print-directory
 
 LIB_DIR    = libsimulator
 EXE_DIR    = renderer
@@ -30,47 +26,37 @@ endif
 
 export
 
-.PHONY: default
+.PHONY: default, sim, render, test
 default: $(EXE)
 
 # lib
-$(LIB): $(LIB_DIR)
-
-.PHONY: $(LIB_DIR)
-$(LIB_DIR): | build_dirs
-	@$(MAKE) -C $@ TARGET=../$(LIB) BIN=../$(BIN) OBJ=../$(OBJ)
+sim: $(LIB)
+$(LIB): $(LIB_DIR) | build_dirs
+	$(MAKE) -C $< TARGET=../$@ BIN=../$(BIN) OBJ=../$(OBJ)
 
 # renderer
-$(EXE): $(EXE_DIR)
-
-.PHONY: $(EXE_DIR)
-$(EXE_DIR): $(LIB) | build_dirs
-	@$(MAKE) -C $@ TARGET=../$(EXE) BIN=../$(BIN) OBJ=../$(OBJ) INC="$(INC) ../$(LIB_INC)"
+render: $(EXE)
+$(EXE): $(LIB) $(EXE_DIR) | build_dirs
+	$(MAKE) -C $< TARGET=../$@ BIN=../$(BIN) OBJ=../$(OBJ)
 
 # tests
-$(TEST): $(TEST_DIR)
+test: $(TEST)
+$(TEST): $(TEST_DIR) | build_dirs
+	$(MAKE) -C $< TARGET=../$@ BIN=../$(BIN) OBJ=../$(OBJ) SRC=. INC=../$(LIB_DIR)/$(INC)
+	@LD_LIBRARY_PATH=$(BIN) $@
 
-.PHONY: $(TEST_DIR)
-$(TEST_DIR): $(LIB) | build_dirs
-	@$(MAKE) -C $@ TARGET=../$(TEST) BIN=../$(BIN) OBJ=../$(OBJ) INC=../$(LIB_INC) SRC=.
-	@LD_LIBRARY_PATH=$(BIN) $(TEST)
-
-.PHONY: clean
+# helpers
+.PHONY: clean, run, debug, build_dirs, all
 clean:
-	@rm -rf $(OBJ) $(BIN)
+	rm -rf $(OBJ) $(BIN)
 
-.PHONY: run
 run: $(EXE)
-	@LD_LIBRARY_PATH=$(BIN) $(EXE)
+	LD_LIBRARY_PATH=$(BIN) $(EXE)
 
-.PHONY: debug
 debug: $(EXE)
 	@LD_LIBRARY_PATH=$(BIN) gdb --tui $(EXE)
 
-.PHONY: build_dirs
 build_dirs:
 	@mkdir -p $(BIN) $(OBJ)
 
-.PHONY: all
 all: $(LIB_DIR) $(EXE_DIR) $(TEST_DIR)
-
