@@ -4,7 +4,6 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <setjmp.h>
-#include <cmocka.h>
 
 typedef void (*unit_test_t)(void **);
 typedef int (*unit_test_env_t)(void **);

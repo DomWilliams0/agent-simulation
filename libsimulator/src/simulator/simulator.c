@@ -1,7 +1,6 @@
 #include "simulator/simulator.h"
 #include "entity/entity.h"
 #include "entity/components.h"
-#include "world/world.h"
 
 #include "util/memory.h"
 #include "util/log.h"
@@ -23,8 +22,8 @@ MODULE_IMPLEMENT(struct simulator, "simulator",
 
 			// TODO pass through simulator args
 			struct world_parameters world_params;
-			world_params.chunk_width = 4;
-			world_params.chunk_height = 4;
+			world_params.width = 30;
+			world_params.width = 30;
 
 			if ((new_instance->entity = entity_create_context(NULL)) == NULL ||
 				(new_instance->world = world_create(&world_params)) == NULL)
@@ -76,12 +75,6 @@ void simulator_populate(struct simulator *sim)
 	// silly path
 	double path[4][2] = {{5, 0}, {5, 5}, {0, 5}, {0, 0}};
 	steering_path_set(steer, (double *)path, 4);
-
-	// some fun terrain
-	struct world *world = sim->world;
-	for (tile_coord i = 0; i < 10; ++i)
-		world_set_tile(world, i, i, TILE_GRASS);
-
 }
 
 struct entity_ctx *entity_get_context(struct simulator *sim)

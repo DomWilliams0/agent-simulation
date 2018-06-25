@@ -36,8 +36,8 @@ $(LIB): $(LIB_DIR) | build_dirs
 
 # renderer
 render: $(EXE)
-$(EXE): $(LIB) $(EXE_DIR) | build_dirs
-	$(MAKE) -C $< TARGET=../$@ BIN=../$(BIN) OBJ=../$(OBJ)
+$(EXE): $(EXE_DIR) $(LIB) | build_dirs
+	$(MAKE) -C $< TARGET=../$@ BIN=../$(BIN) OBJ=../$(OBJ) INC=../$(LIB_DIR)/$(INC)
 
 # tests
 test: $(TEST)

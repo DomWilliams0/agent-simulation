@@ -26,8 +26,8 @@ void create_physics_world(struct world *world)
 
 	// borders
 	const double radius = 1;
-	const double width = world->chunk_width * CHUNK_SIZE;
-	const double height = world->chunk_height * CHUNK_SIZE;
+	const double width = world->width;
+	const double height = world->height;
 
 	dGeomID border;
 	// top

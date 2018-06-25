@@ -4,7 +4,7 @@
 *.lib
 obj/
 bin/
-.ycm_extra_conf.py
+.clang_complete
 .exrc
 CMakeLists.txt
 cmake-build-debug/

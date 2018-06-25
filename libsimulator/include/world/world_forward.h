@@ -9,4 +9,7 @@ struct dxBody;
 //typedef struct dxWorld *world_id; /* dWorldID; */
 typedef struct dxBody *world_body;   /* dBodyID; */
 
+typedef uint64_t coord;
+
+
 #endif

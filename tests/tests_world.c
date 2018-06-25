@@ -7,8 +7,8 @@
 
 #define CREATE_WORLD \
 	struct world_parameters params = { \
-		.chunk_width = 2, \
-		.chunk_height = 7 \
+		.width = 10, \
+		.height = 15 \
 	}; \
 	struct world *w = world_create(&params);
 
