@@ -3,7 +3,6 @@
 #include "util/memory.h"
 #include "util/log.h"
 #include "util/util.h"
-#include "util/constants.h"
 
 #include "world/world.h"
 #include "world/internal/physics.h"
@@ -13,21 +12,20 @@
 
 static bool load_params(struct world *world, struct world_parameters *params);
 
-MODULE_IMPLEMENT(struct world, "world",
-		world_create,
-		{
-			struct world_parameters *params = (struct world_parameters *)arg;
-			if (!load_params(new_instance, params))
-			{
-				LOG_WARN("Invalid world parameters");
-				MODULE_INIT_ABORT;
-			}
-			create_physics_world(new_instance);
-		},
-		world_destroy,
-		{
-			destroy_physics_world(instance);
-		})
+MOD_INIT(world, {
+	struct world_parameters *params = (struct world_parameters *)arg;
+	if (!load_params(self, params))
+	{
+		LOG_WARN("Invalid world parameters");
+		return 1;
+	}
+	create_physics_world(self);
+	return 0;
+})
+
+MOD_DESTROY(world, {
+	destroy_physics_world(self);
+})
 
 void world_step(struct world *w)
 {

@@ -3,14 +3,17 @@
 
 #include <stdbool.h>
 
+#include "graphics.h"
 #include "util/util.h"
 
 struct camera_movement;
 
-MODULE_DECLARE(struct keyboard_ctx, keyboard_init, keyboard_destroy);
+MOD_DECLARE(keyboard, {
+	struct camera_movement camera;
+});
 
-bool keyboard_handle_camera_key(struct keyboard_ctx *ctx, bool is_down, int key);
+bool keyboard_handle_camera_key(struct keyboard *self, bool is_down, int key);
 
-void keyboard_get_camera_changes(struct keyboard_ctx *ctx, struct camera_movement *out);
+void keyboard_get_camera_changes(struct keyboard *self, struct camera_movement *out);
 
 #endif

@@ -1,5 +1,6 @@
 #include <ode/ode.h>
 #include <math.h>
+#include <entity/entity.h>
 
 #include "entity/steering.h"
 #include "entity/components.h"
@@ -10,12 +11,12 @@
 
 #define CENTRE_TILE(coord) (coord + 0.5f)
 
-void steering_update_system(struct entity_ctx *entities)
+void steering_update_system(struct entities *entities)
 {
 	struct component_physics *physics = (struct component_physics *)entity_get_component_array(entities, COMPONENT_PHYSICS);
 	struct component_steer *steers = (struct component_steer *)entity_get_component_array(entities, COMPONENT_STEER);
 
-	entity_id count = entity_get_count(entities);
+	entity_id count = entities->count;
 	const entity_mask render_mask = COMPONENT_PHYSICS | COMPONENT_STEER;
 
 	double velocity[2];

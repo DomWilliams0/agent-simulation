@@ -2,8 +2,28 @@
 #define RENDERER_H
 
 #include "util/util.h"
+#include "keyboard.h"
 
-MODULE_DECLARE(struct renderer, renderer_create, renderer_destroy)
+struct time_collector
+{
+	double accumulator;
+	int count;
+};
+
+MOD_DECLARE(renderer, {
+	struct simulator *sim;
+	struct graphics *graphics;
+	struct keyboard keyboard;
+
+	struct
+	{
+		struct time_collector logic;
+		struct time_collector render;
+		struct time_collector frame;
+		double last_frame;
+	} times;
+})
+
 
 void renderer_start_loop(struct renderer *renderer);
 

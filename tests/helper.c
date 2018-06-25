@@ -23,7 +23,7 @@ int teardown_simulator(void **state)
 int teardown_remove_all_entities(void **state)
 {
 	struct simulator *sim = (struct simulator *)*state;
-	struct entity_ctx *ctx = entity_get_context(sim);
+	struct entities *ctx = entity_get_context(sim);
 
 	entity_id count = entity_get_count(ctx);
 	for (entity_id i = 0; i < count; ++i)

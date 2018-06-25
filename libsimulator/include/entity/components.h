@@ -1,7 +1,7 @@
 #ifndef COMPONENTS_H
 #define COMPONENTS_H
 
-#include "entity/entity.h"
+#include "entity/common.h"
 #include "entity/steering.h"
 #include "world/world_forward.h"
 
@@ -13,6 +13,7 @@ enum component_type {
 };
 
 typedef uint16_t entity_mask;
+typedef uint8_t human_age;
 
 struct component_physics
 {
@@ -48,18 +49,18 @@ struct component_steer
 };
 
 
-entity_mask entity_get_component_mask(struct entity_ctx *ctx, entity_id e);
+entity_mask entity_get_component_mask(struct entities *self, entity_id e);
 
-void *entity_add_component(struct entity_ctx *ctx, entity_id e, enum component_type c);
+void *entity_add_component(struct entities *self, entity_id e, enum component_type c);
 
-void entity_remove_component(struct entity_ctx *ctx, entity_id e, enum component_type c);
+void entity_remove_component(struct entities *self, entity_id e, enum component_type c);
 
-void* entity_get_component(struct entity_ctx *ctx, entity_id e, enum component_type c);
+void* entity_get_component(struct entities *self, entity_id e, enum component_type c);
 
 // for the love of god, remember to cast the return value to an array of the
 // component type BEFORE iterating through it. see test_entity_component_get
-void* entity_get_component_array(struct entity_ctx *ctx, enum component_type c);
+void* entity_get_component_array(struct entities *self, enum component_type c);
 
-bool entity_has_component(struct entity_ctx *ctx, entity_id e, entity_mask mask);
+bool entity_has_component(struct entities *self, entity_id e, entity_mask mask);
 
 #endif

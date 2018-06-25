@@ -7,7 +7,7 @@
 UNIT_TEST(entity_creation_destruction)
 {
 	struct simulator *sim = (struct simulator *)*state;
-	struct entity_ctx *ctx = entity_get_context(sim);
+	struct entities *ctx = entity_get_context(sim);
 
 	// start with zero
 	assert_int_equal(0, entity_get_count(ctx));
@@ -27,7 +27,7 @@ UNIT_TEST(entity_creation_destruction)
 UNIT_TEST(entity_creation_max)
 {
 	struct simulator *sim = (struct simulator *)*state;
-	struct entity_ctx *ctx = entity_get_context(sim);
+	struct entities *ctx = entity_get_context(sim);
 
 	entity_id max_count = entity_get_max_count(ctx);
 
@@ -57,7 +57,7 @@ UNIT_TEST(entity_creation_max)
 
 static void iterator_func(entity_id e, void *arg)
 {
-	assert_true(entity_is_alive((struct entity_ctx *)arg, e));
+	assert_true(entity_is_alive((struct entities *)arg, e));
 }
 
 static void iterator_func_fail(entity_id e, void *arg)
@@ -71,7 +71,7 @@ static void iterator_func_fail(entity_id e, void *arg)
 UNIT_TEST(entity_iteration)
 {
 	struct simulator *sim = (struct simulator *)*state;
-	struct entity_ctx *ctx = entity_get_context(sim);
+	struct entities *ctx = entity_get_context(sim);
 
 	// no entities
 	assert_false(entity_is_alive(ctx, entity_get_first(ctx)));
@@ -105,7 +105,7 @@ UNIT_TEST(entity_iteration)
 UNIT_TEST(entity_is_alive)
 {
 	struct simulator *sim = (struct simulator *)*state;
-	struct entity_ctx *ctx = entity_get_context(sim);
+	struct entities *ctx = entity_get_context(sim);
 
 	// start with zero
 	assert_int_equal(0, entity_get_count(ctx));
@@ -122,7 +122,7 @@ UNIT_TEST(entity_is_alive)
 UNIT_TEST(entity_component_add_remove)
 {
 	struct simulator *sim = (struct simulator *)*state;
-	struct entity_ctx *ctx = entity_get_context(sim);
+	struct entities *ctx = entity_get_context(sim);
 	entity_id e = entity_create(ctx);
 
 	// no components to start
@@ -155,7 +155,7 @@ UNIT_TEST(entity_component_add_remove)
 UNIT_TEST(entity_component_get)
 {
 	struct simulator *sim = (struct simulator *)*state;
-	struct entity_ctx *ctx = entity_get_context(sim);
+	struct entities *ctx = entity_get_context(sim);
 
 	// add 2 entities
 	entity_id e1 = entity_create(ctx);
@@ -191,7 +191,7 @@ UNIT_TEST(entity_component_get)
 UNIT_TEST(entity_steering)
 {
 	struct simulator *sim = (struct simulator *)*state;
-	struct entity_ctx *ctx = entity_get_context(sim);
+	struct entities *ctx = entity_get_context(sim);
 
 	// add an entity
 	entity_id e = entity_create(ctx);

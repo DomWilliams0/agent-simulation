@@ -26,27 +26,24 @@ endif
 
 export
 
-.PHONY: default, sim, render, test
-default: $(EXE)
+.PHONY: default sim render test
+default: render
 
 # lib
-sim: $(LIB)
-$(LIB): $(LIB_DIR) | build_dirs
-	$(MAKE) -C $< TARGET=../$@ BIN=../$(BIN) OBJ=../$(OBJ)
+sim: | build_dirs
+	$(MAKE) -C $(LIB_DIR) TARGET=../$(LIB) BIN=../$(BIN) OBJ=../$(OBJ)
 
 # renderer
-render: $(EXE)
-$(EXE): $(EXE_DIR) $(LIB) | build_dirs
-	$(MAKE) -C $< TARGET=../$@ BIN=../$(BIN) OBJ=../$(OBJ) INC=../$(LIB_DIR)/$(INC)
+render: sim | build_dirs
+	$(MAKE) -C $(EXE_DIR) TARGET=../$(EXE) BIN=../$(BIN) OBJ=../$(OBJ) INC=../$(LIB_DIR)/$(INC)
 
 # tests
-test: $(TEST)
-$(TEST): $(TEST_DIR) | build_dirs
-	$(MAKE) -C $< TARGET=../$@ BIN=../$(BIN) OBJ=../$(OBJ) SRC=. INC=../$(LIB_DIR)/$(INC)
+test: | build_dirs
+	$(MAKE) -C $(TEST_DIR) TARGET=../$(TEST) BIN=../$(BIN) OBJ=../$(OBJ) SRC=. INC=../$(LIB_DIR)/$(INC)
 	@$@
 
 # helpers
-.PHONY: clean, run, debug, build_dirs, all
+.PHONY: clean run debug build_dirs all
 clean:
 	rm -rf $(OBJ) $(BIN)
 

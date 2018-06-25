@@ -5,85 +5,55 @@
 #include "util/memory.h"
 #include "util/log.h"
 
-struct simulator
-{
-	simulator_id id;
-	struct entity_ctx *entity;
-	struct world *world;
-};
+MOD_INIT(simulator, {
+	random_init();
 
-MODULE_IMPLEMENT(struct simulator, "simulator",
-		simulator_create,
-		{
-			static simulator_id last_id = 1;
-			new_instance->id = last_id++;
+	// TODO pass through simulator args
+	struct world_parameters world_params;
+	world_params.width = 30;
+	world_params.height = 30;
 
-			random_init();
+	if (entities_init(&self->entities, NULL) != 0)
+		return 1;
 
-			// TODO pass through simulator args
-			struct world_parameters world_params;
-			world_params.width = 30;
-			world_params.width = 30;
+	safe_malloc(world_sizeof(), &self->world); // hmmm
+	if (world_init(self->world, &world_params) != 0)
+		return 2;
 
-			if ((new_instance->entity = entity_create_context(NULL)) == NULL ||
-				(new_instance->world = world_create(&world_params)) == NULL)
-			{
-				MODULE_INIT_ABORT;
-			}
-		},
-		simulator_destroy,
-		{
-			if (instance->entity)
-				entity_destroy_context(instance->entity);
-			if (instance->world)
-				world_destroy(instance->world);
-		})
+	return 0;
+})
+
+MOD_DESTROY(simulator, {
+	entities_destroy(&self->entities);
+	if (self->world != NULL)
+		world_destroy(self->world);
+})
 
 void simulator_step(struct simulator *sim)
 {
-	steering_update_system(sim->entity);
+	steering_update_system(&sim->entities);
 	world_step(sim->world);
-}
-
-simulator_id simulator_get_id(struct simulator *sim)
-{
-	return sim->id;
-}
-
-struct world *simulator_get_world(struct simulator *sim)
-{
-	return sim->world;
 }
 
 void simulator_populate(struct simulator *sim)
 {
-	struct entity_ctx *entity = sim->entity;
+	struct entities *entities = &sim->entities;
 	double pos[2] = {0, 0};
-	entity_id e = entity_create(entity);
+	entity_id e = entity_create(entities);
 
-	struct component_physics *phys = entity_add_component(entity, e, COMPONENT_PHYSICS);
+	struct component_physics *phys = entity_add_component(entities, e, COMPONENT_PHYSICS);
 	phys->body = world_create_entity(sim->world);
 	world_set_position(phys->body, pos);
 
-	struct component_human *hum = entity_add_component(entity, e, COMPONENT_HUMAN);
+	struct component_human *hum = entity_add_component(entities, e, COMPONENT_HUMAN);
 	hum->age = 20;
 	hum->gender = MALE;
 
-	struct component_steer *steer = entity_add_component(entity, e, COMPONENT_STEER);
+	struct component_steer *steer = entity_add_component(entities, e, COMPONENT_STEER);
 	steer->type = STEERING_PATH_FOLLOW;
 
 	// silly path
 	double path[4][2] = {{5, 0}, {5, 5}, {0, 5}, {0, 0}};
 	steering_path_set(steer, (double *)path, 4);
-}
-
-struct entity_ctx *entity_get_context(struct simulator *sim)
-{
-	return sim->entity;
-}
-
-struct world *world_get_world(struct simulator *sim)
-{
-	return sim->world;
 }
 

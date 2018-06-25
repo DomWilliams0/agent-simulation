@@ -6,25 +6,19 @@
 #include "util/log.h"
 #include "util/util.h"
 
-struct graphics_ctx
+struct graphics
 {
 	int placeholder;
 };
 
 static int last_entity;
 
-MODULE_IMPLEMENT(struct graphics_ctx, "terminal context",
-		graphics_init,
-		{
-		},
-		graphics_destroy,
-		{
-		})
+MOD_INIT(graphics, {});
+MOD_DESTROY(graphics, {});
 
-
-void graphics_start(struct graphics_ctx *ctx)
+void graphics_start(struct graphics *self)
 {
-	UNUSED(ctx);
+	UNUSED(self);
 }
 
 void graphics_draw_world(struct world *world)
@@ -39,23 +33,23 @@ void graphics_draw_human(double x, double y, struct component_human *human)
 	last_entity += 1;
 }
 
-void graphics_end(struct graphics_ctx *ctx)
+void graphics_end(struct graphics *self)
 {
-	UNUSED(ctx);
+	UNUSED(self);
 		last_entity = 1;
 	LOG_INFO("----");
 }
 
-void graphics_resize(struct graphics_ctx *ctx, int w, int h)
+void graphics_resize(struct graphics *self, int w, int h)
 {
-	UNUSED(ctx);
+	UNUSED(self);
 	UNUSED(w);
 	UNUSED(h);
 }
 
-void graphics_update_camera(struct graphics_ctx *ctx, struct camera_movement changes)
+void graphics_update_camera(struct graphics *self, struct camera_movement changes)
 {
-	UNUSED(ctx);
+	UNUSED(self);
 	UNUSED(changes);
 }
 

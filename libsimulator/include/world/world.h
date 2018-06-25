@@ -1,7 +1,7 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#include <stdint.h>
+#include <stddef.h>
 #include <stdbool.h>
 
 #include "world/world_forward.h"
@@ -15,7 +15,7 @@ struct world_parameters
 	coord height;
 };
 
-MODULE_DECLARE(struct world, world_create, world_destroy);
+MOD_FWD_DECLARE(world)
 
 void world_step(struct world *w);
 

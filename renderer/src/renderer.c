@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <entity/entity.h>
 
 #include "renderer.h"
 #include "graphics.h"
@@ -14,61 +15,38 @@
 #define SKIP_TICKS        (1000 / TICKS_PER_SECOND)
 #define MAX_FRAMESKIP     (5)
 
-struct time_collector
-{
-	double accumulator;
-	int count;
-};
-
-struct renderer
-{
-	struct simulator *sim;
-	struct graphics_ctx *graphics;
-	struct keyboard_ctx *keyboard;
-
-	struct
-	{
-		struct time_collector logic;
-		struct time_collector render;
-		struct time_collector frame;
-		double last_frame;
-	} times;
-};
-
 void step_simulation(struct renderer *renderer);
 void render_simulation(struct renderer *renderer);
 
-MODULE_IMPLEMENT(struct renderer, "renderer",
-		renderer_create,
-		{
-			new_instance->sim = (struct simulator *)arg;
+MOD_INIT(renderer, {
+	if (arg == NULL) {
+		LOG_ERROR("Expected simulator argument to renderer");
+		return 1;
+	}
+	self->sim = (struct simulator *) arg;
 
-			if (SDL_Init(SDL_INIT_VIDEO))
-			{
-				LOG_ERROR("Failed to init SDL");
-				MODULE_INIT_ABORT;
-			}
+	if (SDL_Init(SDL_INIT_VIDEO))
+	{
+		LOG_ERROR("Failed to init SDL");
+		return 1;
+	}
 
-			if ((new_instance->graphics = graphics_init(NULL)) == NULL)
-			{
-				MODULE_INIT_ABORT;
-			}
+	safe_malloc(graphics_sizeof(), &self->graphics);
+	if (graphics_init(self->graphics, NULL) != 0)
+		return 1;
 
-			if ((new_instance->keyboard = keyboard_init(NULL)) == NULL)
-			{
-				MODULE_INIT_ABORT;
-			}
+	if (keyboard_init(&self->keyboard, NULL) != 0)
+		return 1;
 
-		},
-		renderer_destroy,
-		{
-			if (instance->graphics)
-				graphics_destroy(instance->graphics);
-			if (instance->keyboard)
-				keyboard_destroy(instance->keyboard);
+	return 0;
+})
 
-			SDL_Quit();
-		})
+MOD_DESTROY(renderer, {
+	if (self->graphics != NULL)
+		graphics_destroy(self->graphics);
+	keyboard_destroy(&self->keyboard);
+	SDL_Quit();
+})
 
 #define TIME_FUNCTION(what, how) \
 		uint32_t MACRO_CONCAT(what, _pre) = SDL_GetTicks(); \
@@ -108,7 +86,7 @@ void renderer_start_loop(struct renderer *renderer)
 					}
 
 					// camera
-					key_handled = keyboard_handle_camera_key(renderer->keyboard, e.type == SDL_KEYDOWN, e.key.keysym.sym);
+					key_handled = keyboard_handle_camera_key(&renderer->keyboard, e.type == SDL_KEYDOWN, e.key.keysym.sym);
 					if (!key_handled)
 					{
 						// TODO pass off to gui/something else
@@ -160,12 +138,12 @@ void step_simulation(struct renderer *renderer)
 	simulator_step(renderer->sim);
 }
 
-static void render_entities(struct entity_ctx *entities)
+static void render_entities(struct entities *entities)
 {
 	struct component_physics *physics = (struct component_physics *)entity_get_component_array(entities, COMPONENT_PHYSICS);
 	struct component_human *humans = (struct component_human *)entity_get_component_array(entities, COMPONENT_HUMAN);
 
-	entity_id count = entity_get_count(entities);
+	entity_id count = entities->count;
 	const entity_mask render_mask = COMPONENT_PHYSICS | COMPONENT_HUMAN;
 
 	double pos[2];
@@ -184,21 +162,19 @@ static void render_entities(struct entity_ctx *entities)
 
 void render_simulation(struct renderer *renderer)
 {
-	struct graphics_ctx *graphics = renderer->graphics;
+	struct graphics *graphics = renderer->graphics;
 
 	struct camera_movement cam;
-	keyboard_get_camera_changes(renderer->keyboard, &cam);
+	keyboard_get_camera_changes(&renderer->keyboard, &cam);
 	graphics_update_camera(graphics, cam);
 
 	graphics_start(graphics);
 
 	// world
-	struct world *world = world_get_world(renderer->sim);
-	graphics_draw_world(world);
+	graphics_draw_world(renderer->sim->world);
 
 	// entities
-	struct entity_ctx *entities = entity_get_context(renderer->sim);
-	render_entities(entities);
+	render_entities(&renderer->sim->entities);
 
 	graphics_end(renderer->graphics);
 }

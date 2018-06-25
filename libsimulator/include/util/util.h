@@ -9,54 +9,30 @@
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
-// forward declare
-// header file init and destroy functions
-// source file init { log; declare new_; allocate; ...init...; return new_; }
-// source file destroy {log; ...destroy...; safe_free}
+// declaration
+#define _MOD_DECLARE_FUNCS(name) \
+    int name ## _init(struct name *self, void *arg); \
+    void name ## _destroy(struct name *self);
 
-// header file
-#define MODULE_DECLARE(struct_type, init_func_name, destroy_func_name) \
-	/* forward declare */ \
-	struct_type; \
-	/* init */ \
-	struct_type *init_func_name(void *arg); \
-	/* destroy */ \
-	void destroy_func_name(struct_type *instance);
+#define MOD_DECLARE(name, impl) \
+    struct name impl; \
+	_MOD_DECLARE_FUNCS(name)
 
-#define MODULE_INIT_ABORT break
+#define MOD_FWD_DECLARE(name) \
+    struct name; \
+	size_t name ## _sizeof(); \
+	_MOD_DECLARE_FUNCS(name)
 
 // implementation
-// TODO upgrade void* arg to va_args if necessary
-#define MODULE_IMPLEMENT(struct_type, friendly_name, \
-		init_func_name, init_impl, \
-		destroy_func_name, destroy_impl) \
-	/* init */ \
-	struct_type *init_func_name(void *arg) \
-	{ \
-		UNUSED(arg); \
-		LOG_DEBUG("Creating new " friendly_name); \
-		struct_type *new_instance; \
-		safe_malloc_struct(struct_type, &new_instance); \
-		int great_success = 0; \
-		do { init_impl; great_success = 1; } while(0); \
-		if (great_success == 0) \
-		{ \
-			LOG_DEBUG("Aborting creation of " friendly_name); \
-			destroy_func_name(new_instance); \
-			return NULL; \
-		} \
-		return new_instance; \
-	} \
-	/* destroy */ \
-	void destroy_func_name(struct_type *instance) \
-	{ \
-		if (!instance) return; \
-		LOG_DEBUG("Destroying " friendly_name); \
-		do { destroy_impl } while(0); \
-		safe_free(instance); \
-	} \
+#define MOD_INIT(name, impl) \
+    int name ## _init(struct name *self, void *arg) { UNUSED(self); UNUSED(arg); impl } \
+	size_t name ## _sizeof() { return sizeof(struct name); }
 
-#endif
+
+#define MOD_DESTROY(name, impl) \
+    void name ## _destroy(struct name *self) { UNUSED(self); impl }
 
 void random_init();
 double random_get(double max);
+
+#endif

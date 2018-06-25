@@ -18,11 +18,11 @@ struct steering_path_waypoint
 	struct steering_path_waypoint *next;
 };
 
-struct entity_ctx;
+struct entities;
 struct world;
 struct component_steer;
 
-void steering_update_system(struct entity_ctx *entities);
+void steering_update_system(struct entities *entities);
 
 void steering_apply(struct component_steer *steer, double current_pos[2], double *velocity);
 

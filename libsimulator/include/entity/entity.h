@@ -5,37 +5,39 @@
 #include <stdbool.h>
 
 #include "util/util.h"
+#include "entity/components.h"
 
-#define HUMAN_DAMPING      (0.15f) // this limits the maximum speed
-#define HUMAN_ACCELERATION (40.f)
-#define VELOCITY_MINIMUM   (0.001f)
-
-// TODO entity IDs will be unique across all worlds
-typedef uint32_t entity_id;
-typedef uint8_t human_age;
-
-typedef enum { MALE = 1, FEMALE } human_gender;
+#define MAX_ENTITIES   (256)
 
 struct simulator;
 
-typedef void entity_consumer(entity_id, void *);
+MOD_DECLARE(entities, {
+	entity_id count;
 
-MODULE_DECLARE(struct entity_ctx, entity_create_context, entity_destroy_context)
+	/* currently unused: will be bitfield for entity flags */
+	/* uint8_t attributes[MAX_ENTITIES]; */
 
-struct entity_ctx *entity_get_context(struct simulator *sim);
+	/* these must remain sorted. 0 -> count-1 are active, count -> MAX_ENTITIES are inactive */
+	entity_mask masks[MAX_ENTITIES];
+	struct component_physics components_physics[MAX_ENTITIES];
+	struct component_human components_human[MAX_ENTITIES];
+	struct component_steer components_steer[MAX_ENTITIES];
+})
 
-entity_id entity_create(struct entity_ctx *ctx);
+struct entities *entity_get_context(struct simulator *sim);
 
-void entity_destroy(struct entity_ctx *ctx, entity_id e);
+entity_id entity_create(struct entities *self);
 
-bool entity_is_alive(struct entity_ctx *ctx, entity_id e);
+void entity_destroy(struct entities *self, entity_id e);
 
-entity_id entity_get_first(struct entity_ctx *ctx);
+bool entity_is_alive(struct entities *self, entity_id e);
 
-entity_id entity_get_count(struct entity_ctx *ctx);
+entity_id entity_get_first(struct entities *self);
 
-entity_id entity_get_max_count(struct entity_ctx *ctx);
+entity_id entity_get_count(struct entities *self);
 
-void entity_foreach(struct entity_ctx *ctx, entity_consumer *func, void *arg);
+entity_id entity_get_max_count(struct entities *self);
+
+void entity_foreach(struct entities *self, entity_consumer *func, void *arg);
 
 #endif

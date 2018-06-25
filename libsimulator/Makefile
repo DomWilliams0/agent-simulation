@@ -3,6 +3,7 @@ OBJS  := $(addprefix $(OBJ)/,$(notdir $(SRCS:%.c=%.o)))
 VPATH  = $(shell find $(SRC) $(INC) -type d)
 
 $(TARGET): $(OBJS)
+	@echo objs ${OBJS}
 	$(AR) rcs $@ $^
 	@echo "Compiled $(TARGET)"
 

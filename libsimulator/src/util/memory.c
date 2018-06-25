@@ -2,6 +2,7 @@
 
 #include "util/log.h"
 #include "util/memory.h"
+#include "util/util.h"
 
 
 void safe_malloc_wrapper(size_t size, void **ptr, const char *file, unsigned int line)
@@ -26,6 +27,8 @@ void safe_malloc_wrapper(size_t size, void **ptr, const char *file, unsigned int
 
 void safe_free_wrapper(void *ptr, const char *file, unsigned int line)
 {
+	UNUSED(file);
+	UNUSED(line);
 	if (ptr)
 	{
 		LOG_DEBUG("Freeing %p at %s:%d", ptr, file, line);

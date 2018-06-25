@@ -4,17 +4,15 @@
 #include <stdint.h>
 
 #include "util/util.h"
+#include "entity/entity.h"
 
-typedef uint8_t simulator_id;
-
-MODULE_DECLARE(struct simulator, simulator_create, simulator_destroy)
-
-void simulator_step(struct simulator *sim);
-
-simulator_id simulator_get_id(struct simulator *sim);
-
-struct world *simulator_get_world(struct simulator *sim);
+MOD_DECLARE(simulator, {
+	struct entities entities;
+	struct world *world;
+});
 
 void simulator_populate(struct simulator *sim);
+
+void simulator_step(struct simulator *sim);
 
 #endif
