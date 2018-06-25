@@ -4,14 +4,14 @@ SRC        = src
 INC        = include
 
 # TODO: move -O0 into debug flags
-CFLAGS     = -std=c11 -c -Wall -Wextra -fPIC -I$(INC) -g -O0
+CFLAGS     = -std=c11 -c -Wall -Wextra -I$(INC) -g -O0
 LDFLAGS    = -Wall
 
 LIB_DIR    = libsimulator
 EXE_DIR    = renderer
 TEST_DIR   = tests
 
-LIB_NAME   = libsimulator.so
+LIB_NAME   = libsimulator.a
 EXE_NAME   = renderer
 TEST_NAME  = simulator_tests
 
@@ -43,7 +43,7 @@ $(EXE): $(EXE_DIR) $(LIB) | build_dirs
 test: $(TEST)
 $(TEST): $(TEST_DIR) | build_dirs
 	$(MAKE) -C $< TARGET=../$@ BIN=../$(BIN) OBJ=../$(OBJ) SRC=. INC=../$(LIB_DIR)/$(INC)
-	@LD_LIBRARY_PATH=$(BIN) $@
+	@$@
 
 # helpers
 .PHONY: clean, run, debug, build_dirs, all
@@ -51,10 +51,10 @@ clean:
 	rm -rf $(OBJ) $(BIN)
 
 run: $(EXE)
-	LD_LIBRARY_PATH=$(BIN) $(EXE)
+	@$(EXE)
 
 debug: $(EXE)
-	@LD_LIBRARY_PATH=$(BIN) gdb --tui $(EXE)
+	@gdb --tui $(EXE)
 
 build_dirs:
 	@mkdir -p $(BIN) $(OBJ)
