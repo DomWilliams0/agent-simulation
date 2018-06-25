@@ -11,7 +11,7 @@ LIB_DIR    = libsimulator
 EXE_DIR    = renderer
 TEST_DIR   = tests
 
-LIB_NAME   = libsimulator.a
+LIB_NAME   = libsimulator.so
 EXE_NAME   = renderer
 TEST_NAME  = simulator_tests
 
@@ -26,16 +26,18 @@ endif
 
 export
 
-.PHONY: default sim render test
-default: render
+.PHONY: default $(LIB_DIR) $(EXE_DIR) test
+default: $(EXE)
 
 # lib
-sim: | build_dirs
-	$(MAKE) -C $(LIB_DIR) TARGET=../$(LIB) BIN=../$(BIN) OBJ=../$(OBJ)
+$(LIB): $(LIB_DIR)
+$(LIB_DIR): | build_dirs
+	$(MAKE) -C $@ TARGET=../$(LIB) BIN=../$(BIN) OBJ=../$(OBJ)
 
 # renderer
-render: sim | build_dirs
-	$(MAKE) -C $(EXE_DIR) TARGET=../$(EXE) BIN=../$(BIN) OBJ=../$(OBJ) INC=../$(LIB_DIR)/$(INC)
+$(EXE): $(EXE_DIR)
+$(EXE_DIR): $(LIB) | build_dirs
+	$(MAKE) -C $@ TARGET=../$(EXE) BIN=../$(BIN) OBJ=../$(OBJ) INC=../$(LIB_DIR)/$(INC)
 
 # tests
 test: | build_dirs
@@ -48,10 +50,10 @@ clean:
 	rm -rf $(OBJ) $(BIN)
 
 run: $(EXE)
-	@$(EXE)
+	@LD_LIBRARY_PATH=$(BIN) $(EXE)
 
 debug: $(EXE)
-	@gdb --tui $(EXE)
+	@LD_LIBRARY_PATH=$(BIN) gdb --tui $(EXE)
 
 build_dirs:
 	@mkdir -p $(BIN) $(OBJ)

@@ -2,9 +2,10 @@ SRCS  := $(shell find $(SRC) -type f -name '*.c')
 OBJS  := $(addprefix $(OBJ)/,$(notdir $(SRCS:%.c=%.o)))
 VPATH  = $(shell find $(SRC) $(INC) -type d)
 
+CFLAGS += -fPIC
+
 $(TARGET): $(OBJS)
-	@echo objs ${OBJS}
-	$(AR) rcs $@ $^
+	$(CC) $(LDFLAGS) $(OBJS) -o $@ -shared
 	@echo "Compiled $(TARGET)"
 
 # src -> obj
