@@ -29,38 +29,31 @@ MOD_DESTROY(world, {
 
 void world_step(struct world *w)
 {
-	dSpaceCollide(w->collision_space, w, near_callback);
-	dWorldQuickStep(w->phys_id, 0.05);
-
-	dJointGroupEmpty(w->contacts);
+	cpSpaceStep(w->space, 1/20.f);
 }
 
 world_body world_create_entity(struct world *w)
 {
 	// body
-	dBodyID b = dBodyCreate(w->phys_id);
-	dMass mass;
-	dMassSetSphereTotal(&mass, HUMAN_MASS, HUMAN_RADIUS);
-	dBodySetMass(b, &mass);
-	dBodySetLinearDamping(b, HUMAN_DAMPING);
+	cpBody *b = cpSpaceAddBody(w->space, cpBodyNew(HUMAN_MASS, INFINITY));
 
 	// collision
-	dGeomID geom = dCreateSphere(w->collision_space, HUMAN_RADIUS);
-	dGeomSetBody(geom, b);
+	cpShape *shape = cpSpaceAddShape(w->space, cpCircleShapeNew(b, HUMAN_RADIUS, cpvzero));
+	cpShapeSetFriction(shape, HUMAN_FRICTION);
 
 	return b;
 }
 
 void world_get_position(world_body body, double pos[2])
 {
-	const double *dpos = dBodyGetPosition(body);
-	pos[0] = dpos[0];
-	pos[1] = dpos[1];
+	cpVect vec = cpBodyGetPosition(body);
+	pos[0] = vec.x;
+	pos[1] = vec.y;
 }
 
 void world_set_position(world_body body, double pos[2])
 {
-	dBodySetPosition(body, pos[0] + 0.5, pos[1] + 0.5, 0);
+	cpBodySetPosition(body, cpv(pos[0] + 0.5, pos[1] + 0.5));
 }
 
 static bool load_params(struct world *world, struct world_parameters *params)

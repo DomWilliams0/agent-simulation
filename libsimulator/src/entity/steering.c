@@ -1,4 +1,4 @@
-#include <ode/ode.h>
+#include <chipmunk/chipmunk.h>
 #include <math.h>
 #include <entity/entity.h>
 
@@ -34,7 +34,7 @@ void steering_update_system(struct entities *entities)
 		struct component_steer *steer = steers + i;
 		steering_apply(steer, position, velocity);
 
-		dBodyAddForce(phys->body, velocity[0], velocity[1], 0);
+		cpBodyApplyForceAtLocalPoint(phys->body, cpv(velocity[0], velocity[1]), cpvzero);
 	}
 
 }

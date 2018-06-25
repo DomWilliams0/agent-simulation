@@ -5,7 +5,7 @@ INC        = $(SRC)
 
 # TODO: move -O0 into debug flags
 CFLAGS     = -std=c11 -c -Wall -Wextra -I$(INC) -g -O0
-LDFLAGS    = -Wall
+LDFLAGS    = -Wall -lchipmunk
 
 LIB_DIR    = libsimulator
 EXE_DIR    = renderer

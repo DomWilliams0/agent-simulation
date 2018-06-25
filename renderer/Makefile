@@ -9,7 +9,7 @@ else
 endif
 
 CFLAGS  += $(addprefix -I,$(INC)) -D$(RENDERER) -DDEBUGGING_OVERLAY
-LDFLAGS += -lode -lsimulator -lGL -lSDL2 -lm -L$(BIN)
+LDFLAGS += -lsimulator -lGL -lSDL2 -lm -L$(BIN)
 
 SRCS    := $(shell find $(SRC) -type f -name '*.c')
 INCS    := $(shell find $(INC) -type f -name '*.h')

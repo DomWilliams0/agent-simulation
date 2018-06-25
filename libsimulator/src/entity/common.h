@@ -6,7 +6,8 @@
 
 #include "util/util.h"
 
-#define HUMAN_DAMPING      (0.15f) // this limits the maximum speed
+#define HUMAN_FRICTION     (1.f)
+#define WORLD_DAMPING      (0.05f) // this limits the maximum speed
 #define HUMAN_ACCELERATION (40.f)
 #define VELOCITY_MINIMUM   (0.001f)
 #define HUMAN_RADIUS       (0.3)
