@@ -1,7 +1,7 @@
 OBJ        = obj
 BIN        = bin
 SRC        = src
-INC        = include
+INC        = $(SRC)
 
 # TODO: move -O0 into debug flags
 CFLAGS     = -std=c11 -c -Wall -Wextra -I$(INC) -g -O0
