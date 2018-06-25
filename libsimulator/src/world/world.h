@@ -7,7 +7,7 @@
 #include "world/world_forward.h"
 #include "util/util.h"
 
-#define HUMAN_MASS (10.0)
+#define HUMAN_MASS (60.0) // kg
 
 struct world_parameters
 {

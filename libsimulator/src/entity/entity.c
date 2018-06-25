@@ -95,6 +95,7 @@ void entity_destroy(struct entities *self, entity_id e)
 	entity_id new_count = self->count;
 
 	// swap with last active
+	// TODO what if doesnt have all components?
 	SWAP_IN_ARRAY(entity_mask, self->masks, e, new_count);
 	SWAP_IN_ARRAY(struct component_physics, self->components_physics, e, new_count);
 	SWAP_IN_ARRAY(struct component_human, self->components_human, e, new_count);

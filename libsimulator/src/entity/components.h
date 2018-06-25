@@ -46,6 +46,7 @@ struct component_steer
 			struct steering_path_waypoint *path_end;
 		};
 	};
+	bool separation; // TODO could be mask of multiple behaviours
 };
 
 

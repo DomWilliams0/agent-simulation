@@ -11,6 +11,54 @@
 
 #define CENTRE_TILE(coord) (coord + 0.5f)
 
+struct separation_query
+{
+	world_body src_body;
+	cpVect src_pos;
+	cpVect mean;
+	int count;
+};
+
+static void separation_callback(cpShape *shape, void *data)
+{
+	struct separation_query *query = data;
+	world_body body = cpShapeGetBody(shape);
+	if (body != query->src_body)
+	{
+		cpVect pos = cpBodyGetPosition(cpShapeGetBody(shape));
+		query->count++;
+
+		// mean += (me - neighbour).norm() / distance
+		cpVect diff = cpvnormalize(cpvsub(query->src_pos, pos));
+		double dist = cpvlength(diff);
+		query->mean = cpvadd(query->mean, cpvmult(diff, 1/dist));
+	}
+}
+
+static void handle_separation(world_body body, double *velocity)
+{
+	cpBB bb = cpBBNewForCircle(cpBodyGetPosition(body), HUMAN_RADIUS * 1.5f);
+
+	struct separation_query query;
+	query.src_body = body;
+	query.src_pos = cpBodyGetPosition(body);
+	query.mean = cpvzero;
+	query.count = 0;
+
+	cpSpaceBBQuery(cpBodyGetSpace(body), bb, CP_SHAPE_FILTER_ALL, &separation_callback, &query);
+
+	if (query.count > 0)
+	{
+		double scale = HUMAN_ACCELERATION * 0.65; // experimental
+		cpVect toAdd = cpvmult(query.mean, scale * (1 / query.count));
+		velocity[0] += toAdd.x;
+		velocity[1] += toAdd.y;
+	}
+
+	// TODO look into using vector fields
+	// TODO context behaviours
+}
+
 void steering_update_system(struct entities *entities)
 {
 	struct component_physics *physics = (struct component_physics *)entity_get_component_array(entities, COMPONENT_PHYSICS);
@@ -33,6 +81,11 @@ void steering_update_system(struct entities *entities)
 		velocity[0] = velocity[1] = 0.f;
 		struct component_steer *steer = steers + i;
 		steering_apply(steer, position, velocity);
+
+		if (steer->separation)
+		{
+			handle_separation(phys->body, velocity);
+		}
 
 		cpBodyApplyForceAtLocalPoint(phys->body, cpv(velocity[0], velocity[1]), cpvzero);
 	}
