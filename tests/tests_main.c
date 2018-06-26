@@ -6,10 +6,8 @@ int fails = 0;
 
 int main()
 {
-//	test_entity();
-//	test_misc();
-//	test_sim();
-//	test_world();
+	test_entity();
+	test_world();
 
 	if (fails == 0)
 	{

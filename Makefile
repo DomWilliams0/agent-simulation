@@ -44,7 +44,7 @@ $(EXE_DIR): $(LIB) | build_dirs
 # tests
 $(TEST): $(TEST_DIR)
 $(TEST_DIR): $(LIB) | build_dirs
-	$(MAKE) -C $@ TARGET=../$(TEST) BIN=../$(BIN) OBJ=../$(OBJ) SRC=$@
+	$(MAKE) -C $@ TARGET=../$(TEST) BIN=../$(BIN) OBJ=../$(OBJ) SRC=$@ INC=../$(LIB_DIR)/$(INC)
 	@LD_LIBRARY_PATH=$(BIN) $(TEST)
 
 # helpers

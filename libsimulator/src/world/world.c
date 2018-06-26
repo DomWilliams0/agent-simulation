@@ -53,7 +53,7 @@ void world_get_position(world_body body, double pos[2])
 
 void world_set_position(world_body body, double pos[2])
 {
-	cpBodySetPosition(body, cpv(pos[0] + 0.5, pos[1] + 0.5));
+	cpBodySetPosition(body, cpv(pos[0], pos[1]));
 }
 
 static bool load_params(struct world *world, struct world_parameters *params)

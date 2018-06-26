@@ -7,9 +7,7 @@
 #include "util/util.h"
 #include "entity/components.h"
 
-#define MAX_ENTITIES   (256)
-
-struct simulator;
+#define MAX_ENTITIES (256)
 
 MOD_DECLARE(entities, {
 	entity_id count;
@@ -24,8 +22,6 @@ MOD_DECLARE(entities, {
 	struct component_steer components_steer[MAX_ENTITIES];
 })
 
-struct entities *entity_get_context(struct simulator *sim);
-
 entity_id entity_create(struct entities *self);
 
 void entity_destroy(struct entities *self, entity_id e);
@@ -37,7 +33,5 @@ entity_id entity_get_first(struct entities *self);
 entity_id entity_get_count(struct entities *self);
 
 entity_id entity_get_max_count(struct entities *self);
-
-void entity_foreach(struct entities *self, entity_consumer *func, void *arg);
 
 #endif

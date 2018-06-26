@@ -228,12 +228,12 @@ bool steering_path_pop(struct component_steer *steer)
 }
 
 
-void steering_path_set(struct component_steer *steer, double waypoints[2], uint32_t n)
+void steering_path_set(struct component_steer *steer, double waypoints[2], int n)
 {
 	// remove old
 	while (steering_path_pop(steer));
 
-	if (n == 0)
+	if (n <= 0)
 	{
 		LOG_WARN("Path length must be at least 0");
 		return;
@@ -244,7 +244,7 @@ void steering_path_set(struct component_steer *steer, double waypoints[2], uint3
 	steer->path_front = wp;
 
 	// the rest
-	for (uint32_t i = 1; i < n; ++i)
+	for (int i = 1; i < n; ++i)
 	{
 		struct steering_path_waypoint *next = create_node(waypoints + (i * 2));
 		wp->next = next;
