@@ -1,5 +1,6 @@
 #ifdef GRAPHICS_TERMINAL
 
+#include <stddef.h>
 #include "graphics.h"
 #include "entity/components.h"
 #include "util/memory.h"
@@ -13,7 +14,7 @@ struct graphics
 
 static int last_entity;
 
-MOD_INIT(graphics, {});
+MOD_INIT(graphics, { return 0; });
 MOD_DESTROY(graphics, {});
 
 void graphics_start(struct graphics *self)
