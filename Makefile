@@ -2,9 +2,14 @@ OBJ        = obj
 BIN        = bin
 SRC        = src
 INC        = $(SRC)
+LIBS       = lib
+
+# vec library
+LIB_VEC_DIR = $(LIBS)/vec/src
+LIB_VEC_SRC = $(LIB_VEC_DIR)/vec.c
 
 # TODO: move -O0 into debug flags
-CFLAGS     = -std=c11 -c -Wall -Wextra -I$(INC) -g -O0
+CFLAGS     := -std=c11 -c -Wall -Wextra -I$(INC) -I$(LIB_VEC_DIR) -g -O0
 LDFLAGS    = -Wall -lchipmunk
 
 LIB_DIR    = libsimulator
@@ -46,7 +51,7 @@ $(EXE_DIR): $(LIB) | build_dirs
 # tests
 $(TEST): $(TEST_DIR)
 $(TEST_DIR): $(LIB) | build_dirs
-	$(MAKE) -C $@ TARGET=../$(TEST) BIN=../$(BIN) OBJ=../$(OBJ) SRC=$@ INC=../$(LIB_DIR)/$(INC)
+	$(MAKE) -C $@ TARGET=../$(TEST) BIN=../$(BIN) OBJ=../$(OBJ) SRC=$@ INC=../$(LIB_DIR)/$(INC) LIBS=../$(LIB_DIR)/$(LIBS)
 	@$(TEST)
 
 # helpers

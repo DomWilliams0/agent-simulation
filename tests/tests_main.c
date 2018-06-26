@@ -9,6 +9,7 @@ int main()
 	test_entity();
 	test_world();
 	test_context_map();
+	test_event();
 
 	if (fails == 0)
 	{
