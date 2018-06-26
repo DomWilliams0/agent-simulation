@@ -15,6 +15,8 @@ enum cm_direction
 	CM_DIRECTION_COUNT
 };
 
+float cm_direction_angle(enum cm_direction direction);
+
 enum cm_type
 {
 	CM_INTEREST = 0,
@@ -36,7 +38,6 @@ void cm_reset(struct context_map *map);
 
 void cm_add(struct context_map *map, enum cm_type type, enum cm_direction direction, float weight);
 
-// returns target angle in radians
-float cm_calculate(struct context_map *map);
+enum cm_direction cm_calculate(struct context_map *map);
 
 #endif

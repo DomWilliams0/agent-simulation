@@ -8,6 +8,7 @@ int main()
 {
 	test_entity();
 	test_world();
+	test_context_map();
 
 	if (fails == 0)
 	{
