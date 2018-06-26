@@ -7,7 +7,8 @@ compiler:
 sudo: true
 before_install:
   - wget http://chipmunk-physics.net/release/ChipmunkLatest.tgz
-  - tar xf ChipmunkLatest.tgz
-  - cd Chipmunk7*
+  - mkdir chipmunk
+  - tar xf ChipmunkLatest.tgz -C chipmunk --strip-components=1
+  - cd chipmunk
   - cmake -DBUILD_DEMOS=OFF .
   - sudo make install
