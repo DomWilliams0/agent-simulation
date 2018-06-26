@@ -1,31 +1,30 @@
-#include "helper.h"
-#include "util/log.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include "tests.h"
 
-#define MAX_TEST_COUNT (512)
+int fails = 0;
 
 int main()
 {
-	struct unit_test *first_entry = ({extern struct unit_test __start_tests; &__start_tests;});
-	struct unit_test *last_entry = ({extern struct unit_test __stop_tests; &__stop_tests;});
+//	test_entity();
+//	test_misc();
+//	test_sim();
+//	test_world();
 
-	unsigned int test_count = last_entry - first_entry;
-	if (test_count == 0)
+	if (fails == 0)
+	{
+		puts("Tests pass");
+		return 0;
+	}
+	else
+	{
+		printf("Tests fail: %d failures\n", fails);
 		return 1;
-
-	if (test_count >= MAX_TEST_COUNT)
-	{
-		LOG_ERROR("Maximum number of tests reached, increase MAX_TEST_COUNT");
-		return 2;
 	}
+}
 
-	struct CMUnitTest tests[MAX_TEST_COUNT] = { 0 };
-
-	int i = 0;
-	for (struct unit_test *t = first_entry; t != last_entry; ++t)
-	{
-		const struct CMUnitTest test = {t->name, t->test, t->setup, t->teardown, NULL};
-		tests[i++] = test;
-	}
-
-	return cmocka_run_group_tests(tests, setup_simulator, teardown_simulator);
+void fail(const char *expr, const char *file, int line)
+{
+	fprintf(stderr, "FAIL %s:%d | %s\n", file, line, expr);
+	fails++;
 }

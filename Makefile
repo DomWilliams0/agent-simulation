@@ -19,6 +19,8 @@ LIB        = $(BIN)/$(LIB_NAME)
 EXE        = $(BIN)/$(EXE_NAME)
 TEST       = $(BIN)/$(TEST_NAME)
 
+MAKE      := $(MAKE) --no-print-directory
+
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
 	CFLAGS += -DDEBUGGING
@@ -26,7 +28,7 @@ endif
 
 export
 
-.PHONY: default $(LIB_DIR) $(EXE_DIR) test
+.PHONY: default $(LIB_DIR) $(EXE_DIR) $(TEST_DIR)
 default: $(EXE)
 
 # lib
@@ -40,9 +42,10 @@ $(EXE_DIR): $(LIB) | build_dirs
 	$(MAKE) -C $@ TARGET=../$(EXE) BIN=../$(BIN) OBJ=../$(OBJ) INC=../$(LIB_DIR)/$(INC)
 
 # tests
-test: | build_dirs
-	$(MAKE) -C $(TEST_DIR) TARGET=../$(TEST) BIN=../$(BIN) OBJ=../$(OBJ) SRC=. INC=../$(LIB_DIR)/$(INC)
-	@$@
+$(TEST): $(TEST_DIR)
+$(TEST_DIR): $(LIB) | build_dirs
+	$(MAKE) -C $@ TARGET=../$(TEST) BIN=../$(BIN) OBJ=../$(OBJ) SRC=$@
+	@LD_LIBRARY_PATH=$(BIN) $(TEST)
 
 # helpers
 .PHONY: clean run debug build_dirs all
