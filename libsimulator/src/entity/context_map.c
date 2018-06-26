@@ -68,7 +68,7 @@ float cm_direction_angle(enum cm_direction direction)
 	return direction * division;
 }
 
-enum cm_direction cm_calculate(struct context_map *map)
+enum cm_direction cm_calculate(struct context_map *map, float *force_out)
 {
 	cm_slots *interest = &map->maps[CM_INTEREST];
 	cm_slots *danger = &map->maps[CM_DANGER];
@@ -81,7 +81,9 @@ enum cm_direction cm_calculate(struct context_map *map)
 
 	// find max of interest
 	enum cm_direction best_direction = find_max_index(interest);
-	// TODO calculate gradient around this point for smoothing
+	float force = best_direction == CM_DIRECTION_COUNT ? 0.0 : (*interest)[best_direction];
 
+	// TODO calculate gradient around this point for smoothing
+	*force_out = force;
 	return best_direction;
 }

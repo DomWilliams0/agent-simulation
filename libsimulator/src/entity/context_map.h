@@ -38,6 +38,6 @@ void cm_reset(struct context_map *map);
 
 void cm_add(struct context_map *map, enum cm_type type, enum cm_direction direction, float weight);
 
-enum cm_direction cm_calculate(struct context_map *map);
+enum cm_direction cm_calculate(struct context_map *map, float *force_out);
 
 #endif
