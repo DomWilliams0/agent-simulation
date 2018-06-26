@@ -30,5 +30,6 @@ void test_world()
 	world_get_position(e, pos_get);
 	ASSERT_POS(pos, pos_get);
 
+	world_destroy(world);
 	safe_free(world);
 }
