@@ -1,6 +1,10 @@
 language: c
-install: chipmunk-dev
 script: make tests
 compiler:
   - gcc
   - clang
+
+sudo: true
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y chipmunk-dev
