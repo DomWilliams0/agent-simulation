@@ -4,11 +4,9 @@ compiler:
   - gcc
   - clang
 
-environment:
-  - LD_LIBRARY_PATH=/usr/local/lib:bin
-
 sudo: true
-before_install:
+install:
+  - export LD_LIBRARY_PATH=/usr/local/lib:bin:$LD_LIBRARY_PATH
   - wget http://chipmunk-physics.net/release/ChipmunkLatest.tgz
   - mkdir chipmunk
   - tar xf ChipmunkLatest.tgz -C chipmunk --strip-components=1
