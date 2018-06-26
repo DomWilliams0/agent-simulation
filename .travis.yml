@@ -12,3 +12,4 @@ before_install:
   - cd chipmunk
   - cmake -DBUILD_DEMOS=OFF .
   - sudo make install
+  - cd ..
