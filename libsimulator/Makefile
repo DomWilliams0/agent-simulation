@@ -5,7 +5,7 @@ VPATH  = $(shell find $(SRC) $(INC) -type d)
 CFLAGS += -fPIC
 
 $(TARGET): $(OBJS)
-	$(CC) $(LDFLAGS) $(OBJS) -o $@ -shared
+	$(CC) $(OBJS) $(LDFLAGS) -o $@ -shared
 	@echo "Compiled $(TARGET)"
 
 # src -> obj

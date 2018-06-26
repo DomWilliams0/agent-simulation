@@ -26,6 +26,8 @@ ifeq ($(DEBUG), 1)
 	CFLAGS += -DDEBUGGING
 endif
 
+LD_LIBRARY_PATH := $(LD_LIBRARY_PATH):$(BIN)
+
 export
 
 .PHONY: default $(LIB_DIR) $(EXE_DIR) $(TEST_DIR)
@@ -45,7 +47,7 @@ $(EXE_DIR): $(LIB) | build_dirs
 $(TEST): $(TEST_DIR)
 $(TEST_DIR): $(LIB) | build_dirs
 	$(MAKE) -C $@ TARGET=../$(TEST) BIN=../$(BIN) OBJ=../$(OBJ) SRC=$@ INC=../$(LIB_DIR)/$(INC)
-	@LD_LIBRARY_PATH=$(BIN) $(TEST)
+	@$(TEST)
 
 # helpers
 .PHONY: clean run debug build_dirs all
@@ -53,10 +55,10 @@ clean:
 	rm -rf $(OBJ) $(BIN)
 
 run: $(EXE)
-	@LD_LIBRARY_PATH=$(BIN) $(EXE)
+	@$(EXE)
 
 debug: $(EXE)
-	@LD_LIBRARY_PATH=$(BIN) gdb --tui $(EXE)
+	@gdb --tui $(EXE)
 
 build_dirs:
 	@mkdir -p $(BIN) $(OBJ)
