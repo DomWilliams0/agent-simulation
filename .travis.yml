@@ -6,5 +6,8 @@ compiler:
 
 sudo: true
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install -y chipmunk-dev
+  - wget http://chipmunk-physics.net/release/ChipmunkLatest.tgz
+  - tar xf ChipmunkLatest.tgz
+  - cd Chipmunk7*
+  - cmake -DBUILD_DEMOS=OFF .
+  - sudo make install
