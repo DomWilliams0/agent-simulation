@@ -13,5 +13,6 @@ void test_entity();
 void test_world();
 void test_context_map();
 void test_event();
+void test_action();
 
 #endif

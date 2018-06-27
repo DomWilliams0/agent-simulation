@@ -10,6 +10,7 @@ int main()
 	test_world();
 	test_context_map();
 	test_event();
+	test_action();
 
 	if (fails == 0)
 	{
