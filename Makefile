@@ -55,18 +55,23 @@ $(EXE_DIR): $(LIB) | build_dirs
 $(TEST): $(TEST_DIR)
 $(TEST_DIR): $(LIB) | build_dirs
 	$(MAKE) -C $@ TARGET=../$(TEST) BIN=../$(BIN) OBJ=../$(OBJ) SRC=$@ INC=../$(LIB_DIR)/$(INC) LIBS=../$(LIB_DIR)/$(LIBS)
-	@$(TEST)
 
 # helpers
-.PHONY: clean run debug build_dirs all
+.PHONY: clean run test debug test_debug build_dirs all
 clean:
 	rm -rf $(OBJ) $(BIN)
 
 run: $(EXE)
-	@$(EXE)
+	@$<
+
+test: $(TEST)
+	@$<
 
 debug: $(EXE)
-	@gdb --tui $(EXE)
+	@gdb --tui $<
+
+test_debug: $(TEST)
+	@gdb --tui $<
 
 build_dirs:
 	@mkdir -p $(BIN) $(OBJ)
