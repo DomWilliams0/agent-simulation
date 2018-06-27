@@ -103,7 +103,7 @@ void st_apply(struct ecs_comp_steer *steer, double current_pos[2], double *veloc
 			return;
 	}
 
-	LOG_ERROR("Steering %d unimplemented");
+	LOG_ERROR("Steering %d unimplemented", steer->type);
 	LOG_FLUSH;
 	exit(6);
 }
