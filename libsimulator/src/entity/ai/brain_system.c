@@ -29,10 +29,12 @@ void br_system_tick(struct ecs *ecs)
 		// tick behaviour
 		ac_stack_current(&b->action_stack, &current);
 		arg.steer_out = s;
+		arg.this = i;
 
 		enum ac_status status = ac_tick(&current, &arg);
 		if (status != AC_STATUS_RUNNING)
 			ac_stack_pop(&b->action_stack);
+		// TODO call end on old action, begin on new
 	}
 
 }

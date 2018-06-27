@@ -24,6 +24,7 @@ struct ac_flee
 {
 	struct ac_vtable _vptr;
 	ecs_id target;
+	double desired_distance;
 };
 
 struct ac_move_to

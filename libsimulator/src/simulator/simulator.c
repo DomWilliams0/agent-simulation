@@ -73,19 +73,24 @@ void simulator_populate(struct simulator *sim)
 	ecs_id mover = make_test_entity(sim, cpv(2, 4));
 	ecs_add(&sim->ecs, mover, ECS_COMP_BRAIN);
 	struct ecs_comp_brain *b = ecs_get(&sim->ecs, mover, ECS_COMP_BRAIN, struct ecs_comp_brain);
+	(ecs_get(&sim->ecs, mover, ECS_COMP_HUMAN, struct ecs_comp_human))->gender = GENDER_FEMALE;
 
 	struct ac_action action = AC_INIT_MOVE_TO;
-	ac_init(&action, cpv(2, -4));
+	ac_init(&action, cpv(1, 5));
+	ac_stack_push(&b->action_stack, &action);
+
+	action = AC_INIT_MOVE_TO;
+	ac_init(&action, cpv(2, 3));
 	ac_stack_push(&b->action_stack, &action);
 
 	for (int i = 0; i < 4; ++i)
 	{
-		ecs_id e = make_test_entity(sim, cpv(i, 0));
+		ecs_id e = make_test_entity(sim, cpv(i, 3));
 		ecs_add(&sim->ecs, e, ECS_COMP_BRAIN);
 		b = ecs_get(&sim->ecs, e, ECS_COMP_BRAIN, struct ecs_comp_brain);
 
 		action = AC_INIT_FLEE;
-		ac_init(&action, mover);
+		ac_init(&action, mover, 2.0);
 		ac_stack_push(&b->action_stack, &action);
 
 	}

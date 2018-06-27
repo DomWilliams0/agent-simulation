@@ -54,8 +54,10 @@ static void init_flee(struct ac_action *action, va_list ap)
 {
 	struct ac_flee *this = &action->payload.flee;
 	ecs_id target = va_arg(ap, ecs_id);
+	double distance = va_arg(ap, double);
 
 	this->target = target;
+	this->desired_distance = distance;
 }
 
 static void destroy_flee(struct ac_action *action)
@@ -66,13 +68,20 @@ static enum ac_status tick_flee(struct ac_action *action, struct ac_tick_arg *ou
 {
 	struct ac_flee *this = &action->payload.flee;
 
-	struct ecs_comp_physics *target_phys = ecs_get(out->ecs, this->target, ECS_COMP_PHYSICS, struct ecs_comp_physics);
-	cpVect target = world_get_position(target_phys->body);
+	cpVect target = world_get_position((ecs_get(out->ecs,
+	                                            this->target,
+	                                            ECS_COMP_PHYSICS,
+	                                            struct ecs_comp_physics))->body);
+	cpVect my_pos = world_get_position((ecs_get(out->ecs,
+	                                            out->this,
+	                                            ECS_COMP_PHYSICS,
+	                                            struct ecs_comp_physics))->body);
+
+	if (cpvdistsq(target, my_pos) > this->desired_distance * this->desired_distance)
+		return AC_STATUS_SUCCESS; // got away
 
 	out->steer_out->type = ST_FLEE;
 	out->steer_out->target = target;
-
-	// TODO succeed if far enough away
 	return AC_STATUS_RUNNING;
 }
 
@@ -92,10 +101,17 @@ static enum ac_status tick_move_to(struct ac_action *action, struct ac_tick_arg 
 {
 	struct ac_move_to *this = &action->payload.move_to;
 
+	// already set and arrived
+	if (out->steer_out->type == ST_ARRIVE &&
+			out->steer_out->arrived &&
+			cpvdistsq(out->steer_out->target, this->target) < 0.0001)
+	{
+		return AC_STATUS_SUCCESS; // wahey
+	}
+
 	out->steer_out->type = ST_ARRIVE;
 	out->steer_out->target = this->target;
 
-	// TODO check for arrival in steer component
 	return AC_STATUS_RUNNING;
 }
 
@@ -110,6 +126,7 @@ static void destroy_idle(struct ac_action *action)
 
 static enum ac_status tick_idle(struct ac_action *action, struct ac_tick_arg *out)
 {
+	out->steer_out->type = ST_NONE;
 	return AC_STATUS_RUNNING;
 }
 

@@ -35,6 +35,11 @@ struct ecs_comp_steer
 	enum st_type type;
 	cpVect target;
 	bool separation; // TODO bitflags for multiple behaviours
+
+	union
+	{
+		bool arrived; // arrival only
+	};
 };
 
 struct ecs_comp_brain

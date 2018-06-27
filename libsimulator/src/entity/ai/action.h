@@ -56,6 +56,7 @@ struct ecs_comp_steer;
 struct ecs;
 struct ac_tick_arg
 {
+	ecs_id this;
 	struct ecs_comp_steer *steer_out;
 	struct ecs *ecs;
 };

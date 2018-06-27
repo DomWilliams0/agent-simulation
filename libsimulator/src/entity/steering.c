@@ -76,7 +76,6 @@ static bool st_arrive(cpVect pos, cpVect target, cpVect *out)
 
 void st_apply(struct ecs_comp_steer *steer, cpVect current_pos, cpVect *velocity_out)
 {
-	// TODO function ptr?
 	switch(steer->type)
 	{
 		case ST_SEEK:
@@ -88,7 +87,7 @@ void st_apply(struct ecs_comp_steer *steer, cpVect current_pos, cpVect *velocity
 			return;
 
 		case ST_ARRIVE:
-			st_arrive(current_pos, steer->target, velocity_out);
+			steer->arrived = st_arrive(current_pos, steer->target, velocity_out);
 			return;
 
 		case ST_NONE:
