@@ -49,6 +49,7 @@ struct ac_action
 		struct ac_flee flee;
 		struct ac_move_to move_to;
 		struct ac_idle idle;
+		struct ac_follow follow;
 	} payload;
 };
 
@@ -75,5 +76,6 @@ void ac_destroy(struct ac_action *a);
 DERIVED_DECLARE_INIT(FLEE)
 DERIVED_DECLARE_INIT(MOVE_TO)
 DERIVED_DECLARE_INIT(IDLE)
+DERIVED_DECLARE_INIT(FOLLOW)
 
 #endif

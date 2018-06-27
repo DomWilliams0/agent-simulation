@@ -75,8 +75,8 @@ void simulator_populate(struct simulator *sim)
 	struct ecs_comp_brain *b = ecs_get(&sim->ecs, mover, ECS_COMP_BRAIN, struct ecs_comp_brain);
 	(ecs_get(&sim->ecs, mover, ECS_COMP_HUMAN, struct ecs_comp_human))->gender = GENDER_FEMALE;
 
-	struct ac_action action = AC_INIT_MOVE_TO;
-	ac_init(&action, cpv(1, 5));
+	struct ac_action action = AC_INIT_FOLLOW;
+	ac_init(&action, mover + 4);
 	ac_stack_push(&b->action_stack, &action);
 
 	action = AC_INIT_MOVE_TO;

@@ -13,6 +13,7 @@ ac_priority ac_priority_of(struct ac_action *action)
 		case AC_FLEE:
 			return 5;
 		case AC_MOVE_TO:
+		case AC_FOLLOW:
 			return 1;
 		case AC_IDLE:
 			return 0;
@@ -130,7 +131,35 @@ static enum ac_status tick_idle(struct ac_action *action, struct ac_tick_arg *ou
 	return AC_STATUS_RUNNING;
 }
 
+// follow
+static void init_follow(struct ac_action *action, va_list ap)
+{
+	struct ac_follow *this = &action->payload.follow;
+	ecs_id target = va_arg(ap, ecs_id);
+
+	this->target = target;
+}
+
+static void destroy_follow(struct ac_action *action)
+{
+}
+
+static enum ac_status tick_follow(struct ac_action *action, struct ac_tick_arg *out)
+{
+	struct ac_follow *this = &action->payload.follow;
+
+	cpVect target = world_get_position((ecs_get(out->ecs,
+	                                            this->target,
+	                                            ECS_COMP_PHYSICS,
+	                                            struct ecs_comp_physics))->body);
+
+	out->steer_out->type = ST_SEEK;
+	out->steer_out->target = target;
+	return AC_STATUS_RUNNING;
+}
+
 // init definitions
 DERIVED_DEFINE_INIT(FLEE, flee)
 DERIVED_DEFINE_INIT(MOVE_TO, move_to)
 DERIVED_DEFINE_INIT(IDLE, idle)
+DERIVED_DEFINE_INIT(FOLLOW, follow)
