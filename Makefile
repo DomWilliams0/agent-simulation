@@ -9,7 +9,7 @@ LIB_VEC_DIR = $(LIBS)/vec/src
 LIB_VEC_SRC = $(LIB_VEC_DIR)/vec.c
 
 LDFLAGS        = -Wall -lchipmunk
-CFLAGS         = -std=c11 -c -Wall -Wextra -I$(INC) -I$(LIB_VEC_DIR) -g
+CFLAGS         = -std=c11 -c -Wall -Wextra -Wno-unused-parameter -I$(INC) -I$(LIB_VEC_DIR) -g
 CFLAGS_DEBUG   = -O0 -DDEBUGGING
 CFLAGS_RELEASE = -O2 -DNDEBUG
 
