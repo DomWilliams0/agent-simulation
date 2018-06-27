@@ -4,9 +4,9 @@
 #define AC_INITIAL_STACK_LENGTH (8)
 
 #include "util/vec.h"
-#include "action.h"
 
 typedef vec_t(struct ac_action) ac_stack_t;
+struct action;
 
 struct ac_stack
 {
@@ -30,8 +30,5 @@ void ac_stack_push(struct ac_stack *stack, struct ac_action *action);
 // top action must have indicated that it has finished
 void ac_stack_pop(struct ac_stack *stack);
 // TODO abort current/given action
-
-// ticks current action, popping it if it completes
-void ac_stack_process(struct ac_stack *stack);
 
 #endif

@@ -13,6 +13,8 @@
 #define HUMAN_RADIUS       (0.3)
 
 
+typedef int ecs_id;
+
 typedef uint8_t human_age;
 
 enum gender

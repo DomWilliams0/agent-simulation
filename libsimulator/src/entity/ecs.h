@@ -10,7 +10,6 @@
 #define MAX_ENTITIES (256)
 
 typedef uint16_t ecs_mask;
-typedef int ecs_id;
 
 MOD_DECLARE(ecs, {
 	ecs_id count;

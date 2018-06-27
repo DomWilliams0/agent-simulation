@@ -1,6 +1,8 @@
 #ifndef SIM_ACTION_TYPES_H
 #define SIM_ACTION_TYPES_H
 
+#include "entity/common.h"
+
 enum ac_type
 {
 	AC_FLEE,
@@ -14,17 +16,14 @@ enum ac_type
 struct ac_vtable
 {
 	void (*init)(void *, va_list);
-	enum ac_status (*tick)(void *);
+	enum ac_status (*tick)(void *, struct ac_tick_arg *);
 	void (*destroy)(void *);
 };
-
-// TODO replace with real handle
-typedef int entity_handle;
 
 struct ac_flee
 {
 	struct ac_vtable _vptr;
-	entity_handle target;
+	ecs_id target;
 };
 
 struct ac_move_to

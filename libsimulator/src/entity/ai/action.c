@@ -1,5 +1,6 @@
 #include <assert.h>
 #include "action.h"
+#include "entity/components.h"
 #include "util/log.h"
 
 ac_priority ac_priority_of(struct ac_action *action)
@@ -31,11 +32,11 @@ void ac_init(struct ac_action *a, ...)
 	va_end(ap);
 }
 
-enum ac_status ac_tick(struct ac_action *a)
+enum ac_status ac_tick(struct ac_action *a, struct ac_tick_arg *out)
 {
 	struct ac_vtable *vptr = (struct ac_vtable *) &a->payload;
 	assert(vptr->tick);
-	return vptr->tick(a);
+	return vptr->tick(a, out);
 }
 
 void ac_destroy(struct ac_action *a)
@@ -47,35 +48,58 @@ void ac_destroy(struct ac_action *a)
 
 // individual action implementations
 // flee
-DERIVED_IMPL(flee, init, void, {
-	entity_handle target = va_arg(ap, entity_handle);
-	this->target = target;
-})
-DERIVED_IMPL(flee, destroy, void, {})
+static void init_flee(struct ac_action *action, va_list ap)
+{
+	struct ac_flee *this = &action->payload.flee;
+	ecs_id target = va_arg(ap, ecs_id);
 
-DERIVED_IMPL(flee, tick, enum ac_status, {
+	this->target = target;
+}
+
+static void destroy_flee(struct ac_action *action)
+{
+}
+
+static enum ac_status tick_flee(struct ac_action *action, struct ac_tick_arg *out)
+{
+	struct ac_flee *this = &action->payload.flee;
+	out->steer_out->type = ST_FLEE;
+	// TODO
 	return AC_STATUS_RUNNING;
-})
+}
 
 // move to
-DERIVED_IMPL(move_to, init, void, {
-	double *target = va_arg(ap, double*);
+static void init_move_to(struct ac_action *action, va_list ap)
+{
+	struct ac_move_to *this = &action->payload.move_to;
+	double *target = va_arg(ap, double *);
 	this->target[0] = target[0];
 	this->target[1] = target[1];
-});
-DERIVED_IMPL(move_to, destroy, void, {})
+}
 
-DERIVED_IMPL(move_to, tick, enum ac_status, {
+static void destroy_move_to(struct ac_action *action)
+{
+}
+
+static enum ac_status tick_move_to(struct ac_action *action, struct ac_tick_arg *out)
+{
+	// TODO
 	return AC_STATUS_RUNNING;
-})
+}
 
 // idle
-DERIVED_IMPL(idle, init, void, {});
-DERIVED_IMPL(idle, destroy, void, {})
+static void init_idle(struct ac_action *action, va_list ap)
+{
+}
 
-DERIVED_IMPL(idle, tick, enum ac_status, {
+static void destroy_idle(struct ac_action *action)
+{
+}
+
+static enum ac_status tick_idle(struct ac_action *action, struct ac_tick_arg *out)
+{
 	return AC_STATUS_RUNNING;
-})
+}
 
 // init definitions
 DERIVED_DEFINE_INIT(FLEE, flee)

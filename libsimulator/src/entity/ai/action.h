@@ -2,15 +2,10 @@
 #define SIM_ACTION_H
 
 #include <stdarg.h>
+#include <entity/components.h>
 #include "action_types.h"
 
 // handy helper for generating methods for each derived class
-#define DERIVED_IMPL(type_name, method_name, ret_type, impl) \
-	static ret_type method_name ## _ ## type_name(struct ac_action *action, va_list ap) \
-	{ \
-		struct ac_ ## type_name *this = &action->payload.type_name; \
-		do { impl } while(0); \
-	}
 
 // initialiser declaration
 #define DERIVED_DECLARE_INIT(name_caps) \
@@ -57,13 +52,19 @@ struct ac_action
 	} payload;
 };
 
+struct ecs_comp_steer;
+struct ac_tick_arg
+{
+	struct ecs_comp_steer *steer_out;
+};
+
 // higher is better
 ac_priority ac_priority_of(struct ac_action *action);
 
 // called before tick
 void ac_init(struct ac_action *a, ...);
 
-enum ac_status ac_tick(struct ac_action *a);
+enum ac_status ac_tick(struct ac_action *a, struct ac_tick_arg *out);
 
 void ac_destroy(struct ac_action *a);
 

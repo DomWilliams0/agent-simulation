@@ -1,9 +1,12 @@
 #ifndef SIM_COMPONENTS_H
 #define SIM_COMPONENTS_H
 
+#include <event/queue.h>
 #include "entity/common.h"
 #include "entity/steering.h"
 #include "world/world_forward.h"
+#include "ai/action_stack.h"
+#include "event/event.h"
 
 enum ecs_component {
 	ECS_COMP_PHYSICS = (1 << 0),

@@ -15,9 +15,9 @@ struct ev_queue
 	int _double_buffered;
 };
 
-ev_vec_t *ev_queue_read(struct ev_queue *queue) { return queue->_bufs + queue->_double_buffered; }
+static inline ev_vec_t *ev_queue_read(struct ev_queue *queue) { return queue->_bufs + queue->_double_buffered; }
 
-ev_vec_t *ev_queue_write(struct ev_queue *queue) { return queue->_bufs + (1 - queue->_double_buffered); }
+static inline ev_vec_t *ev_queue_write(struct ev_queue *queue) { return queue->_bufs + (1 - queue->_double_buffered); }
 
 
 void ev_queue_init(struct ev_queue *queue);
