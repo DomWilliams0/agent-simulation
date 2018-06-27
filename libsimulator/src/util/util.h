@@ -1,5 +1,5 @@
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef SIM_UTIL_H
+#define SIM_UTIL_H
 
 #define UNUSED(x) (void)(x)
 

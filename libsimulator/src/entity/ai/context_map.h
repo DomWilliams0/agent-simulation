@@ -1,5 +1,5 @@
-#ifndef CONTEXT_MAP_H
-#define CONTEXT_MAP_H
+#ifndef SIM_CONTEXT_MAP_H
+#define SIM_CONTEXT_MAP_H
 
 enum cm_direction
 {

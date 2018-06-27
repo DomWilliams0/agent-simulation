@@ -1,5 +1,5 @@
-#ifndef EVENT_H
-#define EVENT_H
+#ifndef SIM_EVENT_H
+#define SIM_EVENT_H
 
 enum ev_type
 {

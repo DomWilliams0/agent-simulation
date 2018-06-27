@@ -1,5 +1,5 @@
-#ifndef WORLD_H
-#define WORLD_H
+#ifndef SIM_WORLD_H
+#define SIM_WORLD_H
 
 #include <stddef.h>
 #include <stdbool.h>

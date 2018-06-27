@@ -1,5 +1,5 @@
-#ifndef RENDERER_H
-#define RENDERER_H
+#ifndef SIM_RENDERER_H
+#define SIM_RENDERER_H
 
 #include "util/util.h"
 #include "keyboard.h"

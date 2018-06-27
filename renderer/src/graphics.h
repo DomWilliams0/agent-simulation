@@ -1,5 +1,5 @@
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#ifndef SIM_GRAPHICS_H
+#define SIM_GRAPHICS_H
 
 #include "util/util.h"
 

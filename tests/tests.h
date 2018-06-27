@@ -1,5 +1,5 @@
-#ifndef TESTS_H
-#define TESTS_H
+#ifndef SIM_TESTS_H
+#define SIM_TESTS_H
 
 #include <stdlib.h>
 

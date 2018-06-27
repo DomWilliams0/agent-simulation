@@ -5,8 +5,8 @@
  * under the terms of the MIT license. See LICENSE for details.
  */
 
-#ifndef VEC_H
-#define VEC_H
+#ifndef SIM_VEC_H
+#define SIM_VEC_H
 
 #include <stdlib.h>
 #include <string.h>

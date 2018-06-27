@@ -1,5 +1,5 @@
-#ifndef KEYBOARD_H
-#define KEYBOARD_H
+#ifndef SIM_KEYBOARD_H
+#define SIM_KEYBOARD_H
 
 #include <stdbool.h>
 

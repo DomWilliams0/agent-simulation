@@ -1,5 +1,5 @@
-#ifndef WORLD_MODULE_H
-#define WORLD_MODULE_H
+#ifndef SIM_WORLD_MODULE_H
+#define SIM_WORLD_MODULE_H
 
 #include <chipmunk/chipmunk.h>
 #include <stdint.h>

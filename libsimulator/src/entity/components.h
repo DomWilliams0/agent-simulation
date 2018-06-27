@@ -1,5 +1,5 @@
-#ifndef COMPONENTS_H
-#define COMPONENTS_H
+#ifndef SIM_COMPONENTS_H
+#define SIM_COMPONENTS_H
 
 #include "entity/common.h"
 #include "entity/steering.h"

@@ -1,5 +1,5 @@
-#ifndef WORLD_PHYSICS_H
-#define WORLD_PHYSICS_H
+#ifndef SIM_WORLD_PHYSICS_H
+#define SIM_WORLD_PHYSICS_H
 
 #include <chipmunk/chipmunk.h>
 

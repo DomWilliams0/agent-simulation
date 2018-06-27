@@ -1,5 +1,5 @@
-#ifndef EVENT_QUEUE_H
-#define EVENT_QUEUE_H
+#ifndef SIM_EVENT_QUEUE
+#define SIM_EVENT_QUEUE
 
 #include "util/vec.h"
 

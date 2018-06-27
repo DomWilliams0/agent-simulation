@@ -1,5 +1,5 @@
-#ifndef ENTITY_COMMON_H
-#define ENTITY_COMMON_H
+#ifndef SIM_ENTITY_COMMON_H
+#define SIM_ENTITY_COMMON_H
 
 #include <stdint.h>
 #include <stdbool.h>

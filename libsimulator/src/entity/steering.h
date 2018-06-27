@@ -1,5 +1,5 @@
-#ifndef STEERING_H
-#define STEERING_H
+#ifndef SIM_STEERING_H
+#define SIM_STEERING_H
 
 #include "world/world.h"
 
