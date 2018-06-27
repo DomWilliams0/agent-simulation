@@ -19,6 +19,7 @@ MOD_DECLARE(ecs, {
 	struct ecs_comp_physics _comps_physics[MAX_ENTITIES];
 	struct ecs_comp_human _comps_human[MAX_ENTITIES];
 	struct ecs_comp_steer _comps_steer[MAX_ENTITIES];
+	struct ecs_comp_brain _comps_brain[MAX_ENTITIES];
 })
 
 // id is persistent

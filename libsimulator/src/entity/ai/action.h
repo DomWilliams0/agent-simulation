@@ -53,9 +53,11 @@ struct ac_action
 };
 
 struct ecs_comp_steer;
+struct ecs;
 struct ac_tick_arg
 {
 	struct ecs_comp_steer *steer_out;
+	struct ecs *ecs;
 };
 
 // higher is better
@@ -71,5 +73,6 @@ void ac_destroy(struct ac_action *a);
 // action defaults
 DERIVED_DECLARE_INIT(FLEE)
 DERIVED_DECLARE_INIT(MOVE_TO)
+DERIVED_DECLARE_INIT(IDLE)
 
 #endif

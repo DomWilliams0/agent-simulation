@@ -101,6 +101,9 @@ void st_apply(struct ecs_comp_steer *steer, double current_pos[2], double *veloc
 		case ST_ARRIVE:
 			st_arrive(current_pos, steer->target, velocity);
 			return;
+
+		case ST_NONE:
+			return;
 	}
 
 	LOG_ERROR("Steering %d unimplemented", steer->type);

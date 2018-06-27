@@ -52,11 +52,6 @@ void test_polymorphism()
 	ac_init(&action, 409);
 	ASSERT(action.payload.flee.target == 409);
 
-	struct ecs_comp_steer dummy;
-	struct ac_tick_arg arg = {.steer_out = &dummy};
-	enum ac_status status = ac_tick(&action, &arg);
-	UNUSED(status);
-	ASSERT(action.payload.flee.target == 409); // still kicking
 	ac_destroy(&action);
 
 	double pos[2] = {90.2, 10.44};

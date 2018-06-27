@@ -6,7 +6,8 @@ struct ecs_comp_steer;
 
 enum st_type
 {
-	ST_SEEK = 1,
+	ST_NONE = 0,
+	ST_SEEK,
 	ST_FLEE,
 	ST_ARRIVE,
 };

@@ -37,6 +37,7 @@ void ecs_add(struct ecs *self, ecs_id e, enum ecs_component c)
 {
 	assert(ecs_is_alive(self, e));
 	self->_masks[e] |= c;
+	// TODO return!
 }
 
 void ecs_remove(struct ecs *self, ecs_id e, enum ecs_component c)
@@ -61,6 +62,8 @@ void *ecs_all(struct ecs *self, enum ecs_component c)
 			return self->_comps_human;
 		case ECS_COMP_STEER:
 			return self->_comps_steer;
+		case ECS_COMP_BRAIN:
+			return self->_comps_brain;
 	}
 
 	LOG_ERROR("Component %d not implemented", c);

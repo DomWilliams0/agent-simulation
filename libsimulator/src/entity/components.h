@@ -12,6 +12,7 @@ enum ecs_component {
 	ECS_COMP_PHYSICS = (1 << 0),
 	ECS_COMP_HUMAN   = (1 << 1),
 	ECS_COMP_STEER   = (1 << 2),
+	ECS_COMP_BRAIN   = (1 << 3),
 };
 
 // physics body
@@ -35,4 +36,9 @@ struct ecs_comp_steer
 	bool separation; // TODO bitflags for multiple behaviours
 };
 
+struct ecs_comp_brain
+{
+	struct ac_stack action_stack;
+	struct ev_queue event_queue;
+};
 #endif

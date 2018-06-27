@@ -1,4 +1,6 @@
 #include <assert.h>
+#include <entity/ecs.h>
+#include <world/world.h>
 #include "action.h"
 #include "entity/components.h"
 #include "util/log.h"
@@ -15,7 +17,7 @@ ac_priority ac_priority_of(struct ac_action *action)
 		case AC_IDLE:
 			return 0;
 	}
-	LOG_ERROR("action not handled");
+	LOG_ERROR("Action %d not handled", action->type);
 	return 0;
 }
 
@@ -63,8 +65,16 @@ static void destroy_flee(struct ac_action *action)
 static enum ac_status tick_flee(struct ac_action *action, struct ac_tick_arg *out)
 {
 	struct ac_flee *this = &action->payload.flee;
+
+	double target[2];
+	struct ecs_comp_physics *target_phys = ecs_get(out->ecs, this->target, ECS_COMP_PHYSICS, struct ecs_comp_physics);
+	world_get_position(target_phys->body, target);
+
 	out->steer_out->type = ST_FLEE;
-	// TODO
+	out->steer_out->target[0] = target[0];
+	out->steer_out->target[1] = target[1]; // for the love of god use vectors
+
+	// TODO succeed if far enough away
 	return AC_STATUS_RUNNING;
 }
 
@@ -83,7 +93,12 @@ static void destroy_move_to(struct ac_action *action)
 
 static enum ac_status tick_move_to(struct ac_action *action, struct ac_tick_arg *out)
 {
-	// TODO
+	struct ac_move_to *this = &action->payload.move_to;
+
+	out->steer_out->type = ST_ARRIVE;
+	out->steer_out->target[0] = this->target[0];
+	out->steer_out->target[1] = this->target[1];
+	// TODO check for arrival in steer component
 	return AC_STATUS_RUNNING;
 }
 
