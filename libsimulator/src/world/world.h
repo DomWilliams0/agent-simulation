@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <chipmunk/cpVect.h>
 
 #include "world/world_forward.h"
 #include "util/util.h"
@@ -21,7 +22,7 @@ void world_step(struct world *w);
 
 // entities
 world_body world_create_entity(struct world *w);
-void world_get_position(world_body body, double pos[2]);
-void world_set_position(world_body body, double pos[2]);
+cpVect world_get_position(world_body body);
+void world_set_position(world_body body, cpVect pos);
 
 #endif

@@ -29,7 +29,7 @@ struct ac_flee
 struct ac_move_to
 {
 	struct ac_vtable _vptr;
-	double target[2];
+	cpVect target;
 };
 
 struct ac_idle

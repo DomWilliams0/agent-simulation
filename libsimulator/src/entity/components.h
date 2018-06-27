@@ -2,6 +2,7 @@
 #define SIM_COMPONENTS_H
 
 #include <event/queue.h>
+#include <chipmunk/cpVect.h>
 #include "entity/common.h"
 #include "entity/steering.h"
 #include "world/world_forward.h"
@@ -32,7 +33,7 @@ struct ecs_comp_human
 struct ecs_comp_steer
 {
 	enum st_type type;
-	double target[2]; // TODO use vec instead
+	cpVect target;
 	bool separation; // TODO bitflags for multiple behaviours
 };
 

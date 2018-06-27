@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 #define ASSERT(expr) do { if (!(expr)) fail(#expr, __FILE__, __LINE__); } while (0)
-#define ASSERT_POS(a, b) ASSERT((a)[0] == (b)[0] && (a)[1] == (b)[1])
 #define ASSERT_FEQ(a, b) ASSERT(abs((a) - (b)) < 0.00001)
+#define ASSERT_POS(a, b) ASSERT_FEQ((a).x, (b).x); ASSERT_FEQ((a).y, (b).y);
 
 void fail(const char *expr, const char *file, int line);
 

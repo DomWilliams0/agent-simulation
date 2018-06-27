@@ -23,11 +23,10 @@ void test_world()
 	world_body e = world_create_entity(world);
 	ASSERT(e != NULL);
 
-	double pos[2] = {5.0, 25.0};
-	world_set_position(e, &pos[0]);
+	cpVect pos = cpv(5, 25);
+	world_set_position(e, pos);
 
-	double pos_get[2];
-	world_get_position(e, pos_get);
+	cpVect pos_get = world_get_position(e);
 	ASSERT_POS(pos, pos_get);
 
 	world_destroy(world);

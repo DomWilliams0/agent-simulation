@@ -44,16 +44,14 @@ world_body world_create_entity(struct world *w)
 	return b;
 }
 
-void world_get_position(world_body body, double pos[2])
+cpVect world_get_position(world_body body)
 {
-	cpVect vec = cpBodyGetPosition(body);
-	pos[0] = vec.x;
-	pos[1] = vec.y;
+	return cpBodyGetPosition(body);
 }
 
-void world_set_position(world_body body, double pos[2])
+void world_set_position(world_body body, cpVect pos)
 {
-	cpBodySetPosition(body, cpv(pos[0], pos[1]));
+	cpBodySetPosition(body, pos);
 }
 
 static bool load_params(struct world *world, struct world_parameters *params)

@@ -54,9 +54,9 @@ void test_polymorphism()
 
 	ac_destroy(&action);
 
-	double pos[2] = {90.2, 10.44};
+	cpVect pos = cpv(90.2, 10.44);
 	action = AC_INIT_MOVE_TO;
-	ac_init(&action, &pos);
+	ac_init(&action, pos);
 	ASSERT_POS(action.payload.move_to.target, pos);
 	ac_destroy(&action);
 }

@@ -66,13 +66,11 @@ static enum ac_status tick_flee(struct ac_action *action, struct ac_tick_arg *ou
 {
 	struct ac_flee *this = &action->payload.flee;
 
-	double target[2];
 	struct ecs_comp_physics *target_phys = ecs_get(out->ecs, this->target, ECS_COMP_PHYSICS, struct ecs_comp_physics);
-	world_get_position(target_phys->body, target);
+	cpVect target = world_get_position(target_phys->body);
 
 	out->steer_out->type = ST_FLEE;
-	out->steer_out->target[0] = target[0];
-	out->steer_out->target[1] = target[1]; // for the love of god use vectors
+	out->steer_out->target = target;
 
 	// TODO succeed if far enough away
 	return AC_STATUS_RUNNING;
@@ -82,9 +80,8 @@ static enum ac_status tick_flee(struct ac_action *action, struct ac_tick_arg *ou
 static void init_move_to(struct ac_action *action, va_list ap)
 {
 	struct ac_move_to *this = &action->payload.move_to;
-	double *target = va_arg(ap, double *);
-	this->target[0] = target[0];
-	this->target[1] = target[1];
+	cpVect target = va_arg(ap, cpVect);
+	this->target = target;
 }
 
 static void destroy_move_to(struct ac_action *action)
@@ -96,8 +93,8 @@ static enum ac_status tick_move_to(struct ac_action *action, struct ac_tick_arg 
 	struct ac_move_to *this = &action->payload.move_to;
 
 	out->steer_out->type = ST_ARRIVE;
-	out->steer_out->target[0] = this->target[0];
-	out->steer_out->target[1] = this->target[1];
+	out->steer_out->target = this->target;
+
 	// TODO check for arrival in steer component
 	return AC_STATUS_RUNNING;
 }

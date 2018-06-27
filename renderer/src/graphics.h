@@ -24,7 +24,7 @@ void graphics_start(struct graphics *self);
 
 void graphics_draw_world(struct world *world);
 
-void graphics_draw_human(double x, double y, struct ecs_comp_human *human);
+void graphics_draw_human(cpVect pos, struct ecs_comp_human *human);
 
 void graphics_end(struct graphics *self);
 

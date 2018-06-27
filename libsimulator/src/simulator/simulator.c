@@ -42,7 +42,7 @@ void simulator_step(struct simulator *sim)
 	world_step(sim->world);
 }
 
-static ecs_id make_test_entity(struct simulator *sim, double pos[2])
+static ecs_id make_test_entity(struct simulator *sim, cpVect pos)
 {
 	struct ecs *ecs = &sim->ecs;
 	ecs_id e = ecs_new(ecs);
@@ -70,20 +70,17 @@ static ecs_id make_test_entity(struct simulator *sim, double pos[2])
 
 void simulator_populate(struct simulator *sim)
 {
-	double pos[2] = {2.0, 4.0};
-	ecs_id mover = make_test_entity(sim, pos);
+	ecs_id mover = make_test_entity(sim, cpv(2, 4));
 	ecs_add(&sim->ecs, mover, ECS_COMP_BRAIN);
 	struct ecs_comp_brain *b = ecs_get(&sim->ecs, mover, ECS_COMP_BRAIN, struct ecs_comp_brain);
 
 	struct ac_action action = AC_INIT_MOVE_TO;
-	double target[2] = {pos[0], -pos[1]};
-	ac_init(&action, target);
+	ac_init(&action, cpv(2, -4));
 	ac_stack_push(&b->action_stack, &action);
 
 	for (int i = 0; i < 4; ++i)
 	{
-		double pos[2] = {i, 0.0};
-		ecs_id e = make_test_entity(sim, pos);
+		ecs_id e = make_test_entity(sim, cpv(i, 0));
 		ecs_add(&sim->ecs, e, ECS_COMP_BRAIN);
 		b = ecs_get(&sim->ecs, e, ECS_COMP_BRAIN, struct ecs_comp_brain);
 

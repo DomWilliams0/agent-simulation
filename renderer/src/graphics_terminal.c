@@ -26,7 +26,7 @@ void graphics_draw_world(struct world *world)
 	UNUSED(world);
 }
 
-void graphics_draw_human(double x, double y, struct ecs_comp_human *human)
+void graphics_draw_human(cpVect pos, struct ecs_comp_human *human)
 {
 	LOG_INFO("Entity %-3d : %s %3dy (%2.1f, %.01f)",
 			last_entity, human->gender == GENDER_MALE ? "  male" : "female", human->age, x, y);

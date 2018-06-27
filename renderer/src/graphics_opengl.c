@@ -108,7 +108,7 @@ void graphics_draw_world(struct world *world)
 	UNUSED(world);
 }
 
-void graphics_draw_human(double x, double y, struct ecs_comp_human *human)
+void graphics_draw_human(cpVect pos, struct ecs_comp_human *human)
 {
 	// ty http://slabode.exofire.net/circle_draw.shtml
 	// values hardcoded
@@ -122,7 +122,7 @@ void graphics_draw_human(double x, double y, struct ecs_comp_human *human)
 	else
 		glColor3fv((GLfloat *)&COLOUR_ENTITY_FEMALE);
 
-	glTranslatef((GLfloat) x, (GLfloat) y, 0);
+	glTranslatef((GLfloat) pos.x, (GLfloat) pos.y, 0);
 
 	double cx = HUMAN_RADIUS;
 	double cy = 0;

@@ -145,14 +145,13 @@ static void render_entities(struct ecs *ecs)
 
 	const ecs_mask mask = ECS_COMP_PHYSICS | ECS_COMP_HUMAN;
 
-	double pos[2];
 	for (ecs_id i = 0; i < ecs->count; ++i)
 	{
 		if (!ecs_has(ecs, i, mask))
 			continue;
 
-		world_get_position((&physics[i])->body, pos);
-		graphics_draw_human(pos[0], pos[1], &humans[i]);
+		cpVect pos = world_get_position((&physics[i])->body);
+		graphics_draw_human(pos, &humans[i]);
 	}
 }
 

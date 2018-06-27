@@ -7,7 +7,7 @@
 #define STEERING_ARRIVE_RADIUS (0.5f)
 #define CENTRE_TILE(coord) (coord + 0.5f)
 
-static void st_separate(world_body body, double *velocity);
+static void st_separate(world_body body, cpVect *out);
 
 void st_system_tick(struct ecs *ecs)
 {
@@ -16,8 +16,6 @@ void st_system_tick(struct ecs *ecs)
 
 	const ecs_mask mask = ECS_COMP_PHYSICS | ECS_COMP_STEER;
 
-	double velocity[2];
-	double position[2];
 	for (ecs_id i = 0; i < ecs->count; ++i)
 	{
 		if (!ecs_has(ecs, i, mask))
@@ -26,57 +24,47 @@ void st_system_tick(struct ecs *ecs)
 		struct ecs_comp_physics *p = &physics[i];
 		struct ecs_comp_steer *s = &steers[i];
 
-		world_get_position(p->body, position);
-		velocity[0] = velocity[1] = 0.f;
+		cpVect position = world_get_position(p->body);
+		cpVect velocity = cpvzero;
 
-		st_apply(s, position, velocity);
+		st_apply(s, position, &velocity);
 
 		if (s->separation)
-			st_separate(p->body, velocity);
+			st_separate(p->body, &velocity);
 
-		cpBodyApplyForceAtLocalPoint(p->body, cpv(velocity[0], velocity[1]), cpvzero);
+		cpBodyApplyForceAtLocalPoint(p->body, velocity, cpvzero);
 	}
 
 }
 
-static double length(double *v)
+static void scale(cpVect *velocity, double speed)
 {
-	return sqrt((v[0] * v[0]) + (v[1] * v[1]));
-}
-
-static void scale(double *velocity, double speed)
-{
-	double l = length(velocity);
+	double l = cpvlength(*velocity);
 	if (l < VELOCITY_MINIMUM)
 		l = 1;
 
-	velocity[0] *= speed / l;
-	velocity[1] *= speed / l;
+	*velocity = cpvmult(*velocity, speed / l);
 }
 
-static void st_seek(double pos[2], double target[2], double *out)
+static void st_seek(cpVect pos, cpVect target, cpVect *out)
 {
-	out[0] = CENTRE_TILE(target[0]) - pos[0];
-	out[1] = CENTRE_TILE(target[1]) - pos[1];
+	*out = cpvsub(target, pos);
 	scale(out, HUMAN_ACCELERATION); // full speed ahead
 }
 
-static void st_flee(double pos[2], double target[2], double *out)
+static void st_flee(cpVect pos, cpVect target, cpVect *out)
 {
-	// opposite of seek
-	double tmp[2];
-	st_seek(pos, target, tmp);
-	out[0] = -tmp[0];
-	out[1] = -tmp[1];
+	cpVect tmp = cpvzero;
+	st_seek(pos, target, &tmp);
+	*out = cpvmult(tmp, -1);
 }
 
 // returns if arrived
-static bool st_arrive(double pos[2], double target[2], double *out)
+static bool st_arrive(cpVect pos, cpVect target, cpVect *out)
 {
-	out[0] = CENTRE_TILE(target[0]) - pos[0];
-	out[1] = CENTRE_TILE(target[1]) - pos[1];
+	*out = cpvsub(target, pos);
 
-	double distance = length(out);
+	double distance = cpvlength(*out);
 	double speed = HUMAN_ACCELERATION;
 	bool arriving = distance < STEERING_ARRIVE_RADIUS;
 	if (arriving)
@@ -86,20 +74,21 @@ static bool st_arrive(double pos[2], double target[2], double *out)
 	return arriving;
 }
 
-void st_apply(struct ecs_comp_steer *steer, double current_pos[2], double *velocity)
+void st_apply(struct ecs_comp_steer *steer, cpVect current_pos, cpVect *velocity_out)
 {
+	// TODO function ptr?
 	switch(steer->type)
 	{
 		case ST_SEEK:
-			st_seek(current_pos, steer->target, velocity);
+			st_seek(current_pos, steer->target, velocity_out);
 			return;
 
 		case ST_FLEE:
-			st_flee(current_pos, steer->target, velocity);
+			st_flee(current_pos, steer->target, velocity_out);
 			return;
 
 		case ST_ARRIVE:
-			st_arrive(current_pos, steer->target, velocity);
+			st_arrive(current_pos, steer->target, velocity_out);
 			return;
 
 		case ST_NONE:
@@ -135,7 +124,7 @@ static void separation_callback(cpShape *shape, void *data)
 	}
 }
 
-static void st_separate(world_body body, double *velocity)
+static void st_separate(world_body body, cpVect *out)
 {
 	cpBB bb = cpBBNewForCircle(cpBodyGetPosition(body), HUMAN_RADIUS * 1.5f);
 
@@ -151,8 +140,7 @@ static void st_separate(world_body body, double *velocity)
 	{
 		double scale = HUMAN_ACCELERATION * 0.65; // experimental
 		cpVect toAdd = cpvmult(query.mean, scale * (1 / query.count));
-		velocity[0] += toAdd.x;
-		velocity[1] += toAdd.y;
+		*out = cpvadd(*out, toAdd);
 	}
 
 	// TODO look into using vector fields
