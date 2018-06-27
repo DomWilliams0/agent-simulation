@@ -1,6 +1,10 @@
-#include <stdio.h>
+#include <entity/ai/action.h>
 #include "tests.h"
+#include "util/util.h"
 #include "entity/ai/action_stack.h"
+#include "entity/ai/action.h"
+
+void test_polymorphism();
 
 void test_action()
 {
@@ -38,4 +42,24 @@ void test_action()
 	ASSERT(top.type == AC_FLEE);
 
 	ac_stack_destroy(&stack);
+
+	test_polymorphism();
+}
+
+void test_polymorphism()
+{
+	struct ac_action action = AC_INIT_FLEE;
+	ac_init(&action, 409);
+	ASSERT(action.payload.flee.target == 409);
+
+	enum ac_status status = ac_tick(&action);
+	UNUSED(status);
+	ASSERT(action.payload.flee.target == 409); // still kicking
+	ac_destroy(&action);
+
+	double pos[2] = {90.2, 10.44};
+	action = AC_INIT_MOVE_TO;
+	ac_init(&action, &pos);
+	ASSERT_POS(action.payload.move_to.target, pos);
+	ac_destroy(&action);
 }

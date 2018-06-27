@@ -4,13 +4,42 @@
 #include <stdarg.h>
 #include "action_types.h"
 
+// handy helper for generating methods for each derived class
+#define DERIVED_IMPL(type_name, method_name, ret_type, impl) \
+	static ret_type method_name ## _ ## type_name(struct ac_action *action, va_list ap) \
+	{ \
+		struct ac_ ## type_name *this = &action->payload.type_name; \
+		do { impl } while(0); \
+	}
+
+// initialiser declaration
+#define DERIVED_DECLARE_INIT(name_caps) \
+ const struct ac_action AC_INIT_ ## name_caps;
+
+// initialiser definition
+#define DERIVED_DEFINE_INIT(name_caps, name_lower) \
+	const struct ac_action AC_INIT_ ## name_caps = { \
+		.type = AC_ ## name_caps, \
+		.payload._vptr = { \
+				.init = (void *) init_ ## name_lower, \
+				.tick = (void *) tick_ ## name_lower, \
+				.destroy = (void *) destroy_ ## name_lower, \
+		} \
+	};
+
+
 enum ac_status
 {
+	/*
 	AC_STATUS_NONE = 0, // not started yet
 	AC_STATUS_STARTING, // start in progress
 	AC_STATUS_RUNNING,  // in progress
 	AC_STATUS_STOPPING, // stop in progress
 	AC_STATUS_STOPPED,  // done
+	*/
+	AC_STATUS_RUNNING = 1,
+	AC_STATUS_SUCCESS,
+	AC_STATUS_FAILURE,
 };
 
 typedef int ac_priority;
@@ -21,12 +50,25 @@ struct ac_action
 
 	union
 	{
+		struct ac_vtable _vptr;
 		struct ac_flee flee;
 		struct ac_move_to move_to;
 		struct ac_idle idle;
-	};
+	} payload;
 };
 
 // higher is better
 ac_priority ac_priority_of(struct ac_action *action);
+
+// called before tick
+void ac_init(struct ac_action *a, ...);
+
+enum ac_status ac_tick(struct ac_action *a);
+
+void ac_destroy(struct ac_action *a);
+
+// action defaults
+DERIVED_DECLARE_INIT(FLEE)
+DERIVED_DECLARE_INIT(MOVE_TO)
+
 #endif
