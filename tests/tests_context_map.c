@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "tests.h"
 #include "entity/ai/context_map.h"
 
@@ -13,7 +12,6 @@ void test_context_map()
 
 	cm_add(&map, CM_INTEREST, CM_E, 0.2);
 	ASSERT(cm_calculate(&map, &force) == CM_E);
-	printf("force %f\n", force);
 	ASSERT_FEQ(force, 0.2);
 
 	cm_add(&map, CM_INTEREST, CM_W, 0.4);
