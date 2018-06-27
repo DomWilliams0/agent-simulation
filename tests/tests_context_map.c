@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "tests.h"
-#include "entity/context_map.h"
+#include "entity/ai/context_map.h"
 
 void test_context_map()
 {
