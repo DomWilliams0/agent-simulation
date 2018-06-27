@@ -31,4 +31,7 @@ void ac_stack_push(struct ac_stack *stack, struct ac_action *action);
 void ac_stack_pop(struct ac_stack *stack);
 // TODO abort current/given action
 
+// ticks current action, popping it if it completes
+void ac_stack_process(struct ac_stack *stack);
+
 #endif

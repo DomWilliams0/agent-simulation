@@ -42,3 +42,13 @@ void ac_stack_pop(struct ac_stack *stack)
 	struct ac_action top = vec_pop(&stack->_stack);
 	UNUSED(top);
 }
+
+void ac_stack_process(struct ac_stack *stack)
+{
+	struct ac_action current;
+	ac_stack_current(stack, &current);
+
+	enum ac_status status = ac_tick(&current);
+	if (status != AC_STATUS_RUNNING)
+		ac_stack_pop(stack);
+}
