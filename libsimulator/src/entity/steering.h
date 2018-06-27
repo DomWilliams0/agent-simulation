@@ -1,33 +1,19 @@
 #ifndef SIM_STEERING_H
 #define SIM_STEERING_H
 
-#include "world/world.h"
+struct ecs;
+struct ecs_comp_steer;
 
-#define STEERING_ARRIVE_RADIUS (0.5f)
-
-enum steering_type
+enum st_type
 {
-	STEERING_SEEK = 1,
-	STEERING_ARRIVE,
-	STEERING_PATH_FOLLOW
+	ST_SEEK = 1,
+	ST_FLEE,
+	ST_ARRIVE,
 };
 
-struct steering_path_waypoint
-{
-	double pos[2];
-	struct steering_path_waypoint *next;
-};
+void st_apply(struct ecs_comp_steer *steer, double current_pos[2], double *velocity);
 
-struct entities;
-struct world;
-struct component_steer;
-
-void steering_update_system(struct entities *entities);
-
-void steering_apply(struct component_steer *steer, double current_pos[2], double *velocity);
-
-void steering_path_add(struct component_steer *steer, double waypoint[2]);
-bool steering_path_pop(struct component_steer *steer);
-void steering_path_set(struct component_steer *steer, double *waypoints, int n);
+// realise steering components -> physical movement
+void st_system_tick(struct ecs *ecs);
 
 #endif

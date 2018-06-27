@@ -1,6 +1,7 @@
 #ifndef SIM_GRAPHICS_H
 #define SIM_GRAPHICS_H
 
+#include <entity/components.h>
 #include "util/util.h"
 
 #define WINDOW_TITLE  "Simulator"
@@ -15,7 +16,7 @@ struct camera_movement
 };
 
 struct world;
-struct component_human;
+struct ecs_comp_human;
 
 MOD_FWD_DECLARE(graphics) // implementation specific
 
@@ -23,7 +24,7 @@ void graphics_start(struct graphics *self);
 
 void graphics_draw_world(struct world *world);
 
-void graphics_draw_human(double x, double y, struct component_human *human);
+void graphics_draw_human(double x, double y, struct ecs_comp_human *human);
 
 void graphics_end(struct graphics *self);
 

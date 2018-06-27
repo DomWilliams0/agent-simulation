@@ -1,6 +1,5 @@
 #include "simulator/simulator.h"
-#include "entity/entity.h"
-#include "entity/components.h"
+#include "world/world.h"
 
 #include "util/memory.h"
 #include "util/log.h"
@@ -13,7 +12,7 @@ MOD_INIT(simulator, {
 	world_params.width = 30;
 	world_params.height = 30;
 
-	if (entities_init(&self->entities, NULL) != 0)
+	if (ecs_init(&self->ecs, NULL) != 0)
 		return 1;
 
 	safe_malloc(world_sizeof(), &self->world); // hmmm
@@ -21,49 +20,54 @@ MOD_INIT(simulator, {
 		return 2;
 
 	return 0;
-})
+});
 
 MOD_DESTROY(simulator, {
-	entities_destroy(&self->entities);
+	ecs_destroy(&self->ecs);
 	if (self->world != NULL)
+	{
 		world_destroy(self->world);
+		safe_free(self->world);
+		self->world = NULL;
+	}
 })
 
 void simulator_step(struct simulator *sim)
 {
-	steering_update_system(&sim->entities);
+	st_system_tick(&sim->ecs);
 	world_step(sim->world);
 }
 
-static struct component_steer *make_test_entity(struct simulator *sim, double pos[2])
+static void make_test_entity(struct simulator *sim, double pos[2])
 {
-	struct entities *entities = &sim->entities;
-	entity_id e = entity_create(entities);
+	struct ecs *ecs = &sim->ecs;
+	ecs_id e = ecs_new(ecs);
 
-	struct component_physics *phys = entity_add_component(entities, e, COMPONENT_PHYSICS);
-	phys->body = world_create_entity(sim->world);
-	world_set_position(phys->body, pos);
+	ecs_add(ecs, e, ECS_COMP_PHYSICS);
+	ecs_add(ecs, e, ECS_COMP_HUMAN);
+	ecs_add(ecs, e, ECS_COMP_STEER);
 
-	struct component_human *hum = entity_add_component(entities, e, COMPONENT_HUMAN);
-	hum->age = 20;
-	hum->gender = MALE;
+	struct ecs_comp_physics *p = ecs_get(ecs, e, ECS_COMP_PHYSICS, struct ecs_comp_physics);
+	p->body = world_create_entity(sim->world);
+	world_set_position(p->body, pos);
 
-	struct component_steer *steer = entity_add_component(entities, e, COMPONENT_STEER);
-	steer->type = STEERING_PATH_FOLLOW;
-	steer->separation = true;
+	struct ecs_comp_human *h = ecs_get(ecs, e, ECS_COMP_HUMAN, struct ecs_comp_human);
+	h->age = 25;
+	h->gender = GENDER_MALE;
 
-	return steer;
+	struct ecs_comp_steer *s = ecs_get(ecs, e, ECS_COMP_STEER, struct ecs_comp_steer);
+	s->type = ST_ARRIVE;
+	s->target[0] = 0.0;
+	s->target[1] = 0.0;
+	s->separation = true;
 }
 
 void simulator_populate(struct simulator *sim)
 {
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
-		double pos[2] = {0.0, i};
-		struct component_steer *steer = make_test_entity(sim, pos);
-
-		double path[3][2] = {{5, 0}, {3, 3}, {0, 3}};
-		steering_path_set(steer, (double *) path, 1);
+		double pos[2] = {-i, i};
+		make_test_entity(sim, pos);
 	}
 }
 

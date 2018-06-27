@@ -8,7 +8,7 @@
 #include "world/internal/physics.h"
 #include "world/internal/world.h"
 #include "entity/steering.h"
-#include "entity/entity.h"
+#include "entity/ecs.h"
 
 static bool load_params(struct world *world, struct world_parameters *params);
 

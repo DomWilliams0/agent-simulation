@@ -9,7 +9,6 @@
 
 struct graphics
 {
-	int placeholder;
 };
 
 static int last_entity;
@@ -27,17 +26,17 @@ void graphics_draw_world(struct world *world)
 	UNUSED(world);
 }
 
-void graphics_draw_human(double x, double y, struct component_human *human)
+void graphics_draw_human(double x, double y, struct ecs_comp_human *human)
 {
 	LOG_INFO("Entity %-3d : %s %3dy (%2.1f, %.01f)",
-			last_entity, human->gender == MALE ? "  male" : "female", human->age, x, y);
+			last_entity, human->gender == GENDER_MALE ? "  male" : "female", human->age, x, y);
 	last_entity += 1;
 }
 
 void graphics_end(struct graphics *self)
 {
 	UNUSED(self);
-		last_entity = 1;
+	last_entity = 1;
 	LOG_INFO("----");
 }
 

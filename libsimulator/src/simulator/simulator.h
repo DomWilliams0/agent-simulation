@@ -4,10 +4,10 @@
 #include <stdint.h>
 
 #include "util/util.h"
-#include "entity/entity.h"
+#include "entity/ecs.h"
 
 MOD_DECLARE(simulator, {
-	struct entities entities;
+	struct ecs ecs;
 	struct world *world;
 });
 

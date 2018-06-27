@@ -1,5 +1,5 @@
 #include <SDL2/SDL.h>
-#include <entity/entity.h>
+#include <entity/ecs.h>
 
 #include "renderer.h"
 #include "graphics.h"
@@ -138,25 +138,21 @@ void step_simulation(struct renderer *renderer)
 	simulator_step(renderer->sim);
 }
 
-static void render_entities(struct entities *entities)
+static void render_entities(struct ecs *ecs)
 {
-	struct component_physics *physics = (struct component_physics *)entity_get_component_array(entities, COMPONENT_PHYSICS);
-	struct component_human *humans = (struct component_human *)entity_get_component_array(entities, COMPONENT_HUMAN);
+	struct ecs_comp_physics *physics = ecs_all(ecs, ECS_COMP_PHYSICS);
+	struct ecs_comp_human *humans = ecs_all(ecs, ECS_COMP_HUMAN);
 
-	entity_id count = entities->count;
-	const entity_mask render_mask = COMPONENT_PHYSICS | COMPONENT_HUMAN;
+	const ecs_mask mask = ECS_COMP_PHYSICS | ECS_COMP_HUMAN;
 
 	double pos[2];
-	for (entity_id i = 0; i < count; ++i)
+	for (ecs_id i = 0; i < ecs->count; ++i)
 	{
-		if (!entity_has_component(entities, i, render_mask))
+		if (!ecs_has(ecs, i, mask))
 			continue;
 
-		struct component_physics *phys = physics + i;
-		world_get_position(phys->body, pos);
-
-		struct component_human *human = humans + i;
-		graphics_draw_human(pos[0], pos[1], human);
+		world_get_position((&physics[i])->body, pos);
+		graphics_draw_human(pos[0], pos[1], &humans[i]);
 	}
 }
 
@@ -174,7 +170,7 @@ void render_simulation(struct renderer *renderer)
 	graphics_draw_world(renderer->sim->world);
 
 	// entities
-	render_entities(&renderer->sim->entities);
+	render_entities(&renderer->sim->ecs);
 
 	graphics_end(renderer->graphics);
 }

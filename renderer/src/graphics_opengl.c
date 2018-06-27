@@ -108,7 +108,7 @@ void graphics_draw_world(struct world *world)
 	UNUSED(world);
 }
 
-void graphics_draw_human(double x, double y, struct component_human *human)
+void graphics_draw_human(double x, double y, struct ecs_comp_human *human)
 {
 	// ty http://slabode.exofire.net/circle_draw.shtml
 	// values hardcoded
@@ -117,7 +117,7 @@ void graphics_draw_human(double x, double y, struct component_human *human)
 	static int segment_count       = 20;
 
 	glPushMatrix();
-	if (human->gender == MALE)
+	if (human->gender == GENDER_MALE)
 		glColor3fv((GLfloat *)&COLOUR_ENTITY_MALE);
 	else
 		glColor3fv((GLfloat *)&COLOUR_ENTITY_FEMALE);

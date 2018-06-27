@@ -13,12 +13,12 @@
 #define HUMAN_RADIUS       (0.3)
 
 
-// TODO entity IDs will be unique across all worlds
-typedef uint32_t entity_id;
+typedef uint8_t human_age;
 
-typedef enum { MALE = 1, FEMALE } human_gender;
-
-// TODO remove
-typedef void entity_consumer(entity_id, void *);
+enum gender
+{
+	GENDER_MALE = 1,
+	GENDER_FEMALE,
+};
 
 #endif
