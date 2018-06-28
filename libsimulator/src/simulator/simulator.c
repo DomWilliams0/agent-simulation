@@ -76,11 +76,13 @@ void simulator_populate(struct simulator *sim)
 
 	struct ac_action action = AC_INIT_FOLLOW;
 	ac_init(&action, mover + 4);
-	ac_stack_push(&b->action_stack, &action);
+//	ac_stack_push(&b->action_stack, &action);
 
 	action = AC_INIT_MOVE_TO;
-	ac_init(&action, cpv(2, 1));
+	ac_init(&action, cpv(2, -2));
 	ac_stack_push(&b->action_stack, &action);
+
+	return;
 
 	for (int i = 0; i < 4; ++i)
 	{

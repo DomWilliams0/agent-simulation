@@ -9,5 +9,6 @@ void world_add_road(struct world *w, struct road *road)
 	cpShapeSetFriction(line, 0.2);
 	cpSpaceAddShape(w->space, line);
 	cpShapeSetCollisionType(line, CG_ROAD_BOUNDARY);
-	cpShapeSetSensor(line, cpTrue);
+	cpShapeSetFilter(line, COLLISION_ROAD_BOUNDARY);
+//	cpShapeSetSensor(line, cpTrue);
 }

@@ -1,10 +1,27 @@
+#include <world/collision.h>
 #include "sensor_system.h"
 #include "entity/ecs.h"
 
 float sense_danger(ECS_COMP(physics) *physics, enum cm_direction direction, float len)
 {
-//	return (float) (direction == CM_S ? 0.5 : 0.0);
-	return 0;
+	cpVect start = world_get_position(physics->body);
+	cpVect sensor_direction = cpvmult(cpvforangle(cm_direction_angle(direction)), len); // TODO precompute this
+	cpVect end = cpvadd(start, sensor_direction);
+
+	cpSegmentQueryInfo query;
+	// TODO correct filter
+	cpShape *target = cpSpaceSegmentQueryFirst(cpBodyGetSpace(physics->body),
+	                         start, end,
+	                         0, COLLISION_HUMAN_SENSOR, &query);
+	if (target == NULL)
+		return 0;
+
+	// roads are dangerous
+	if (cpShapeGetCollisionType(target) == CG_ROAD_BOUNDARY)
+		return 0.2f;
+
+	// TODO default?
+	return 0.f;
 }
 
 void sense_dangers(ECS_COMP(sensors) *sensors, ECS_COMP(physics) *physics, ECS_COMP(steer) *steer)

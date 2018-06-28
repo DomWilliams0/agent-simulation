@@ -34,8 +34,8 @@ MOD_INIT(world, {
 
 	// test segment
 	struct road test_road;
-	test_road.a = cpv(0, 1.2);
-	test_road.b = cpv(4, 3.5);
+	test_road.a = cpv(1.3, 5);
+	test_road.b = cpv(1.3, -2);
 	test_road.thickness = 0.2;
 	world_add_road(self, &test_road);
 
@@ -63,6 +63,8 @@ world_body world_create_entity(struct world *w)
 	// collision
 	cpShape *shape = cpSpaceAddShape(w->space, cpCircleShapeNew(b, HUMAN_RADIUS, cpvzero));
 	cpShapeSetFriction(shape, HUMAN_FRICTION);
+	cpShapeSetCollisionType(shape, CG_HUMAN);
+	cpShapeSetFilter(shape, COLLISION_HUMAN);
 
 	return b;
 }

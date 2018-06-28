@@ -5,14 +5,16 @@
 
 enum collision_group
 {
-	CG_HUMAN_SENSOR =  1 << 0,
-	CG_ROAD_BOUNDARY = 1 << 1,
+	CG_HUMAN        =  1 << 0,
+	CG_HUMAN_SENSOR =  1 << 1,
+	CG_ROAD_BOUNDARY = 1 << 2,
 
 //	CG_ALL = ~0,
 //	CG_ALL_PHYSICAL = ~CG_HUMAN_SENSOR,
 };
 
-static const cpShapeFilter COLLISION_HUMAN_SENSOR = { CP_NO_GROUP, CG_HUMAN_SENSOR, CG_ROAD_BOUNDARY };
+static const cpShapeFilter COLLISION_HUMAN = { CP_NO_GROUP, CG_HUMAN, CG_HUMAN };
+static const cpShapeFilter COLLISION_HUMAN_SENSOR = { CP_NO_GROUP, CG_HUMAN_SENSOR, CG_ROAD_BOUNDARY};
 static const cpShapeFilter COLLISION_ROAD_BOUNDARY = { CP_NO_GROUP, CG_ROAD_BOUNDARY, CG_HUMAN_SENSOR };
 
 #endif

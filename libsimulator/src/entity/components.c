@@ -22,4 +22,6 @@ ECS_COMP_INIT_DEFINE(brain, {
 	ev_queue_destroy(&comp->event_queue);
 })
 
-ECS_COMP_INIT_DEFINE(sensors, {}, {})
+ECS_COMP_INIT_DEFINE(sensors, {
+	comp->length = 1.f;
+}, {})
