@@ -9,6 +9,7 @@
 #include "ai/action_stack.h"
 #include "event/event.h"
 #include "components_decl.h"
+#include "ai/context_map.h"
 
 // physics body
 ECS_COMP_DEFINE(0, physics,
@@ -21,9 +22,11 @@ ECS_COMP_DEFINE(1, human,
 	enum gender gender;
 )
 
-// steering movement
+// steering intent
 ECS_COMP_DEFINE(2, steer,
 	enum st_type type;
+	struct context_map ctx_map;
+
 	cpVect target;
 	bool separation; // TODO bitflags for multiple behaviours
 

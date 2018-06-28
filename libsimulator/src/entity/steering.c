@@ -5,7 +5,6 @@
 #include "util/log.h"
 
 #define STEERING_ARRIVE_RADIUS (0.5f)
-#define CENTRE_TILE(coord) (coord + 0.5f)
 
 static void st_separate(world_body body, cpVect *out);
 
@@ -24,15 +23,32 @@ void st_system_tick(struct ecs *ecs)
 		ECS_COMP(physics) *p = &physics[i];
 		ECS_COMP(steer) *s = &steers[i];
 
+		// calculate steering intent
 		cpVect position = world_get_position(p->body);
 		cpVect velocity = cpvzero;
-
 		st_apply(s, position, &velocity);
-
 		if (s->separation)
 			st_separate(p->body, &velocity);
 
+		// append to interest context map
+		cpFloat vel_angle = cpvtoangle(velocity);
+		cpFloat vel_len = cpvlength(velocity);
+		vel_len = vel_len == 0.0 ? 0.0 : HUMAN_ACCELERATION / vel_len; // scale
+		cm_add(&s->ctx_map, CM_INTEREST,
+		       cm_direction_from_angle((float) vel_angle),
+		       (float) vel_len);
+
+		// calculate movement direction and apply
+		float speed = 0.0;
+		enum cm_direction direction = cm_calculate(&s->ctx_map, &speed);
+		speed *= HUMAN_ACCELERATION;
+		velocity = cpvmult(cpvforangle(cm_direction_angle(direction)), speed);
+
+		// apply force
 		cpBodyApplyForceAtLocalPoint(p->body, velocity, cpvzero);
+
+		// clear map for next time
+		cm_reset(&s->ctx_map);
 	}
 
 }

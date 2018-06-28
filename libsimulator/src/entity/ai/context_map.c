@@ -1,4 +1,6 @@
+#include <math.h>
 #include <string.h>
+#include <assert.h>
 
 #include "context_map.h"
 
@@ -12,6 +14,7 @@ void cm_add(struct context_map *map,
             enum cm_direction direction,
             float weight)
 {
+	assert(!isinf(weight) && !isnan(weight));
 	cm_slots *slots = &map->maps[type];
 	(*slots)[direction] += weight;
 
@@ -62,10 +65,23 @@ static void mask_danger(cm_slots *interest,
 
 }
 
+static const float ANGLE_DIV = 0.7853981634f; // 45 degrees
+
+#ifndef M_PI
+// Source: http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html
+#define M_PI 3.141592653589793238462643383279502884197169399375105820974944592307816406
+#endif
+
+
 float cm_direction_angle(enum cm_direction direction)
 {
-	const float division = 0.7853981634f; // 45 degrees
-	return direction * division;
+	return direction * ANGLE_DIV;
+}
+
+enum cm_direction cm_direction_from_angle(float angle)
+{
+	int snapped = (int) roundf(angle / ANGLE_DIV);
+	return (enum cm_direction) snapped % CM_DIRECTION_COUNT; // TODO avoid expensive mod
 }
 
 enum cm_direction cm_calculate(struct context_map *map, float *force_out)
@@ -81,7 +97,9 @@ enum cm_direction cm_calculate(struct context_map *map, float *force_out)
 
 	// find max of interest
 	enum cm_direction best_direction = find_max_index(interest);
-	float force = best_direction == CM_DIRECTION_COUNT ? 0.0 : (*interest)[best_direction];
+	float force = (float) (best_direction == CM_DIRECTION_COUNT ? 0.0 : (*interest)[best_direction]);
+
+	assert(!isinf(force) && !isnan(force));
 
 	// TODO calculate gradient around this point for smoothing
 	*force_out = force;

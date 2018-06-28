@@ -17,6 +17,9 @@ enum cm_direction
 
 float cm_direction_angle(enum cm_direction direction);
 
+// closest from given radians
+enum cm_direction cm_direction_from_angle(float angle);
+
 enum cm_type
 {
 	CM_INTEREST = 0,
@@ -27,6 +30,7 @@ enum cm_type
 
 typedef float cm_slots[CM_DIRECTION_COUNT];
 
+// TODO add cm_ prefix
 struct context_map
 {
 	// interest and danger
