@@ -6,6 +6,9 @@
 
 #include "world/world.h"
 #include "entity/ecs.h"
+#include "collision.h"
+
+static void register_collision_handlers(struct world *world);
 
 static bool load_params(struct world *world, struct world_parameters *params);
 
@@ -26,6 +29,8 @@ MOD_INIT(world, {
 	cpSpaceSetDamping(space, WORLD_DAMPING);
 	self->space = space;
 	// TODO add world boundary
+
+	register_collision_handlers(self);
 
 	// test segment
 	struct road test_road;
@@ -95,4 +100,10 @@ static bool load_params(struct world *world, struct world_parameters *params)
 	world->height = params->height;
 
 	return true;
+}
+
+static void register_collision_handlers(struct world *world)
+{
+//	cpCollisionHandler *handler = cpSpaceAddCollisionHandler(world->space, CG_HUMAN_SENSOR, CG_ROAD_BOUNDARY);
+	// TODO
 }
