@@ -22,8 +22,8 @@ void test_context_map()
 	ASSERT(cm_calculate(&map, &force) == CM_E);
 	ASSERT_FEQ(force, 0.2);
 
-	ASSERT(cm_direction_from_angle(0.0) == CM_N);
-	ASSERT(cm_direction_from_angle(3.14) == CM_S);
+	ASSERT(cm_direction_from_angle(0.0) == CM_E);
+	ASSERT(cm_direction_from_angle(3.14) == CM_W);
 
 	for (enum cm_direction i = CM_DIRECTION_FIRST; i < CM_DIRECTION_LAST; ++i)
 	{

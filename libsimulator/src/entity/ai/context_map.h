@@ -1,19 +1,19 @@
 #ifndef SIM_CONTEXT_MAP_H
 #define SIM_CONTEXT_MAP_H
 
-#define CM_DIRECTION_FIRST (CM_N)
+#define CM_DIRECTION_FIRST ((enum cm_direction) 0)
 #define CM_DIRECTION_LAST (CM_DIRECTION_COUNT)
 
 enum cm_direction
 {
-	CM_N = 0,
-	CM_NE,
-	CM_E,
+	CM_E = 0,
 	CM_SE,
 	CM_S,
 	CM_SW,
 	CM_W,
 	CM_NW,
+	CM_N,
+	CM_NE,
 
 	CM_DIRECTION_COUNT
 };
