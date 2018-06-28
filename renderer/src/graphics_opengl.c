@@ -25,6 +25,7 @@ struct colour
 
 DECLARE_COLOUR_CONSTANT(ENTITY_MALE,   105, 80 , 200);
 DECLARE_COLOUR_CONSTANT(ENTITY_FEMALE, 200, 80 , 105);
+DECLARE_COLOUR_CONSTANT(ROAD,          200, 200, 200);
 
 struct graphics
 {
@@ -105,43 +106,62 @@ void graphics_start(struct graphics *self)
 
 void graphics_draw_world(struct world *world)
 {
-	UNUSED(world);
+	struct road *r;
+	int i;
+
+	glPushMatrix();
+	glColor4fv((GLfloat *)&COLOUR_ROAD);
+	glBegin(GL_QUADS);
+	vec_foreach_ptr(&world->roads, r, i) {
+			// TODO GL_LINES for thickness 0?
+			GLfloat thickness = r->thickness == 0 ? 0.1f : r->thickness;
+			cpVect line = cpvmult(cpvnormalize(cpvsub(r->b, r->a)), thickness);
+			cpVect norm = cpv(-line.y, line.x); // rotated
+
+			glVertex2f((GLfloat) (r->a.x - norm.x), (GLfloat) (r->a.y - norm.y));
+			glVertex2f((GLfloat) (r->a.x + norm.x), (GLfloat) (r->a.y + norm.y));
+			glVertex2f((GLfloat) (r->b.x + norm.x), (GLfloat) (r->b.y + norm.y));
+			glVertex2f((GLfloat) (r->b.x - norm.x), (GLfloat) (r->b.y - norm.y));
+	}
+	glEnd();
+	glPopMatrix();
+}
+
+// ty http://slabode.exofire.net/circle_draw.shtml
+static void draw_circle(cpVect centre, float radius)
+{
+	const float SEGMENTS = 30;
+	float theta = 2.f * 3.1415926f / SEGMENTS;
+	float c = cosf(theta);
+	float s = sinf(theta);
+	float t;
+
+	float x = radius;
+	float y = 0;
+
+	glBegin(GL_POLYGON);
+	for(int i = 0; i < SEGMENTS; i++)
+	{
+		glVertex2f((GLfloat) x, (GLfloat) y);
+
+		t = x;
+		x = c * x - s * y;
+		y = s * t + c * y;
+	}
+	glEnd();
 }
 
 void graphics_draw_human(cpVect pos, ECS_COMP(human) *human)
 {
-	// ty http://slabode.exofire.net/circle_draw.shtml
-	// values hardcoded
-	static double tangetial_factor = 0.3249196962329063;
-	static double radial_factor    = 0.9510565162951535;
-	static int segment_count       = 20;
-
 	glPushMatrix();
-	if (human->gender == GENDER_MALE)
-		glColor3fv((GLfloat *)&COLOUR_ENTITY_MALE);
-	else
-		glColor3fv((GLfloat *)&COLOUR_ENTITY_FEMALE);
-
 	glTranslatef((GLfloat) pos.x, (GLfloat) pos.y, 0);
 
-	double cx = HUMAN_RADIUS;
-	double cy = 0;
+	if (human->gender == GENDER_MALE)
+		glColor4fv((GLfloat *)&COLOUR_ENTITY_MALE);
+	else
+		glColor4fv((GLfloat *)&COLOUR_ENTITY_FEMALE);
 
-	glBegin(GL_POLYGON);
-	for(int ii = 0; ii < segment_count; ++ii)
-	{
-		glVertex2f((GLfloat) cx, (GLfloat) cy);
-
-		double tx = -cy;
-		double ty = cx;
-
-		cx += tx * tangetial_factor;
-		cy += ty * tangetial_factor;
-
-		cx *= radial_factor;
-		cy *= radial_factor;
-	}
-	glEnd();
+	draw_circle(pos, HUMAN_RADIUS);
 
 	glPopMatrix();
 }

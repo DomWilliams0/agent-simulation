@@ -4,7 +4,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <chipmunk/chipmunk.h>
+#include <util/vec.h>
 
+#include "road.h"
 #include "world/world.h"
 #include "util/util.h"
 
@@ -12,6 +14,7 @@
 
 typedef cpBody *world_body;
 typedef int coord; // TODO remove this
+typedef vec_t(struct road) vec_road;
 
 struct world_parameters
 {
@@ -21,6 +24,7 @@ struct world_parameters
 
 MOD_DECLARE(world, {
 	cpSpace *space;
+	vec_road roads;
 
 	coord width;
 	coord height;
@@ -35,4 +39,6 @@ void world_set_position(world_body body, cpVect pos);
 
 cpVect world_get_velocity(world_body body);
 
+// roads
+void world_add_road(struct world *w, struct road *road);
 #endif

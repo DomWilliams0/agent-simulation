@@ -10,6 +10,8 @@
 static bool load_params(struct world *world, struct world_parameters *params);
 
 MOD_INIT(world, {
+	vec_init(&self->roads);
+
 	struct world_parameters *params = (struct world_parameters *)arg;
 	if (!load_params(self, params))
 	{
@@ -17,13 +19,21 @@ MOD_INIT(world, {
 		return 1;
 	}
 
+	// collision space
 	cpSpace *space = cpSpaceNew();
 	cpSpaceSetGravity(space, cpv(0.0, 0.0));
 	cpSpaceSetIterations(space, 10);
 	cpSpaceSetDamping(space, WORLD_DAMPING);
-
 	self->space = space;
 	// TODO add world boundary
+
+	// test segment
+	struct road test_road;
+	test_road.a = cpv(0, 1.2);
+	test_road.b = cpv(4, 3.5);
+	test_road.thickness = 0.2;
+	world_add_road(self, &test_road);
+
 	return 0;
 })
 
