@@ -3,12 +3,15 @@
 
 #include <stddef.h>
 #include <stdbool.h>
-#include <chipmunk/cpVect.h>
+#include <chipmunk/chipmunk.h>
 
-#include "world/world_forward.h"
+#include "world/world.h"
 #include "util/util.h"
 
 #define HUMAN_MASS (60.0) // kg
+
+typedef cpBody *world_body;
+typedef int coord; // TODO remove this
 
 struct world_parameters
 {
@@ -16,7 +19,12 @@ struct world_parameters
 	coord height;
 };
 
-MOD_FWD_DECLARE(world)
+MOD_DECLARE(world, {
+	cpSpace *space;
+
+	coord width;
+	coord height;
+})
 
 void world_step(struct world *w);
 

@@ -5,9 +5,6 @@
 #include "util/util.h"
 
 #include "world/world.h"
-#include "world/internal/physics.h"
-#include "world/internal/world.h"
-#include "entity/steering.h"
 #include "entity/ecs.h"
 
 static bool load_params(struct world *world, struct world_parameters *params);
@@ -19,12 +16,23 @@ MOD_INIT(world, {
 		LOG_WARN("Invalid world parameters");
 		return 1;
 	}
-	create_physics_world(self);
+
+	cpSpace *space = cpSpaceNew();
+	cpSpaceSetGravity(space, cpv(0.0, 0.0));
+	cpSpaceSetIterations(space, 10);
+	cpSpaceSetDamping(space, WORLD_DAMPING);
+
+	self->space = space;
+	// TODO add world boundary
 	return 0;
 })
 
 MOD_DESTROY(world, {
-	destroy_physics_world(self);
+	if (self->space)
+	{
+		cpSpaceFree(self->space);
+		self->space = NULL;
+	}
 })
 
 void world_step(struct world *w)

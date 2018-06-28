@@ -5,7 +5,7 @@
 #include <chipmunk/cpVect.h>
 #include "entity/common.h"
 #include "entity/steering.h"
-#include "world/world_forward.h"
+#include "world/world.h"
 #include "ai/action_stack.h"
 #include "event/event.h"
 #include "components_decl.h"
