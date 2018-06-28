@@ -20,6 +20,7 @@ MOD_DECLARE(ecs, {
 	ECS_COMP(human) _comps_human[MAX_ENTITIES];
 	ECS_COMP(steer) _comps_steer[MAX_ENTITIES];
 	ECS_COMP(brain) _comps_brain[MAX_ENTITIES];
+	ECS_COMP(sensors) _comps_sensors[MAX_ENTITIES];
 })
 
 // id is persistent

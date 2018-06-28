@@ -21,3 +21,5 @@ ECS_COMP_INIT_DEFINE(brain, {
 	ac_stack_destroy(&comp->action_stack);
 	ev_queue_destroy(&comp->event_queue);
 })
+
+ECS_COMP_INIT_DEFINE(sensors, {}, {})

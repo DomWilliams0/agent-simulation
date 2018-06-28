@@ -67,12 +67,6 @@ static void mask_danger(cm_slots *interest,
 
 static const float ANGLE_DIV = 0.7853981634f; // 45 degrees
 
-#ifndef M_PI
-// Source: http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html
-#define M_PI 3.141592653589793238462643383279502884197169399375105820974944592307816406
-#endif
-
-
 float cm_direction_angle(enum cm_direction direction)
 {
 	return direction * ANGLE_DIV;

@@ -1,6 +1,9 @@
 #ifndef SIM_CONTEXT_MAP_H
 #define SIM_CONTEXT_MAP_H
 
+#define CM_DIRECTION_FIRST (CM_N)
+#define CM_DIRECTION_LAST (CM_DIRECTION_COUNT)
+
 enum cm_direction
 {
 	CM_N = 0,
@@ -18,6 +21,7 @@ enum cm_direction
 float cm_direction_angle(enum cm_direction direction);
 
 // closest from given radians
+// TODO tests
 enum cm_direction cm_direction_from_angle(float angle);
 
 enum cm_type

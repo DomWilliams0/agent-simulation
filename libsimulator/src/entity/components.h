@@ -41,4 +41,10 @@ ECS_COMP_DEFINE(3, brain,
 	struct ac_stack action_stack;
 	struct ev_queue event_queue;
 );
+
+ECS_COMP_DEFINE(4, sensors,
+	float length;
+	// TODO sensor count
+)
+
 #endif

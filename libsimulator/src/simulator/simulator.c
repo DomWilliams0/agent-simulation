@@ -1,5 +1,6 @@
 #include <entity/ai/brain_system.h>
 #include <entity/ai/action.h>
+#include <entity/ai/sensor_system.h>
 #include "simulator/simulator.h"
 #include "world/world.h"
 
@@ -36,6 +37,7 @@ MOD_DESTROY(simulator, {
 
 void simulator_step(struct simulator *sim)
 {
+	se_system_tick(&sim->ecs);
 	br_system_tick(&sim->ecs);
 	st_system_tick(&sim->ecs);
 
@@ -68,6 +70,8 @@ void simulator_populate(struct simulator *sim)
 	ecs_id mover = make_test_entity(sim, cpv(2, 4));
 	ECS_COMP(brain) *b;
 	ecs_add(&sim->ecs, mover, brain, b);
+	ECS_COMP(sensors) *sense;
+	ecs_add(&sim->ecs, mover, sensors, sense);
 	ecs_get(&sim->ecs, mover, human)->gender = GENDER_FEMALE;
 
 	struct ac_action action = AC_INIT_FOLLOW;
@@ -75,7 +79,7 @@ void simulator_populate(struct simulator *sim)
 	ac_stack_push(&b->action_stack, &action);
 
 	action = AC_INIT_MOVE_TO;
-	ac_init(&action, cpv(2, 3));
+	ac_init(&action, cpv(2, 1));
 	ac_stack_push(&b->action_stack, &action);
 
 	for (int i = 0; i < 4; ++i)
