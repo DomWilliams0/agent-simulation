@@ -8,30 +8,21 @@
 #include "world/world_forward.h"
 #include "ai/action_stack.h"
 #include "event/event.h"
-
-enum ecs_component {
-	ECS_COMP_PHYSICS = (1 << 0),
-	ECS_COMP_HUMAN   = (1 << 1),
-	ECS_COMP_STEER   = (1 << 2),
-	ECS_COMP_BRAIN   = (1 << 3),
-};
+#include "components_decl.h"
 
 // physics body
-struct ecs_comp_physics
-{
+ECS_COMP_DEFINE(0, physics,
 	world_body body;
-};
+)
 
 // human attributes
-struct ecs_comp_human
-{
+ECS_COMP_DEFINE(1, human,
 	human_age age;
 	enum gender gender;
-};
+)
 
 // steering movement
-struct ecs_comp_steer
-{
+ECS_COMP_DEFINE(2, steer,
 	enum st_type type;
 	cpVect target;
 	bool separation; // TODO bitflags for multiple behaviours
@@ -40,11 +31,11 @@ struct ecs_comp_steer
 	{
 		bool arrived; // arrival only
 	};
-};
+)
 
-struct ecs_comp_brain
-{
+// behaviour coordination
+ECS_COMP_DEFINE(3, brain,
 	struct ac_stack action_stack;
 	struct ev_queue event_queue;
-};
+);
 #endif

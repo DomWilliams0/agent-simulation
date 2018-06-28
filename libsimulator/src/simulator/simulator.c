@@ -47,23 +47,18 @@ static ecs_id make_test_entity(struct simulator *sim, cpVect pos)
 	struct ecs *ecs = &sim->ecs;
 	ecs_id e = ecs_new(ecs);
 
-	ecs_add(ecs, e, ECS_COMP_PHYSICS);
-	ecs_add(ecs, e, ECS_COMP_HUMAN);
-	ecs_add(ecs, e, ECS_COMP_BRAIN);
-	ecs_add(ecs, e, ECS_COMP_STEER);
-
-	struct ecs_comp_physics *p = ecs_get(ecs, e, ECS_COMP_PHYSICS, struct ecs_comp_physics);
+	ECS_COMP(physics) *p;
+	ecs_add(ecs, e, physics, p);
 	p->body = world_create_entity(sim->world);
 	world_set_position(p->body, pos);
 
-	struct ecs_comp_human *h = ecs_get(ecs, e, ECS_COMP_HUMAN, struct ecs_comp_human);
+	ECS_COMP(human) *h;
+	ecs_add(ecs, e, human, h);
 	h->age = 25;
 	h->gender = GENDER_MALE;
 
-	struct ecs_comp_brain *b = ecs_get(ecs, e, ECS_COMP_BRAIN, struct ecs_comp_brain);
-	struct ac_action default_idle = AC_INIT_IDLE;
-	ac_stack_init(&b->action_stack, &default_idle);
-	ev_queue_init(&b->event_queue);
+	ECS_COMP(steer) *s;
+	ecs_add(ecs, e, steer, s);
 
 	return e;
 }
@@ -71,9 +66,9 @@ static ecs_id make_test_entity(struct simulator *sim, cpVect pos)
 void simulator_populate(struct simulator *sim)
 {
 	ecs_id mover = make_test_entity(sim, cpv(2, 4));
-	ecs_add(&sim->ecs, mover, ECS_COMP_BRAIN);
-	struct ecs_comp_brain *b = ecs_get(&sim->ecs, mover, ECS_COMP_BRAIN, struct ecs_comp_brain);
-	(ecs_get(&sim->ecs, mover, ECS_COMP_HUMAN, struct ecs_comp_human))->gender = GENDER_FEMALE;
+	ECS_COMP(brain) *b;
+	ecs_add(&sim->ecs, mover, brain, b);
+	ecs_get(&sim->ecs, mover, human)->gender = GENDER_FEMALE;
 
 	struct ac_action action = AC_INIT_FOLLOW;
 	ac_init(&action, mover + 4);
@@ -86,13 +81,11 @@ void simulator_populate(struct simulator *sim)
 	for (int i = 0; i < 4; ++i)
 	{
 		ecs_id e = make_test_entity(sim, cpv(i, 3));
-		ecs_add(&sim->ecs, e, ECS_COMP_BRAIN);
-		b = ecs_get(&sim->ecs, e, ECS_COMP_BRAIN, struct ecs_comp_brain);
+		ecs_add(&sim->ecs, e, brain, b);
 
 		action = AC_INIT_FLEE;
 		ac_init(&action, mover, 2.0);
 		ac_stack_push(&b->action_stack, &action);
-
 	}
 }
 

@@ -2,9 +2,10 @@
 #define SIM_STEERING_H
 
 #include <chipmunk/cpVect.h>
+#include "components_decl.h"
 
 struct ecs;
-struct ecs_comp_steer;
+ECS_COMP(steer);
 
 enum st_type
 {
@@ -14,7 +15,7 @@ enum st_type
 	ST_ARRIVE,
 };
 
-void st_apply(struct ecs_comp_steer *steer, cpVect current_pos, cpVect *velocity_out);
+void st_apply(ECS_COMP(steer) *steer, cpVect current_pos, cpVect *velocity_out);
 
 // realise steering components -> physical movement
 void st_system_tick(struct ecs *ecs);

@@ -16,7 +16,7 @@ struct camera_movement
 };
 
 struct world;
-struct ecs_comp_human;
+ECS_COMP(human);
 
 MOD_FWD_DECLARE(graphics) // implementation specific
 
@@ -24,7 +24,7 @@ void graphics_start(struct graphics *self);
 
 void graphics_draw_world(struct world *world);
 
-void graphics_draw_human(cpVect pos, struct ecs_comp_human *human);
+void graphics_draw_human(cpVect pos, ECS_COMP(human) *human);
 
 void graphics_end(struct graphics *self);
 

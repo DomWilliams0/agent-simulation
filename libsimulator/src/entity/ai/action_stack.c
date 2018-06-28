@@ -2,7 +2,6 @@
 
 #include "util/util.h"
 #include "action.h"
-#include "action_stack.h"
 
 void ac_stack_init(struct ac_stack *stack, struct ac_action *default_action)
 {

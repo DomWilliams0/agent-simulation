@@ -53,12 +53,12 @@ struct ac_action
 	} payload;
 };
 
-struct ecs_comp_steer;
+ECS_COMP(steer);
 struct ecs;
 struct ac_tick_arg
 {
 	ecs_id this;
-	struct ecs_comp_steer *steer_out;
+	ECS_COMP(steer) *steer_out;
 	struct ecs *ecs;
 };
 

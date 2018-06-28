@@ -108,7 +108,7 @@ void graphics_draw_world(struct world *world)
 	UNUSED(world);
 }
 
-void graphics_draw_human(cpVect pos, struct ecs_comp_human *human)
+void graphics_draw_human(cpVect pos, ECS_COMP(human) *human)
 {
 	// ty http://slabode.exofire.net/circle_draw.shtml
 	// values hardcoded

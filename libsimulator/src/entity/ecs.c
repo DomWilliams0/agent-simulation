@@ -21,7 +21,6 @@ ecs_id ecs_new(struct ecs *self)
 		LOG_ERROR("Maximum entity count reached (%d)", MAX_ENTITIES);
 		LOG_FLUSH;
 		exit(4); // hmmm
-		return 0;
 	}
 
 	// allocate at end of sorted array
@@ -33,47 +32,21 @@ bool ecs_is_alive(struct ecs *self, ecs_id e)
 	return e < self->count;
 }
 
-void ecs_add(struct ecs *self, ecs_id e, enum ecs_component c)
+void _ecs_enable(struct ecs *self, ecs_id e, int mask)
 {
 	assert(ecs_is_alive(self, e));
-	self->_masks[e] |= c;
-	// TODO return!
+	self->_masks[e] |= mask;
 }
 
-void ecs_remove(struct ecs *self, ecs_id e, enum ecs_component c)
+void _ecs_disable(struct ecs *self, ecs_id e, int mask)
 {
 	assert(ecs_is_alive(self, e));
-	self->_masks[e] &= ~c;
+	self->_masks[e] &= ~mask;
 }
 
-/*void *ecs_get(struct ecs *self, ecs_id e, enum ecs_component c)
+bool ecs_has_mask(struct ecs *self, ecs_id e, ecs_mask mask)
 {
 	assert(ecs_is_alive(self, e));
-	return &ecs_all(self, c)[e];
-}*/
-
-void *ecs_all(struct ecs *self, enum ecs_component c)
-{
-	switch (c)
-	{
-		case ECS_COMP_PHYSICS:
-			return self->_comps_physics;
-		case ECS_COMP_HUMAN:;
-			return self->_comps_human;
-		case ECS_COMP_STEER:
-			return self->_comps_steer;
-		case ECS_COMP_BRAIN:
-			return self->_comps_brain;
-	}
-
-	LOG_ERROR("Component %d not implemented", c);
-	LOG_FLUSH;
-	exit(5);
-	return NULL; // unreachable
-}
-
-bool ecs_has(struct ecs *self, ecs_id e, ecs_mask mask)
-{
 	return (self->_masks[e] & mask) == mask;
 }
 

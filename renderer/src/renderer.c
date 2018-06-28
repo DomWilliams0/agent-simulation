@@ -141,14 +141,14 @@ void step_simulation(struct renderer *renderer)
 
 static void render_entities(struct ecs *ecs, double interpolation)
 {
-	struct ecs_comp_physics *physics = ecs_all(ecs, ECS_COMP_PHYSICS);
-	struct ecs_comp_human *humans = ecs_all(ecs, ECS_COMP_HUMAN);
+	ECS_COMP(physics) *physics = ecs_all(ecs, physics);
+	ECS_COMP(human) *humans = ecs_all(ecs, human);
 
-	const ecs_mask mask = ECS_COMP_PHYSICS | ECS_COMP_HUMAN;
+	const ecs_mask mask = ECS_COMP_MASK(physics) | ECS_COMP_MASK(human);
 
 	for (ecs_id i = 0; i < ecs->count; ++i)
 	{
-		if (!ecs_has(ecs, i, mask))
+		if (!ecs_has_mask(ecs, i, mask))
 			continue;
 
 		world_body body = (&physics[i])->body;

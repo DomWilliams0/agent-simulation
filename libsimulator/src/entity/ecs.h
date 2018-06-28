@@ -16,30 +16,43 @@ MOD_DECLARE(ecs, {
 
 	/* these must remain sorted. 0 -> count-1 are active, count -> MAX_ENTITIES are inactive */
 	ecs_mask _masks[MAX_ENTITIES];
-	struct ecs_comp_physics _comps_physics[MAX_ENTITIES];
-	struct ecs_comp_human _comps_human[MAX_ENTITIES];
-	struct ecs_comp_steer _comps_steer[MAX_ENTITIES];
-	struct ecs_comp_brain _comps_brain[MAX_ENTITIES];
+	ECS_COMP(physics) _comps_physics[MAX_ENTITIES];
+	ECS_COMP(human) _comps_human[MAX_ENTITIES];
+	ECS_COMP(steer) _comps_steer[MAX_ENTITIES];
+	ECS_COMP(brain) _comps_brain[MAX_ENTITIES];
 })
 
 // id is persistent
 ecs_id ecs_new(struct ecs *self);
-
 // TODO destroy entity
-
 bool ecs_is_alive(struct ecs *self, ecs_id e);
 
-void ecs_add(struct ecs *self, ecs_id e, enum ecs_component c);
+// TODO assert has component?
+#define ecs_get(ecs, e, type) \
+	(ecs_all((ecs), type) + (e))
 
-void ecs_remove(struct ecs *self, ecs_id e, enum ecs_component c);
+#define ecs_add(ecs, e, type, out_var) \
+do {\
+	_ecs_enable((ecs), (e), ECS_COMP_MASK(type)); \
+	ECS_COMP(type) *comp = ecs_get(ecs, e, type); \
+	ECS_COMP_INIT(type)(comp); \
+	(out_var) = comp; \
+} while(0)
 
-//void *ecs_get(struct ecs *self, ecs_id e, enum ecs_component c);
-#define ecs_get(self, e, comp, comp_type) \
-	((comp_type *) ecs_all(self,  comp)) + e
+#define ecs_remove(ecs, e, type) \
+do {\
+	ECS_COMP_DESTROY(type)(ecs_get((ecs), (e), type)); \
+	_ecs_disable((ecs), (e), ECS_COMP_MASK(type)); \
+} while(0)
 
-// make sure to cast the return value to the concrete time before dereferencing
-void *ecs_all(struct ecs *self, enum ecs_component c);
+#define ecs_all(ecs, type) \
+	((&(ecs)->_comps_ ## type)[0])
 
-bool ecs_has(struct ecs *self, ecs_id e, ecs_mask mask);
+#define ecs_has(ecs, e, type) \
+	ecs_has_mask(ecs, e, ECS_COMP_MASK(type))
+
+void _ecs_enable(struct ecs *self, ecs_id e, int mask);
+void _ecs_disable(struct ecs *self, ecs_id e, int mask);
+bool ecs_has_mask(struct ecs *self, ecs_id e, ecs_mask mask);
 
 #endif

@@ -4,9 +4,9 @@
 
 void br_system_tick(struct ecs *ecs)
 {
-	struct ecs_comp_brain *brains = ecs_all(ecs, ECS_COMP_BRAIN);
-	struct ecs_comp_steer *steers = ecs_all(ecs, ECS_COMP_STEER);
-	const ecs_mask mask = ECS_COMP_BRAIN | ECS_COMP_STEER;
+	ECS_COMP(brain) *brains = ecs_all(ecs, brain);
+	ECS_COMP(steer) *steers = ecs_all(ecs, steer);
+	const ecs_mask mask = ECS_COMP_MASK(brain) | ECS_COMP_MASK(steer);
 
 	struct ac_action current;
 	struct ac_tick_arg arg = {
@@ -14,11 +14,11 @@ void br_system_tick(struct ecs *ecs)
 	};
 	for (ecs_id i = 0; i < ecs->count; ++i)
 	{
-		if (!ecs_has(ecs, i, mask))
+		if (!ecs_has_mask(ecs, i, mask))
 			continue;
 
-		struct ecs_comp_brain *b = &brains[i];
-		struct ecs_comp_steer *s = &steers[i];
+		ECS_COMP(brain) *b = &brains[i];
+		ECS_COMP(steer) *s = &steers[i];
 
 		// TODO process events
 		ev_queue_process(&b->event_queue, {

@@ -11,18 +11,18 @@ static void st_separate(world_body body, cpVect *out);
 
 void st_system_tick(struct ecs *ecs)
 {
-	struct ecs_comp_physics *physics = ecs_all(ecs, ECS_COMP_PHYSICS);
-	struct ecs_comp_steer *steers = ecs_all(ecs, ECS_COMP_STEER);
+	ECS_COMP(physics) *physics = ecs_all(ecs, physics);
+	ECS_COMP(steer) *steers = ecs_all(ecs, steer);
 
-	const ecs_mask mask = ECS_COMP_PHYSICS | ECS_COMP_STEER;
+	const ecs_mask mask = ECS_COMP_MASK(physics) | ECS_COMP_MASK(steer);
 
 	for (ecs_id i = 0; i < ecs->count; ++i)
 	{
-		if (!ecs_has(ecs, i, mask))
+		if (!ecs_has_mask(ecs, i, mask))
 			continue;
 
-		struct ecs_comp_physics *p = &physics[i];
-		struct ecs_comp_steer *s = &steers[i];
+		ECS_COMP(physics) *p = &physics[i];
+		ECS_COMP(steer) *s = &steers[i];
 
 		cpVect position = world_get_position(p->body);
 		cpVect velocity = cpvzero;
@@ -74,7 +74,7 @@ static bool st_arrive(cpVect pos, cpVect target, cpVect *out)
 	return arriving;
 }
 
-void st_apply(struct ecs_comp_steer *steer, cpVect current_pos, cpVect *velocity_out)
+void st_apply(ECS_COMP(steer) *steer, cpVect current_pos, cpVect *velocity_out)
 {
 	switch(steer->type)
 	{

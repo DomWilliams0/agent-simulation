@@ -12,6 +12,8 @@ enum ac_type
 //	AC_ATTACK,
 };
 
+struct ac_tick_arg;
+
 // must be first field of every action
 struct ac_vtable
 {

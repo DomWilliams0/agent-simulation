@@ -1,7 +1,6 @@
 #include "entity/steering.h"
 #include "entity/components.h"
 #include "entity/ecs.h"
-#include "util/util.h"
 #include "tests.h"
 
 void test_entity()
@@ -14,34 +13,33 @@ void test_entity()
 	ASSERT(ecs.count == 1);
 	ASSERT(ecs_is_alive(&ecs, e));
 
+	ECS_COMP(physics) *p;
+	ECS_COMP(human) *h, *h2;
+
 	// components
-	ASSERT(!ecs_has(&ecs, e, ECS_COMP_HUMAN));
-	ecs_add(&ecs, e, ECS_COMP_HUMAN);
-	ASSERT(ecs_has(&ecs, e, ECS_COMP_HUMAN));
-	struct ecs_comp_human *human = ecs_get(&ecs, e, ECS_COMP_HUMAN, struct ecs_comp_human);
-	ASSERT(ecs_get(&ecs, e, ECS_COMP_HUMAN, struct ecs_comp_human) == human);
+	ASSERT(!ecs_has(&ecs, e, human));
+	ecs_add(&ecs, e, human, h);
+	ASSERT(ecs_has(&ecs, e, human));
+	ASSERT(ecs_get(&ecs, e, human) == h);
 
-	ASSERT(!ecs_has(&ecs, e, ECS_COMP_PHYSICS));
-	ecs_add(&ecs, e, ECS_COMP_PHYSICS);
-	ecs_add(&ecs, e, ECS_COMP_PHYSICS); // multiple adds are fine
-	ASSERT(ecs_has(&ecs, e, ECS_COMP_PHYSICS));
+	ASSERT(!ecs_has(&ecs, e, physics));
+	ecs_add(&ecs, e, physics, p);
+	ASSERT(ecs_has(&ecs, e, physics));
 
-	ecs_remove(&ecs, e, ECS_COMP_PHYSICS);
-	ASSERT(!ecs_has(&ecs, e, ECS_COMP_PHYSICS));
-	ecs_remove(&ecs, e, ECS_COMP_PHYSICS); // multiple removes too
-	ASSERT(!ecs_has(&ecs, e, ECS_COMP_PHYSICS));
+	ecs_remove(&ecs, e, physics);
+	ASSERT(!ecs_has(&ecs, e, physics));
+	ASSERT(!ecs_has(&ecs, e, physics));
 
 	ecs_id other = ecs_new(&ecs);
-	ecs_add(&ecs, other, ECS_COMP_HUMAN);
-	struct ecs_comp_human *other_human = ecs_get(&ecs, other, ECS_COMP_HUMAN, struct ecs_comp_human);
+	ecs_add(&ecs, other, human, h2);
 
-	human->age = 20;
-	human->gender = GENDER_MALE;
-	other_human->age = 80;
-	other_human->gender = GENDER_FEMALE;
+	h->age = 20;
+	h->gender = GENDER_MALE;
+	h2->age = 80;
+	h2->gender = GENDER_FEMALE;
 
 	// ensure no memory overlap
-	ASSERT(human->age == 20 && human->gender == GENDER_MALE);
-	ASSERT(other_human->age == 80 && other_human->gender == GENDER_FEMALE);
+	ASSERT(h->age == 20 && h->gender == GENDER_MALE);
+	ASSERT(h2->age == 80 && h2->gender == GENDER_FEMALE);
 }
 

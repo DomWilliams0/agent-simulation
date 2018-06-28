@@ -69,14 +69,12 @@ static enum ac_status tick_flee(struct ac_action *action, struct ac_tick_arg *ou
 {
 	struct ac_flee *this = &action->payload.flee;
 
-	cpVect target = world_get_position((ecs_get(out->ecs,
-	                                            this->target,
-	                                            ECS_COMP_PHYSICS,
-	                                            struct ecs_comp_physics))->body);
-	cpVect my_pos = world_get_position((ecs_get(out->ecs,
-	                                            out->this,
-	                                            ECS_COMP_PHYSICS,
-	                                            struct ecs_comp_physics))->body);
+	cpVect target = world_get_position(ecs_get(out->ecs,
+	                                           this->target,
+	                                           physics)->body);
+	cpVect my_pos = world_get_position(ecs_get(out->ecs,
+	                                           out->this,
+	                                           physics)->body);
 
 	if (cpvdistsq(target, my_pos) > this->desired_distance * this->desired_distance)
 		return AC_STATUS_SUCCESS; // got away
@@ -148,10 +146,9 @@ static enum ac_status tick_follow(struct ac_action *action, struct ac_tick_arg *
 {
 	struct ac_follow *this = &action->payload.follow;
 
-	cpVect target = world_get_position((ecs_get(out->ecs,
-	                                            this->target,
-	                                            ECS_COMP_PHYSICS,
-	                                            struct ecs_comp_physics))->body);
+	cpVect target = world_get_position(ecs_get(out->ecs,
+	                                           this->target,
+	                                           physics)->body);
 
 	out->steer_out->type = ST_SEEK;
 	out->steer_out->target = target;
