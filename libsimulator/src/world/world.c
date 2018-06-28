@@ -54,6 +54,11 @@ void world_set_position(world_body body, cpVect pos)
 	cpBodySetPosition(body, pos);
 }
 
+cpVect world_get_velocity(world_body body)
+{
+	return cpBodyGetVelocity(body);
+}
+
 static bool load_params(struct world *world, struct world_parameters *params)
 {
 	if (params == NULL)

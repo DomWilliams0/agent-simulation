@@ -16,7 +16,7 @@
 #define MAX_FRAMESKIP     (5)
 
 void step_simulation(struct renderer *renderer);
-void render_simulation(struct renderer *renderer);
+void render_simulation(struct renderer *renderer, double interpolation);
 
 MOD_INIT(renderer, {
 	if (arg == NULL) {
@@ -113,8 +113,9 @@ void renderer_start_loop(struct renderer *renderer)
 		}
 
 		interpolation = (double)(SDL_GetTicks() + SKIP_TICKS - next_tick) / SKIP_TICKS;
+		interpolation /= TICKS_PER_SECOND;
 
-		TIME_FUNCTION(render, render_simulation(renderer));
+		TIME_FUNCTION(render, render_simulation(renderer, interpolation));
 
 		// print every second
 		if (logic_tc->count == TICKS_PER_SECOND)
@@ -138,7 +139,7 @@ void step_simulation(struct renderer *renderer)
 	simulator_step(renderer->sim);
 }
 
-static void render_entities(struct ecs *ecs)
+static void render_entities(struct ecs *ecs, double interpolation)
 {
 	struct ecs_comp_physics *physics = ecs_all(ecs, ECS_COMP_PHYSICS);
 	struct ecs_comp_human *humans = ecs_all(ecs, ECS_COMP_HUMAN);
@@ -150,12 +151,16 @@ static void render_entities(struct ecs *ecs)
 		if (!ecs_has(ecs, i, mask))
 			continue;
 
-		cpVect pos = world_get_position((&physics[i])->body);
+		world_body body = (&physics[i])->body;
+		cpVect pos = world_get_position(body);
+		cpVect vel = world_get_velocity(body);
+
+		pos = cpvadd(pos, cpvmult(vel, interpolation));
 		graphics_draw_human(pos, &humans[i]);
 	}
 }
 
-void render_simulation(struct renderer *renderer)
+void render_simulation(struct renderer *renderer, double interpolation)
 {
 	struct graphics *graphics = renderer->graphics;
 
@@ -169,7 +174,7 @@ void render_simulation(struct renderer *renderer)
 	graphics_draw_world(renderer->sim->world);
 
 	// entities
-	render_entities(&renderer->sim->ecs);
+	render_entities(&renderer->sim->ecs, interpolation);
 
 	graphics_end(renderer->graphics);
 }

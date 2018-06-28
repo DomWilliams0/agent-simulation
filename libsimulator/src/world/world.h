@@ -25,4 +25,6 @@ world_body world_create_entity(struct world *w);
 cpVect world_get_position(world_body body);
 void world_set_position(world_body body, cpVect pos);
 
+cpVect world_get_velocity(world_body body);
+
 #endif
